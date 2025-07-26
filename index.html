@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapeutic Reframing Engine</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 2rem auto; background: #f4f4f9; color: #333; line-height: 1.6; }.container { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }h1 { color: #2c3e50; text-align: center; }p { color: #555; }textarea { width: 100%; min-height: 80px; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; resize: vertical; }.buttons { display: flex; justify-content: space-between; }button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; transition: background-color 0.2s; }button:hover { background-color: #2980b9; }button:disabled { background-color: #bdc3c7; cursor: not-allowed; }#anotherAngleBtn { background-color: #9b59b6; display: none; }#anotherAngleBtn:hover { background-color: #8e44ad; }#responseArea { margin-top: 20px; padding: 15px; background: #ecf0f1; border-left: 5px solid #3498db; min-height: 50px; border-radius: 4px; }#responseArea.prompt { border-left-color: #f1c40f; }</style>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div id="app-container">
+        <!-- 1. Landing Screen -->
+        <div id="screen-landing" class="active">
+            <div class="container landing-container">
+                <div class="landing-content">
+                    <h1 class="landing-headline">Ready to trade your old story for a new one?</h1>
+                    <p class="landing-subtitle">A private, secure space to work through challenging thoughts and emotions.</p>
+                    <button id="btn-start" class="btn-primary landing-cta">Start Your 3-Minute Shift</button>
+                </div>
+                <div class="background-animation">
+                    <div class="floating-element floating-1"></div>
+                    <div class="floating-element floating-2"></div>
+                    <div class="floating-element floating-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Readiness Screen -->
+        <div id="screen-readiness">
+            <div class="container">
+                <h2>How intense are your feelings right now?</h2>
+                <div class="slider-section">
+                    <label for="intensity-slider" class="slider-label">
+                        Move the slider to reflect your current emotional intensity
+                    </label>
+                    <input 
+                        type="range" 
+                        id="intensity-slider" 
+                        min="0" 
+                        max="10" 
+                        value="5" 
+                        aria-label="Emotional intensity from 0 to 10"
+                        aria-describedby="intensity-feedback"
+                    >
+                    <div class="intensity-display">
+                        <span>0 - Calm</span>
+                        <span id="intensity-value">5</span>
+                        <span>10 - Overwhelming</span>
+                    </div>
+                    <div id="intensity-feedback" class="feedback-text feedback-medium">
+                        You're feeling moderately intense emotions - this is a good place to start working through them.
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="btn-continue-readiness" class="btn-primary">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Topic Screen -->
+        <div id="screen-topic">
+            <div class="container">
+                <h2>What area would you like to work on?</h2>
+                <div id="topic-buttons">
+                    <!-- Topic buttons will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Emotion Screen -->
+        <div id="screen-emotion">
+            <div class="container">
+                <h2>How are you feeling about this?</h2>
+                <div id="emotion-buttons">
+                    <!-- Emotion buttons will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Starting Text Screen -->
+        <div id="screen-starting-text">
+            <div class="container">
+                <h2>What's on your mind?</h2>
+                <div class="text-input-section">
+                    <label for="starting-textarea" class="text-input-label">
+                        Share your specific thought or concern to get personalized reframing
+                    </label>
+                    <textarea 
+                        id="starting-textarea" 
+                        placeholder="For example: 'I keep worrying about not having enough money for retirement' or 'I feel like I'm not good enough for anyone to love me'"
+                        aria-label="Required text input for personalized guidance"
+                        aria-describedby="text-input-help"
+                        required
+                    ></textarea>
+                    <div id="text-input-help" class="text-input-help">
+                        <small>Your exact words help us provide the most relevant reframing. Your text is processed privately on your device.</small>
+                    </div>
+                    <div class="button-section">
+                        <button id="btn-begin-journey" class="btn-primary">Begin Journey</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5.5. Model Loading Screen -->
+        <div id="screen-model-loading">
+            <div class="container">
+                <div class="loading-content">
+                    <h2>Preparing your personalized experience</h2>
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div class="loading-progress">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div id="progress-percentage" class="progress-percentage">0%</div>
+                    </div>
+                    <div id="loading-message" class="loading-message">
+                        Warming up the engine...
+                    </div>
+                    <div class="loading-description">
+                        <p>We're setting up a sophisticated understanding system that works entirely on your device to protect your privacy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Journey Screen -->
+        <div id="screen-journey">
+            <div class="container">
+                <div class="journey-header">
+                    <h2>Your Journey</h2>
+                    <div class="progress-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <div id="journey-prompt" class="prompt-text">
+                        <!-- Current therapeutic prompt will be displayed here -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="btn-try-another" class="btn-secondary">Try another angle</button>
+                    <button id="btn-feels-better" class="btn-primary">This feels better</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. ACT Defusion Screen -->
+        <div id="screen-act-defusion">
+            <div class="container">
+                <div class="prompt-section">
+                    <div id="act-prompt" class="prompt-text">
+                        <!-- ACT defusion prompt will be displayed here -->
+                    </div>
+                </div>
+                <button id="btn-act-continue" class="btn-primary">Continue</button>
+            </div>
+        </div>
+
+        <!-- 8. Completion Screen -->
+        <div id="screen-completion">
+            <div class="container">
+                <h2>Well Done!</h2>
+                <div id="completion-animation" class="completion-animation">✨</div>
+                <div id="completion-summary" class="completion-text">
+                    <!-- Completion summary will be displayed here -->
+                </div>
+                <div id="emotional-shift-summary" class="emotional-shift">
+                    <!-- Emotional shift summary will be displayed here -->
+                </div>
+                <div class="completion-actions">
+                    <a href="#" id="set-reminder-link" class="btn-primary">Set Reminder</a>
+                    <button id="btn-start-over" class="btn-secondary">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Calendar Screen -->
+        <div id="screen-calendar">
+            <div class="container">
+                <h2>Set up gentle reminders</h2>
+                <p>Get private calendar reminders to check in with your emotional wellness. All reminders are created locally on your device.</p>
+                <div class="button-group">
+                    <button id="btn-daily" class="btn-primary">
+                        <span>📅</span>
+                        Daily Check-ins
+                        <small>3-minute daily emotional wellness moments</small>
+                    </button>
+                    <button id="btn-weekly" class="btn-primary">
+                        <span>🗓️</span>
+                        Weekly Reflections
+                        <small>Deeper weekly emotional pattern review</small>
+                    </button>
+                    <button id="btn-no-thanks" class="btn-secondary">No Thanks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

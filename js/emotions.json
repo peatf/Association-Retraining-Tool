@@ -1,0 +1,35 @@
+{
+  "Money": {
+    "palette": ["anxious", "resentful", "overwhelmed", "insecure", "ashamed", "fearful"],
+    "descriptions": {
+      "anxious": "Worried about financial security",
+      "resentful": "Angry about financial limitations",
+      "overwhelmed": "Feeling unable to manage money matters",
+      "insecure": "Uncertain about financial decisions",
+      "ashamed": "Embarrassed about financial situation",
+      "fearful": "Scared about financial future"
+    }
+  },
+  "Romance": {
+    "palette": ["lonely", "rejected", "unworthy", "desperate", "heartbroken", "jealous"],
+    "descriptions": {
+      "lonely": "Feeling isolated and disconnected",
+      "rejected": "Hurt by romantic rejection",
+      "unworthy": "Feeling undeserving of love",
+      "desperate": "Anxious need for romantic connection",
+      "heartbroken": "Deep sadness from relationship loss",
+      "jealous": "Envious of others' relationships"
+    }
+  },
+  "Self-Image": {
+    "palette": ["inadequate", "worthless", "embarrassed", "disappointed", "self-critical", "defeated"],
+    "descriptions": {
+      "inadequate": "Feeling not good enough",
+      "worthless": "Lacking sense of personal value",
+      "embarrassed": "Ashamed of personal qualities",
+      "disappointed": "Let down by personal performance",
+      "self-critical": "Harsh internal judgment",
+      "defeated": "Feeling like giving up on self"
+    }
+  }
+}

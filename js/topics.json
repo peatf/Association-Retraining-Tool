@@ -1,0 +1,13 @@
+{
+  "topics": ["Money", "Romance", "Self-Image"],
+  "topicDescriptions": {
+    "Money": "Financial concerns, scarcity, and abundance mindset",
+    "Romance": "Relationships, dating, and emotional connections", 
+    "Self-Image": "Self-worth, confidence, and personal identity"
+  },
+  "topicIcons": {
+    "Money": "💰",
+    "Romance": "💕",
+    "Self-Image": "🪞"
+  }
+}

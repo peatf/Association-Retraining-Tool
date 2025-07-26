@@ -1,0 +1,312 @@
+{
+  "sequences": {
+    "Money": {
+      "anxious": [
+        {
+          "type": "cbt_reframe",
+          "content": "Notice that your financial anxiety often focuses on worst-case scenarios. Consider the evidence that contradicts these fears.",
+          "alternative": "Your anxiety about money shows you care about security. You can take one small step today to feel more financially grounded."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider how you would support a friend who shared your exact financial situation and worries.",
+          "alternative": "Someone who cares about you would recognize your financial capabilities and resilience."
+        },
+        {
+          "type": "cbt_reframe", 
+          "content": "Financial security isn't just about the amount in your account—it's also about your ability to adapt and problem-solve.",
+          "alternative": "You've managed financial challenges before. Consider the strengths you used then that you still have now."
+        },
+        {
+          "type": "socratic",
+          "content": "Reflect on one financial decision you made in the past that you're proud of.",
+          "alternative": "Notice the times you've shown resourcefulness with money, even in small ways."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Your relationship with money can evolve. Today's financial situation doesn't determine your future possibilities.",
+          "alternative": "Financial anxiety often shrinks when you focus on what you can control rather than what you can't."
+        }
+      ],
+      "resentful": [
+        {
+          "type": "cbt_reframe",
+          "content": "Resentment about money often masks deeper feelings about fairness and worth. Consider what's really underneath this anger.",
+          "alternative": "Your resentment shows you have strong values about fairness. You can honor those values in your own financial choices."
+        },
+        {
+          "type": "socratic",
+          "content": "Imagine how it would feel to release some of this resentment, even if your financial situation stayed the same.",
+          "alternative": "Consider how your life might change if you let go of comparing your financial situation to others'."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Other people's financial success doesn't diminish your own potential or worth.",
+          "alternative": "Resentment uses energy that could be redirected toward your own financial growth and well-being."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider the financial goal that matters most to you, separate from what others have.",
+          "alternative": "Imagine how your life might improve if you focused on your own financial journey rather than others'."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You can acknowledge financial inequality while still taking empowered action in your own life.",
+          "alternative": "Your resentment is information about what you value. You can use that information constructively."
+        }
+      ],
+      "overwhelmed": [
+        {
+          "type": "cbt_reframe",
+          "content": "Financial overwhelm often comes from trying to solve everything at once. Consider one small financial task you could complete today.",
+          "alternative": "Feeling overwhelmed means you're aware of what needs attention. That awareness is the first step toward clarity."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider which aspect of your finances would have the biggest positive impact if you focused on it this week.",
+          "alternative": "Think about the smallest financial step that would help you feel more in control."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You don't need to become a financial expert overnight. Learning happens gradually, one concept at a time.",
+          "alternative": "Financial overwhelm is temporary. Each small action you take builds your confidence and clarity."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider who in your life has good financial judgment that you could learn from or ask for guidance.",
+          "alternative": "Think about a financial resource or tool that might help you feel more organized and less overwhelmed."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Managing money is a skill that improves with practice. You're building that skill every time you pay attention to your finances.",
+          "alternative": "Your financial situation has many moving parts, but you can influence it one decision at a time."
+        }
+      ]
+    },
+    "Romance": {
+      "lonely": [
+        {
+          "type": "cbt_reframe",
+          "content": "Loneliness is a signal that you value connection, not evidence that you're unlovable.",
+          "alternative": "The capacity to feel lonely shows your heart is open to love, which is a beautiful quality."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what kind of connection would feel most meaningful to you right now.",
+          "alternative": "Reflect on when you've felt most genuinely connected to another person and what made that special."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Building a loving relationship with yourself creates the foundation for connecting with others.",
+          "alternative": "Loneliness can motivate you to reach out and create the connections you're seeking."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider one small way you could nurture connection in your life this week.",
+          "alternative": "Notice how you show love and care to the people already in your life."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You are worthy of love and connection exactly as you are, not after you change or improve yourself.",
+          "alternative": "Loneliness is temporary. Your capacity for love and connection remains constant."
+        }
+      ],
+      "rejected": [
+        {
+          "type": "cbt_reframe",
+          "content": "Rejection is about compatibility and timing, not about your fundamental worth as a person.",
+          "alternative": "Being rejected by someone who isn't right for you protects you from an unfulfilling relationship."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what you learned about yourself or what you want from this experience.",
+          "alternative": "Notice how this rejection might be redirecting you toward something better suited for you."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "The right person for you will appreciate what you have to offer.",
+          "alternative": "Rejection often says more about the other person's readiness or situation than about you."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider the qualities you bring to relationships that you're proud of.",
+          "alternative": "Think about what you would want your best friend to know if they experienced this same rejection."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You can feel the pain of rejection without letting it define your self-worth or future possibilities.",
+          "alternative": "Each experience of putting yourself out there, even when it doesn't work out, builds your courage and resilience."
+        }
+      ],
+      "unworthy": [
+        {
+          "type": "cbt_reframe",
+          "content": "Your worth in relationships isn't earned through perfection—it exists simply because you're human.",
+          "alternative": "The belief that you're unworthy of love is a thought, not a fact about who you are."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what you would say to someone you care about if they felt unworthy of love.",
+          "alternative": "Notice the evidence that contradicts the belief that you're unworthy of love."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Everyone has flaws and struggles. Worthiness isn't about being perfect—it's about being authentically yourself.",
+          "alternative": "You deserve love not because of what you do, but because of who you are."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider the qualities you have that make you a good friend or partner.",
+          "alternative": "Notice how you show love and care to others and what that says about your capacity for relationship."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Feeling unworthy often comes from old messages that no longer serve you. You can choose new, kinder beliefs about yourself.",
+          "alternative": "Your worthiness of love is not up for debate—it's a given, like your need for air and water."
+        }
+      ]
+    },
+    "Self-Image": {
+      "inadequate": [
+        {
+          "type": "cbt_reframe",
+          "content": "Feeling inadequate often means you're comparing your inside experience to others' outside appearance.",
+          "alternative": "Inadequacy is a feeling, not a fact. Your worth doesn't depend on measuring up to impossible standards."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what 'adequate' would look like to you and whether those standards are realistic and kind.",
+          "alternative": "Notice the areas of your life where you feel confident and capable."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You don't need to be exceptional at everything to be valuable and worthy of respect.",
+          "alternative": "Your unique combination of strengths, experiences, and perspectives has value that can't be measured by conventional standards."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what you would accomplish or try if you knew you were already enough.",
+          "alternative": "Notice how feeling inadequate has both protected you and limited you."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Adequacy isn't about perfection—it's about being human, trying your best, and learning as you go.",
+          "alternative": "You are adequate for your own life. No one else can live it or judge it as well as you can."
+        }
+      ],
+      "worthless": [
+        {
+          "type": "cbt_reframe",
+          "content": "Your worth is inherent and unchanging, not dependent on achievements, approval, or circumstances.",
+          "alternative": "Feeling worthless is a symptom of pain, not a truth about who you are."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what you would want someone you love to know if they felt worthless.",
+          "alternative": "Notice the impact you've had on others' lives, even in small ways."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You matter simply because you exist. Your life has value that extends beyond what you produce or achieve.",
+          "alternative": "Worthlessness is often the result of harsh self-judgment, not accurate self-assessment."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider what would change in your life if you truly believed you had worth.",
+          "alternative": "Notice the evidence that exists and contradicts the belief that you're worthless."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You deserve the same compassion and respect you would offer to anyone else who was struggling.",
+          "alternative": "Your worth is not determined by your lowest moments or your harshest self-criticisms."
+        }
+      ],
+      "embarrassed": [
+        {
+          "type": "cbt_reframe",
+          "content": "Embarrassment often comes from imagining others are judging you more harshly than they actually are.",
+          "alternative": "Everyone has moments they feel embarrassed about. It's part of being human, not a reflection of your character."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider how much time you spend thinking about others' embarrassing moments and what that tells you about how much others focus on yours.",
+          "alternative": "Think about what you would say to a friend who felt embarrassed about the same thing."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "You can acknowledge feeling embarrassed without letting it define your self-worth or limit your actions.",
+          "alternative": "Embarrassment fades with time, but the courage to be yourself despite it builds lasting confidence."
+        },
+        {
+          "type": "socratic",
+          "content": "Consider the worst thing that would realistically happen if people knew about what embarrasses you.",
+          "alternative": "Imagine how your life might improve if you worried less about others' opinions."
+        },
+        {
+          "type": "cbt_reframe",
+          "content": "Your value as a person isn't diminished by moments of imperfection or vulnerability.",
+          "alternative": "Embarrassment often signals that you care about connection and belonging, which are healthy human needs."
+        }
+      ]
+    }
+  },
+  "act_defusion_exercises": {
+    "Money": {
+      "title": "The Financial Worry Cloud",
+      "instructions": "Imagine your money worries as clouds drifting across the sky of your mind.",
+      "steps": [
+        "Close your eyes and picture a vast, open sky.",
+        "See your financial worries as different shaped clouds—some dark storm clouds, others light and wispy.",
+        "Notice that you are not the clouds. You are the sky—vast, unchanging, able to hold all weather.",
+        "Watch as the worry clouds drift across your awareness. They come and go, but the sky remains.",
+        "Some clouds might be labeled 'not enough money,' others 'financial failure,' or 'money stress.'",
+        "Observe these thought-clouds with curiosity rather than getting caught up in their stories.",
+        "Remember: thoughts about money are just mental events, not commands you must obey or truths you must believe."
+      ],
+      "closing": "You are the spacious sky of awareness, not the temporary weather of financial worry."
+    },
+    "Romance": {
+      "title": "The Love Story Theater",
+      "instructions": "Imagine your romantic thoughts and fears as characters in a play you're watching.",
+      "steps": [
+        "Picture yourself sitting comfortably in a theater, watching a play about relationships.",
+        "On stage, you see characters representing your romantic thoughts: 'I'm Unlovable,' 'I'll Never Find Someone,' 'I'm Too Damaged.'",
+        "Notice that these are just actors playing roles, not the truth of who you are.",
+        "Watch as these character-thoughts deliver their lines with drama and intensity.",
+        "You might see 'Fear of Rejection' having a heated argument with 'Desperate for Love.'",
+        "Observe the performance with compassion, knowing these are just thoughts doing what thoughts do—creating stories.",
+        "You are not the characters on stage. You are the aware observer, safe in your theater seat."
+      ],
+      "closing": "Your thoughts about love are just performances, not the reality of your capacity for connection."
+    },
+    "Self-Image": {
+      "title": "The Inner Critic Radio Station",
+      "instructions": "Imagine your self-critical thoughts as a radio station you can tune in and out of.",
+      "steps": [
+        "Picture your mind as having many radio stations, and right now you're tuned to 'KCRITIC FM.'",
+        "Listen to the DJ (your inner critic) playing the same old songs: 'You're Not Good Enough,' 'Everyone's Better Than You,' 'You Always Mess Up.'",
+        "Notice the repetitive nature of these broadcasts—the same messages, day after day.",
+        "Remember that you are not the radio station. You are the person with the radio, and you have the power to change the channel.",
+        "You might tune to 'KCOMPASSION' or 'KWISDOM' or simply turn the volume down on KCRITIC.",
+        "The critical thoughts might keep broadcasting, but you don't have to listen intently or believe every word.",
+        "Practice being the observer of these mental radio waves rather than their captive audience."
+      ],
+      "closing": "You are not your inner critic's broadcast. You are the conscious listener who can choose what to tune into."
+    },
+    "generic": {
+      "title": "Thoughts as Leaves on a Stream",
+      "instructions": "A gentle exercise for creating space between you and any difficult thoughts.",
+      "steps": [
+        "Imagine yourself sitting beside a gently flowing stream on a peaceful day.",
+        "Notice leaves floating down the stream—some moving quickly, others slowly, each unique.",
+        "As thoughts arise in your mind, place each one on a leaf and watch it float downstream.",
+        "You might see leaves labeled with worries, judgments, fears, or painful memories.",
+        "Don't try to stop the leaves or push them away. Simply observe them floating by.",
+        "If you find yourself getting caught up in a thought, gently return to your position by the stream.",
+        "Remember: you are not the leaves or the thoughts they carry. You are the peaceful observer by the water."
+      ],
+      "closing": "Thoughts come and go like leaves on a stream. You are the constant, aware presence watching from the shore."
+    }
+  }
+}
+
