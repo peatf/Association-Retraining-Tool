@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import contentSearchService from '../../services/ContentSearchService.js';
-import { Spinner } from '../common/index.js';
+import { Spinner, ErrorState } from '../common/index.js';
 
 const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
   const [categories, setCategories] = useState([]);
@@ -85,10 +85,12 @@ const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
 
   if (error && categories.length === 0) {
     return (
-      <div className="topic-selector error" role="alert" aria-live="assertive">
-        <p>Error loading categories: {error}</p>
-        <button onClick={retryLoading}>Retry</button>
-      </div>
+      <ErrorState
+        title="Failed to Load Categories"
+        message={error}
+        onRetry={retryLoading}
+        retryText="Try Again"
+      />
     );
   }
 

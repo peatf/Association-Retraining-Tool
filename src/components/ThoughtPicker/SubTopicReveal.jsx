@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import contentSearchService from '../../services/ContentSearchService.js';
-import { Spinner } from '../common/index.js';
+import { Spinner, ErrorState } from '../common/index.js';
 
 const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }) => {
   const [subcategories, setSubcategories] = useState([]);
@@ -70,11 +70,12 @@ const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }
 
   if (error) {
     return (
-      <div className="subtopic-reveal error" role="alert" aria-live="assertive">
-        <h3>Error loading subcategories for {selectedCategory}</h3>
-        <p>{error}</p>
-        <button onClick={retryLoading}>Retry</button>
-      </div>
+      <ErrorState
+        title={`Error loading subcategories for ${selectedCategory}`}
+        message={error}
+        onRetry={retryLoading}
+        retryText="Try Again"
+      />
     );
   }
 

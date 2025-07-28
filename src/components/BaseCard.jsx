@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Spinner, ErrorState } from './common';
+import { SkeletonCard, ErrorState, Spinner } from './common';
 import errorHandlingService from '../services/ErrorHandlingService';
 import './BaseCard.css';
 
@@ -143,11 +143,7 @@ const BaseCard = ({
       >
         {loading && (
           <div className="card-loading-state">
-            <Spinner 
-              size="medium" 
-              message="Loading content..." 
-              aria-label="Card content is loading"
-            />
+            <SkeletonCard testId={`${testId}-skeleton`} />
           </div>
         )}
         

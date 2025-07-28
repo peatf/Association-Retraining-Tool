@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import contentSearchService from '../../services/ContentSearchService.js';
-import { Spinner } from '../common/index.js';
+import { Spinner, ErrorState } from '../common/index.js';
 
 const ReplacementThoughtList = ({ 
   category, 
@@ -81,11 +81,12 @@ const ReplacementThoughtList = ({
 
   if (error) {
     return (
-      <div className="replacement-thought-list error" role="alert" aria-live="assertive">
-        <h3>Error loading replacement thoughts</h3>
-        <p>{error}</p>
-        <button onClick={retryLoading}>Retry</button>
-      </div>
+      <ErrorState
+        title="Error loading replacement thoughts"
+        message={error}
+        onRetry={retryLoading}
+        retryText="Try Again"
+      />
     );
   }
 

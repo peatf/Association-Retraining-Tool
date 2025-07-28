@@ -74,7 +74,7 @@
   - Add error recovery mechanisms that don't lose user progress
   - _Requirements: 8.1, 8.2, 8.5, 8.6_
 
-- [ ] 6.1 Global Error Boundary Implementation
+- [x] 6.1 Global Error Boundary Implementation
 
   - Create top-level React ErrorBoundary that catches all unexpected JavaScript errors
   - Display friendly "Something went wrong" card while preserving user insights
@@ -82,7 +82,15 @@
   - Implement session recovery that allows users to continue after errors
   - _Requirements: 8.6, 9.1_
 
-- [ ] 7. Loading and Spinner System
+- [x] 6.2 PsychologicalEngine robustness
+  - Integrate error handling into PsychologicalEngine to catch and gracefully handle AI model failures.
+  - Ensure that if the HighFidelityNLPEngine fails, the system falls back to the SingletonPipelineManager without disrupting the user flow.
+  - Add unit tests to verify that the fallback mechanism works as expected.
+  - _Requirements: 8.2, 8.5_
+
+- [x] 6.3 – Integrate the new error-handling system into the main UI flows.
+
+- [x] 7. Loading and Spinner System
   - Create reusable Spinner component with different sizes and accessibility support
   - Build skeleton loading states for cards while content loads
   - Implement loading state management that doesn't block user interactions

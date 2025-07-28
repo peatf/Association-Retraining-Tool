@@ -1,9 +1,10 @@
 // Main Canvas component - Layout container for therapeutic cards
 // Manages lane-based layout and navigation between canvas states
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Breadcrumb from './Breadcrumb.jsx';
+import ErrorState from './common/ErrorState.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -95,6 +96,32 @@ const LaneContent = styled.div`
 `;
 
 function Canvas() {
+  const [error, setError] = useState(null);
+
+  const handleComponentError = (error, info) => {
+    console.error("Caught an error:", error, info);
+    setError(error);
+  };
+
+  const resetError = () => {
+    setError(null);
+  };
+
+  if (error) {
+    return (
+      <CanvasLayout>
+        <ErrorState
+          title="Oops! Something went wrong in the Canvas."
+          message="We've encountered an issue displaying the canvas. You can try to refresh the component or return to the previous state."
+          onRetry={resetError}
+          retryText="Refresh Canvas"
+          error={error}
+          showDetails={true}
+        />
+      </CanvasLayout>
+    );
+  }
+
   return (
     <CanvasLayout>
       <Breadcrumb />
@@ -105,6 +132,7 @@ function Canvas() {
           A private, interactive space to work through challenging thoughts 
           and discover new perspectives through guided therapeutic exercises.
         </p>
+        <button onClick={() => handleComponentError(new Error("Test Error"))}>Simulate Error</button>
       </WelcomeMessage>
 
       <CanvasLanes>
