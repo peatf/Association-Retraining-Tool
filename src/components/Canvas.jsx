@@ -13,6 +13,7 @@ import CardNeutralize from './CardNeutralize.jsx';
 import CardCommonGround from './CardCommonGround.jsx';
 import CardDataExtraction from './CardDataExtraction.jsx';
 import ThoughtMining from './ThoughtMining.jsx';
+import ThoughtPicker from './ThoughtPicker.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -210,20 +211,16 @@ function Canvas() {
         )}
 
         {/* Picker Lane */}
-        <LaneCard className="picker-lane">
-          <LaneHeader>
-            <h3>Better-Feeling Thoughts</h3>
-          </LaneHeader>
-          <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Hierarchical Thought Picker will be implemented in Phase 5
-            </div>
-          </LaneContent>
-        </LaneCard>
+        {!showReadinessGate && (
+          <LaneCard className="picker-lane">
+            <LaneHeader>
+              <h3>Better-Feeling Thoughts</h3>
+            </LaneHeader>
+            <LaneContent>
+              <ThoughtPicker />
+            </LaneContent>
+          </LaneCard>
+        )}
       </CanvasLanes>
     </CanvasLayout>
   );
