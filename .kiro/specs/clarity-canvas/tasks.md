@@ -198,7 +198,7 @@
 
 **Definition of Done**: Content pipeline generates properly structured mining prompts for neutralize, commonGround, and dataExtraction categories.
 
-- [ ] 18. Mining Prompts Content Structure
+- [x] 18. Mining Prompts Content Structure
 
   - Update content/raw/\*.json files to include comprehensive miningPrompts sections
   - Create neutralize prompts (5 per category) for voice neutralization exercises
