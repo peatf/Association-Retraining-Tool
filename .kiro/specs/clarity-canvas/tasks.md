@@ -185,7 +185,7 @@
   - Include selection state management that integrates with overall canvas state
   - _Requirements: 4.4, 4.5, 3.3_
 
-- [ ] 17. Thought Export and Capture
+- [x] 17. Thought Export and Capture
   - Build thought selection interface with export capabilities
   - Implement copy/export functionality for selected insights
   - Add selected thoughts to canvas insights collection

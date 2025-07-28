@@ -145,6 +145,17 @@ const ReplacementThoughtList = ({
         <small>
           Found {replacementThoughts.length} replacement thought{replacementThoughts.length !== 1 ? 's' : ''}
         </small>
+        {selectedThought && (
+          <button
+            className="btn-primary"
+            onClick={() => {
+              navigator.clipboard.writeText(selectedThought);
+              alert('Copied to clipboard!');
+            }}
+          >
+            Export Selected Thought
+          </button>
+        )}
       </div>
     </div>
   );

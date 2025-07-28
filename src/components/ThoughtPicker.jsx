@@ -13,7 +13,7 @@ const IntensitySlider = styled.input`
 `;
 
 const ThoughtPicker = () => {
-  const { canvasState, updateCanvasState } = useSession();
+  const { canvasState, updateCanvasState, addInsight } = useSession();
   const { selectedTopic, selectedSubcategory, intensity, selectedThought } = canvasState;
 
   const handleTopicSelect = (topic) => {
@@ -26,6 +26,11 @@ const ThoughtPicker = () => {
 
   const handleThoughtSelect = (thought) => {
     updateCanvasState({ selectedThought: thought });
+    addInsight({
+      type: 'replacement_thought',
+      content: thought,
+      source: 'thought_picker'
+    });
   };
 
   return (
@@ -75,6 +80,13 @@ const ThoughtPicker = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {selectedThought && (
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button className="btn-primary" onClick={() => console.log('Thought Picker complete')}>
+              Done
+            </button>
+          </div>
+        )}
       </motion.div>
     </BaseCard>
   );
