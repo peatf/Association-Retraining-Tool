@@ -7,6 +7,8 @@ import Breadcrumb from './Breadcrumb.jsx';
 import ErrorState from './common/ErrorState.jsx';
 import ReadinessGate from './ReadinessGate.jsx';
 import CenteringExercise from './CenteringExercise.jsx';
+import { useSession } from '../context/SessionContext.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -98,8 +100,10 @@ const LaneContent = styled.div`
 `;
 
 function Canvas() {
+  const { updateCanvasState } = useSession();
   const [error, setError] = useState(null);
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
+  const [showReadinessGate, setShowReadinessGate] = useState(true);
 
   const handleComponentError = (error, info) => {
     console.error("Caught an error:", error, info);
@@ -112,7 +116,8 @@ function Canvas() {
 
   const handleReady = (intensity) => {
     console.log("Ready with intensity:", intensity);
-    // Proceed to the main flow
+    updateCanvasState({ isReady: true, intensity: intensity });
+    setShowReadinessGate(false);
   };
 
   const handleNotReady = () => {
@@ -157,18 +162,36 @@ function Canvas() {
 
       <CanvasLanes>
         {/* Readiness Lane */}
-        <LaneCard>
-          <LaneHeader>
-            <h3>Readiness Assessment</h3>
-          </LaneHeader>
-          <LaneContent>
-            {showCenteringExercise ? (
-              <CenteringExercise onComplete={handleCenteringComplete} onExit={handleExit} />
-            ) : (
-              <ReadinessGate onReady={handleReady} onNotReady={handleNotReady} />
-            )}
-          </LaneContent>
-        </LaneCard>
+        {showReadinessGate && (
+          <LaneCard>
+            <LaneHeader>
+              <h3>Readiness Assessment</h3>
+            </LaneHeader>
+            <LaneContent>
+            <AnimatePresence mode="wait">
+              {showCenteringExercise ? (
+                <motion.div
+                  key="centering"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                >
+                  <CenteringExercise onComplete={handleCenteringComplete} onExit={handleExit} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="readiness"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                >
+                  <ReadinessGate onReady={handleReady} onNotReady={handleNotReady} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            </LaneContent>
+          </LaneCard>
+        )}
 
         {/* Mining Lane */}
         <LaneCard>
