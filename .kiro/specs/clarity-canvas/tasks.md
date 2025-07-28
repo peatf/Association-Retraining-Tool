@@ -148,7 +148,7 @@
   - Add completion logic that saves insights and progression state
   - _Requirements: 2.5, 5.1, 8.1, 9.1_
 
-- [ ] 13. Card Data Extraction Implementation
+- [x] 13. Card Data Extraction Implementation
 
   - Create CardDataExtraction.jsx with ContentSearchService.getMiningPrompts(topic, 'dataExtraction')
   - Build either/or question interface with clear option selection

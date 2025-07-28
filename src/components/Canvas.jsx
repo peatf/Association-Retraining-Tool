@@ -11,6 +11,7 @@ import { useSession } from '../context/SessionContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardNeutralize from './CardNeutralize.jsx';
 import CardCommonGround from './CardCommonGround.jsx';
+import CardDataExtraction from './CardDataExtraction.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -107,6 +108,7 @@ function Canvas() {
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
   const [showReadinessGate, setShowReadinessGate] = useState(true);
   const [showCommonGround, setShowCommonGround] = useState(false);
+  const [showDataExtraction, setShowDataExtraction] = useState(false);
 
   const handleComponentError = (error, info) => {
     console.error("Caught an error:", error, info);
@@ -205,8 +207,10 @@ function Canvas() {
             <LaneContent>
               {!showCommonGround ? (
                 <CardNeutralize onComplete={() => setShowCommonGround(true)} />
+              ) : !showDataExtraction ? (
+                <CardCommonGround onComplete={() => setShowDataExtraction(true)} />
               ) : (
-                <CardCommonGround onComplete={() => console.log('Common Ground complete')} />
+                <CardDataExtraction onComplete={() => console.log('Data Extraction complete')} />
               )}
             </LaneContent>
           </LaneCard>
