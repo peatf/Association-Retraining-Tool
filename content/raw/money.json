@@ -1,0 +1,13 @@
+[
+  {
+    "category": "Money",
+    "subcategories": ["Savings", "Debt", "Investing"],
+    "summaryForVectorization": "Core themes around finances, abundance, scarcity, security.",
+    "miningPrompts": {
+      "neutralize": [],
+      "commonGround": [],
+      "dataExtraction": []
+    },
+    "replacementThoughts": []
+  }
+]

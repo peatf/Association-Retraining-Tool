@@ -11,28 +11,17 @@
             display: block !important;
             opacity: 1 !important;
             min-height: 100vh;
-            background: #f4f4f9 !important;
+            background: #f4f4f9 !important; /* Match React theme background */
         }
         
         /* Hide legacy content when React is active */
         #app-container[data-react-root] > div:not([data-react-content]) {
             display: none !important;
         }
-        
-        /* Ensure React content is visible */
-        #app-container[data-react-root] > div[data-react-content] {
-            display: block !important;
-            opacity: 1 !important;
-        }
-        
-        /* Override any body styles that might interfere */
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
     </style>
-    <link rel="stylesheet" href="style.css">
 
+  <script type="module" crossorigin src="/assets/main-A1SlGtEW.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-xY_MsBn_.css">
 </head>
 <body>
     <div id="app-container">
@@ -234,6 +223,5 @@
         </div>
     </div>
 
-    <script type="module" src="src/index.jsx"></script>
 </body>
 </html>

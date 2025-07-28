@@ -1,0 +1,125 @@
+{
+  "version": "1.1.0",
+  "timestamp": "2025-07-28T04:35:58.588Z",
+  "metadata": {
+    "categories": [
+      "Money",
+      "Relationships",
+      "Self-Image"
+    ],
+    "subcategories": {
+      "Money": [
+        "Savings",
+        "Debt",
+        "Investing"
+      ],
+      "Relationships": [
+        "Romance",
+        "Friendship",
+        "Family"
+      ],
+      "Self-Image": [
+        "Self-Talk",
+        "Confidence",
+        "Worthiness"
+      ]
+    },
+    "totalEntries": 3,
+    "totalChunks": 3
+  },
+  "entries": [
+    {
+      "id": "Money-1753677358588-sqoajtbzh",
+      "category": "Money",
+      "subcategories": [
+        "Savings",
+        "Debt",
+        "Investing"
+      ],
+      "content": "Core themes around finances, abundance, scarcity, security.",
+      "miningPrompts": {
+        "neutralize": [],
+        "commonGround": [],
+        "dataExtraction": []
+      },
+      "replacementThoughts": [],
+      "sourceFile": "money.json",
+      "chunks": [
+        {
+          "text": "Core themes around finances, abundance, scarcity, security.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "summary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Relationships-1753677358588-7vfh002fg",
+      "category": "Relationships",
+      "subcategories": [
+        "Romance",
+        "Friendship",
+        "Family"
+      ],
+      "content": "Exploring connection, trust, boundaries, intimacy.",
+      "miningPrompts": {
+        "neutralize": [],
+        "commonGround": [],
+        "dataExtraction": []
+      },
+      "replacementThoughts": [],
+      "sourceFile": "relationships.json",
+      "chunks": [
+        {
+          "text": "Exploring connection, trust, boundaries, intimacy.",
+          "metadata": {
+            "category": "Relationships",
+            "subcategories": [
+              "Romance",
+              "Friendship",
+              "Family"
+            ],
+            "type": "summary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Self-Image-1753677358588-dagkb2ttt",
+      "category": "Self-Image",
+      "subcategories": [
+        "Self-Talk",
+        "Confidence",
+        "Worthiness"
+      ],
+      "content": "Beliefs about self, identity, inner dialogue.",
+      "miningPrompts": {
+        "neutralize": [],
+        "commonGround": [],
+        "dataExtraction": []
+      },
+      "replacementThoughts": [],
+      "sourceFile": "self-image.json",
+      "chunks": [
+        {
+          "text": "Beliefs about self, identity, inner dialogue.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "summary"
+          }
+        }
+      ]
+    }
+  ]
+}

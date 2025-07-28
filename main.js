@@ -2,12 +2,35 @@
 // Clean, static front-end application with privacy-first design
 // No backend dependencies - all processing happens client-side
 
-import SessionStateManager from './js/SessionStateManager.js';
-import PsychologicalEngine from './js/PsychologicalEngine.js';
-import ContentManager from './js/ContentManager.js';
-import CalendarGenerator from './js/CalendarGenerator.js';
-import ErrorHandler from './js/ErrorHandler.js';
-import FeedbackManager from './js/FeedbackManager.js';
+// Check if React Canvas is active before importing anything
+if (window.REACT_CANVAS_ACTIVE) {
+    console.log('React Canvas is active. Skipping legacy initialization.');
+    // Exit early to prevent any imports or initialization
+} else {
+    // Only import and initialize if React is not active
+    import('./js/SessionStateManager.js').then(({ default: SessionStateManager }) => {
+        // Dynamic imports to prevent loading when React is active
+        Promise.all([
+            import('./js/PsychologicalEngine.js'),
+            import('./js/ContentManager.js'),
+            import('./js/CalendarGenerator.js'),
+            import('./js/ErrorHandler.js'),
+            import('./js/FeedbackManager.js'),
+            import('./src/services/ContentSearchService.js')
+        ]).then(([
+            { default: PsychologicalEngine },
+            { default: ContentManager },
+            { default: CalendarGenerator },
+            { default: ErrorHandler },
+            { default: FeedbackManager },
+            { default: contentSearchService }
+        ]) => {
+            initializeLegacyApp(SessionStateManager, PsychologicalEngine, ContentManager, CalendarGenerator, ErrorHandler, FeedbackManager, contentSearchService);
+        });
+    });
+}
+
+function initializeLegacyApp(SessionStateManager, PsychologicalEngine, ContentManager, CalendarGenerator, ErrorHandler, FeedbackManager, contentSearchService) {
 
 // Initialize session manager for transient, memory-only storage
 const sessionManager = new SessionStateManager();
@@ -51,6 +74,12 @@ async function loadContentData() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Check if React Canvas is active to avoid conflicts
+    if (window.REACT_CANVAS_ACTIVE) {
+        console.log('React Canvas is active. Skipping legacy initialization.');
+        return;
+    }
+    
     // Load content data on initialization
     await loadContentData();
     
@@ -126,36 +155,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         goTo('screen-topic');
     });
 
-    // Screen 3: Topic buttons - load from JSON
-    function loadTopics() {
-        if (!topicsData) {
-            console.error('Topics data not loaded');
-            return;
+    // Screen 3: Topic buttons - load from ContentSearchService
+    async function loadTopics() {
+        try {
+            const categories = await contentSearchService.getCategories();
+            
+            let finalCategories = categories;
+            if (categories.length === 0) {
+                console.warn('No categories found, falling back to static data');
+                // Fallback to static data if no categories found
+                if (!topicsData) {
+                    console.error('Topics data not loaded');
+                    return;
+                }
+                finalCategories = topicsData.topics;
+            }
+            
+            const topicButtons = document.getElementById('topic-buttons');
+            topicButtons.innerHTML = '';
+            
+            finalCategories.forEach((topicName, index) => {
+                const button = document.createElement('button');
+                button.className = `btn-primary topic-button topic-${topicName.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                
+                // Use static data for icons and descriptions if available, otherwise use defaults
+                const icon = topicsData?.topicIcons?.[topicName] || getDefaultIcon(topicName);
+                const description = topicsData?.topicDescriptions?.[topicName] || `Work on ${topicName.toLowerCase()} related concerns`;
+                
+                button.innerHTML = `
+                    <span class="topic-icon">${icon}</span>
+                    <span class="topic-name">${topicName}</span>
+                    <span class="topic-description">${description}</span>
+                `;
+                button.addEventListener('click', () => selectTopic(topicName));
+                
+                // Add staggered animation delay
+                button.style.animationDelay = `${index * 0.1}s`;
+                
+                topicButtons.appendChild(button);
+            });
+        } catch (error) {
+            console.error('Error loading topics from ContentSearchService:', error);
+            // Fallback to static data
+            if (topicsData) {
+                topicsData.topics.forEach((topicName, index) => {
+                    const button = document.createElement('button');
+                    button.className = `btn-primary topic-button topic-${topicName.toLowerCase().replace('-', '')}`;
+                    button.innerHTML = `
+                        <span class="topic-icon">${topicsData.topicIcons[topicName]}</span>
+                        <span class="topic-name">${topicName}</span>
+                        <span class="topic-description">${topicsData.topicDescriptions[topicName]}</span>
+                    `;
+                    button.addEventListener('click', () => selectTopic(topicName));
+                    button.style.animationDelay = `${index * 0.1}s`;
+                    document.getElementById('topic-buttons').appendChild(button);
+                });
+            }
         }
-        
-        const topicButtons = document.getElementById('topic-buttons');
-        topicButtons.innerHTML = '';
-        
-        topicsData.topics.forEach((topicName, index) => {
-            const button = document.createElement('button');
-            button.className = `btn-primary topic-button topic-${topicName.toLowerCase().replace('-', '')}`;
-            button.innerHTML = `
-                <span class="topic-icon">${topicsData.topicIcons[topicName]}</span>
-                <span class="topic-name">${topicName}</span>
-                <span class="topic-description">${topicsData.topicDescriptions[topicName]}</span>
-            `;
-            button.addEventListener('click', () => selectTopic(topicName));
-            
-            // Add staggered animation delay
-            button.style.animationDelay = `${index * 0.1}s`;
-            
-            topicButtons.appendChild(button);
-        });
     }
 
-    function selectTopic(topic) {
+    // Helper function to get default icons for categories
+    function getDefaultIcon(category) {
+        const iconMap = {
+            'Money': '💰',
+            'Relationships': '💕',
+            'Self-Image': '🪞',
+            'Romance': '💕'
+        };
+        return iconMap[category] || '🔹';
+    }
+
+    async function selectTopic(topic) {
         sessionManager.updateState('selectedTopic', topic);
         
+        try {
+            // Load subcategories from ContentSearchService
+            const subcategories = await contentSearchService.getSubcategories(topic);
+            
+            // If subcategories exist, we could show them as an intermediate step
+            // For now, we'll store them in session state for potential future use
+            if (subcategories.length > 0) {
+                sessionManager.updateState('availableSubcategories', subcategories);
+            }
+        } catch (error) {
+            console.error('Error loading subcategories:', error);
+        }
+        
+        // Continue with existing emotion selection logic
         if (!emotionsData) {
             console.error('Emotions data not loaded');
             return;
@@ -185,6 +271,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         
         goTo('screen-emotion');
+    }
+
+    // New function to reveal subcategories (for future use)
+    async function revealSubTopics(category) {
+        try {
+            const subcategories = await contentSearchService.getSubcategories(category);
+            
+            // This could be used to create a SubTopicReveal component
+            // For now, we'll just log the subcategories
+            console.log(`Subcategories for ${category}:`, subcategories);
+            
+            return subcategories;
+        } catch (error) {
+            console.error('Error revealing subtopics:', error);
+            return [];
+        }
+    }
+
+    // New function to get replacement thoughts list (ReplacementThoughtList functionality)
+    async function getReplacementThoughtsList(category, subcategory = null, intensity = 10) {
+        try {
+            const replacementThoughts = await contentSearchService.getReplacementThoughts(
+                category, 
+                subcategory, 
+                intensity
+            );
+            
+            console.log(`Replacement thoughts for ${category}${subcategory ? ` > ${subcategory}` : ''}:`, replacementThoughts);
+            
+            return replacementThoughts;
+        } catch (error) {
+            console.error('Error getting replacement thoughts:', error);
+            return [];
+        }
     }
 
     // Screen 4: Emotion selection
@@ -521,3 +641,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+} // End of initializeLegacyApp function

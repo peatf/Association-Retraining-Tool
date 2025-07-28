@@ -1,0 +1,13 @@
+[
+  {
+    "category": "Relationships",
+    "subcategories": ["Romance", "Friendship", "Family"],
+    "summaryForVectorization": "Exploring connection, trust, boundaries, intimacy.",
+    "miningPrompts": {
+      "neutralize": [],
+      "commonGround": [],
+      "dataExtraction": []
+    },
+    "replacementThoughts": []
+  }
+]

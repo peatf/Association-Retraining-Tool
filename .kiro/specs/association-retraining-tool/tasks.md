@@ -162,3 +162,49 @@
   - Optimize all assets for a static site deployment
   - Create deployment documentation and ensure all security headers are in place
   - _Requirements: 6.1, 6.2, 6.4_
+
+## Phase 4: v1.1 Enhancements - Dynamic Content Pipeline
+
+**Objective**: Implement dynamic category-subcategory hierarchy with content globbing, starter JSON templates, and enhanced content pipeline integration. This builds on the existing system to provide a more scalable and maintainable content management approach.
+
+**Definition of Done**: The system dynamically loads categories and subcategories from data files, supports content globbing from multiple JSON files, and provides enhanced UI components that drive off service methods rather than static data.
+
+- [ ] Epic 8: v1.1 Enhancements - Dynamic Content Pipeline
+- [x] 8.1 Data Folder Globbing Infrastructure
+
+  - Update scripts/ingest-content.js to use fast-glob for reading all `/content/raw/*.{json,txt}` files
+  - Modify scripts/build-content-index.mjs to extract category, subcategories, miningPrompts, and replacementThoughts from globbed files
+  - Ensure the build pipeline handles multiple content files and merges them appropriately
+  - _Requirements: 6.2, 6.4_
+
+- [x] 8.2 Starter JSON Templates Creation
+
+  - Create /content/raw/ directory structure
+  - Commit money.json template with Money category, subcategories [Savings, Debt, Investing], and empty miningPrompts/replacementThoughts structure
+  - Commit relationships.json template with Relationships category, subcategories [Romance, Friendship, Family], and empty structure
+  - Commit self-image.json template with Self-Image category, subcategories [Self-Talk, Confidence, Worthiness], and empty structure
+  - _Requirements: 6.4_
+
+- [x] 8.3 ContentSearchService Enhancement
+
+  - Create src/services/ContentSearchService.js if it doesn't exist
+  - Implement getCategories() method to return top-level categories from index metadata
+  - Implement getSubcategories(category) method to return subcategories for a given category
+  - Ensure service methods integrate with existing content-index.bin structure
+  - _Requirements: 6.2, 6.4_
+
+- [x] 8.4 Picker UI Component Refactoring
+
+  - Refactor TopicSelector.jsx to use ContentSearchService.getCategories() instead of static data
+  - Create/refactor SubTopicReveal.jsx to use ContentSearchService.getSubcategories(selectedCategory)
+  - Update ReplacementThoughtList.jsx to query replacementThoughts filtered by (category, subcategory, level ≤ intensity)
+  - Ensure all UI components maintain existing functionality while using dynamic data
+  - _Requirements: 1.3, 1.4, 2.1_
+
+- [x] 8.5 Pipeline Validation & CI Integration
+
+  - Add "content:refresh": "node scripts/ingest-content.js && node scripts/build-content-index.mjs" script to package.json
+  - Create CI validation that npm run content:refresh regenerates public/content/content-index.bin without errors
+  - Add validation checks to ensure content structure integrity after globbing
+  - Test that the enhanced pipeline works with both existing and new content formats
+  - _Requirements: 6.4_

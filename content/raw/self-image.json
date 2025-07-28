@@ -1,0 +1,13 @@
+[
+  {
+    "category": "Self-Image",
+    "subcategories": ["Self-Talk", "Confidence", "Worthiness"],
+    "summaryForVectorization": "Beliefs about self, identity, inner dialogue.",
+    "miningPrompts": {
+      "neutralize": [],
+      "commonGround": [],
+      "dataExtraction": []
+    },
+    "replacementThoughts": []
+  }
+]

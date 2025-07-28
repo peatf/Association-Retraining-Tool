@@ -1,0 +1,143 @@
+
+
+```json
+[
+  {
+    "theme": "Navigating Self‑Doubt",
+    "summaryForVectorization": "Self‑doubt often spikes when we shift from obeying external standards to following our own path. Rather than a danger signal, doubt is evidence that we now perceive a wider range of possible highs and lows. Welcoming this awareness—and choosing which possibilities to pursue—transmutes doubt from paralysis to creative agency.",
+    "keywords": ["self‑doubt","external standards","possibility awareness","inner authority","creative agency"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Does this doubt feel like it’s trying to keep you safely inside familiar rules?",
+        "prompt_B": "Or does it feel like it’s inviting you to explore new territory you couldn’t see before?"
+      },
+      {
+        "prompt_A": "Is the doubt demanding approval from others?",
+        "prompt_B": "Or is it asking you to approve of your own direction?"
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "Feeling doubt simply means I’m aware of more possibilities." },
+      { "level": 2, "statement": "Doubt can point me toward new paths worth exploring." },
+      { "level": 3, "statement": "I can move forward while doubt travels beside me." },
+      { "level": 4, "statement": "When I welcome doubt, I expand the shape of my reality." }
+    ]
+  },
+  {
+    "theme": "Internal Authority",
+    "summaryForVectorization": "Two belief systems often collide: the conditioned need to ‘do it right’ and the emerging trust in one’s own guidance. Bringing these parts into dialogue—rather than exiling either—builds coherence and lets inner authority direct outer experience.",
+    "keywords": ["inner authority","conditioning","belief conflict","self‑trust","coherence"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Does this choice feel aligned with your own inner guidance?",
+        "prompt_B": "Or does it feel like it satisfies someone else’s rules?"
+      },
+      {
+        "prompt_A": "Are you acting to avoid being ‘wrong’?",
+        "prompt_B": "Or are you acting to stay true to yourself?" 
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "Both conditioned and intuitive parts of me want safety." },
+      { "level": 2, "statement": "My inner guidance deserves equal presence at the table." },
+      { "level": 3, "statement": "When my parts communicate, I act with clarity." },
+      { "level": 4, "statement": "Honoring my authority shapes a life that fully reflects me." }
+    ]
+  },
+  {
+    "theme": "Redefining Frustration",
+    "summaryForVectorization": "Frustration is not proof of failure; it is a real‑time indicator that something needs to pivot. By treating frustration as feedback—much like a baby learning a task—we replace self‑blame with experimental adjustment.",
+    "keywords": ["frustration","pivot","feedback loop","self‑blame","experimentation"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Does this frustration prove you did something wrong?",
+        "prompt_B": "Or does it signal it’s time to try another angle?"
+      },
+      {
+        "prompt_A": "Is the urgency to ‘push through’ helping?",
+        "prompt_B": "Or would stepping away create space for insight?"
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "Frustration shows something needs adjusting." },
+      { "level": 2, "statement": "A small pivot can release this stuck energy." },
+      { "level": 3, "statement": "Every pivot refines my direction and skills." },
+      { "level": 4, "statement": "I welcome frustration as a compass toward wiser action." }
+    ]
+  },
+  {
+    "theme": "Aligning with Core Values",
+    "summaryForVectorization": "Imagining past, present, and future selves in conversation reveals what truly matters when nothing must be proved or avoided. Acting from these shared values integrates purpose across time and sustains creative vitality.",
+    "keywords": ["core values","self‑dialogue","timelines","purpose integration","creative vitality"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Does this decision honor what matters when nothing is at stake?",
+        "prompt_B": "Or does it serve a need to prove or avoid something?"
+      },
+      {
+        "prompt_A": "Are your past, present, and future selves in agreement here?",
+        "prompt_B": "Or is one of them asking for a different priority?" 
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "My values are constant guides beneath daily noise." },
+      { "level": 2, "statement": "When choices match my values, effort feels lighter." },
+      { "level": 3, "statement": "Living my values harmonizes past, present, and future me." },
+      { "level": 4, "statement": "My value‑led actions enrich both my life and the world." }
+    ]
+  },
+  {
+    "theme": "Harmonizing Internal Voices",
+    "summaryForVectorization": "Creative momentum thrives when the Dreamer, Pragmatist, and Team Leader within cooperate. Mapping their dialogues turns internal debate into a round‑table where vision, practicality, and execution share equal weight.",
+    "keywords": ["internal voices","dreamer","pragmatist","team leader","cooperation"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Is the Dreamer’s vision being fully heard?",
+        "prompt_B": "Or is the Pragmatist overruling too soon?"
+      },
+      {
+        "prompt_A": "Does the Team Leader balance ambition and daily action?",
+        "prompt_B": "Or is one voice dominating the project?" 
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "Each inner voice offers a vital perspective." },
+      { "level": 2, "statement": "When voices listen, conflict becomes collaboration." },
+      { "level": 3, "statement": "Balanced voices turn vision into sustainable progress." },
+      { "level": 4, "statement": "Unified inner dialogue powers breakthroughs with ease." }
+    ]
+  },
+  {
+    "theme": "Embracing Change & Adaptation",
+    "summaryForVectorization": "A dialogue between the part that resists change and the part that welcomes it uncovers strategies for agility without self‑betrayal. Integrating both perspectives builds resilience in evolving circumstances.",
+    "keywords": ["change","adaptation","resistance","agility","resilience"],
+    "miningPrompts": [
+      {
+        "prompt_A": "Is this change threatening your sense of stability?",
+        "prompt_B": "Or could it be offering new space for growth?"
+      },
+      {
+        "prompt_A": "Does staying the same feel safer right now?",
+        "prompt_B": "Or would a controlled experiment with change feel supportive?" 
+      }
+    ],
+    "replacementThoughts": [
+      { "level": 1, "statement": "Change and stability can coexist within me." },
+      { "level": 2, "statement": "Small experiments let me test change safely." },
+      { "level": 3, "statement": "Adaptation expands my options without losing my core." },
+      { "level": 4, "statement": "I partner with change to evolve into my fullest potential." }
+    ]
+  }
+]
+```
+
+### How the themes map to your workshop material  
+
+* **Self‑Doubt** reframes doubt as possibility awareness.
+* **Internal Authority** arises from the dialogue about conditioned rules versus inner guidance.
+* **Frustration** is recast as a pivot signal rather than failure.
+* **Core Values** leverage the Past‑Present‑Future “Values Roundtable” prompt.
+* **Internal Voices** draw on the Dreamer / Pragmatist / Team‑Leader exercise.
+* **Change & Adaptation** comes from the Day 20 dialogue between parts that resist and welcome change.
+
+Feel free to add or refine themes later—the schema is ready for immediate ingestion by Clarity Canvas.
