@@ -4,10 +4,38 @@
     "subcategories": ["Self-Talk", "Confidence", "Worthiness"],
     "summaryForVectorization": "Beliefs about self, identity, inner dialogue.",
     "miningPrompts": {
-      "neutralize": [],
-      "commonGround": [],
-      "dataExtraction": []
+      "neutralize": [
+        "If this self-critical thought had a voice, what would it sound like?",
+        "What is the temperature of this feeling about yourself?",
+        "Notice this thought as if it were a cloud passing in the sky.",
+        "Where did you first learn to believe this about yourself?",
+        "Can you hold this belief with compassion, without needing it to be true?"
+      ],
+      "commonGround": [
+        "How is this inner critic trying to protect you from failure or judgment?",
+        "What is this self-limiting belief helping you avoid?",
+        "What core need for safety or belonging is this thought trying to meet?",
+        "Could this harsh inner voice be a younger part of you trying to keep you safe?",
+        "Thank this thought for its protective intention, even if its strategy is outdated."
+      ],
+      "dataExtraction": [
+        "Is this self-assessment based on external standards or your own inner truth?",
+        "Does this thought expand your sense of what's possible or limit it?",
+        "Are you defining yourself by past mistakes or by your potential to grow?",
+        "Is your sense of worth conditional on achievement or is it inherent?",
+        "Does this belief feel like a choice or an obligation?"
+      ]
     },
-    "replacementThoughts": []
+    "replacementThoughts": [
+      "I am not my thoughts; I am the observer of my thoughts.",
+      "My worthiness is inherent and does not need to be earned.",
+      "I choose to speak to myself with kindness and compassion.",
+      "Confidence is a practice, and I am practicing now.",
+      "I approve of myself, here and now.",
+      "I am allowed to be both a masterpiece and a work in progress.",
+      "My unique essence is my gift to the world.",
+      "I release the past and embrace the person I am becoming.",
+      "I trust the wisdom that lies within me."
+    ]
   }
 ]

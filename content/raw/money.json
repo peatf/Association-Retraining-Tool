@@ -4,10 +4,39 @@
     "subcategories": ["Savings", "Debt", "Investing"],
     "summaryForVectorization": "Core themes around finances, abundance, scarcity, security.",
     "miningPrompts": {
-      "neutralize": [],
-      "commonGround": [],
-      "dataExtraction": []
+      "neutralize": [
+        "What physical sensations arise when you think about this money situation?",
+        "If this thought were a color, what color would it be?",
+        "Where in your body do you feel the energy of this financial belief?",
+        "What is the very first memory you have about money?",
+        "Without judgment, what is one word that describes your current feeling about money?"
+      ],
+      "commonGround": [
+        "How is this financial worry trying to protect you or keep you safe?",
+        "What does this belief about money think it's helping you avoid?",
+        "What positive intention or core need is hiding beneath this fear?",
+        "If you could thank this thought for its service, what would you say?",
+        "What part of you believes this thought is necessary for survival?"
+      ],
+      "dataExtraction": [
+        "Does this decision come from a place of scarcity or a place of sufficiency?",
+        "Is this choice about avoiding risk or about creating opportunity?",
+        "Does this financial belief feel like your own, or did it come from someone else?",
+        "Is the goal to accumulate for safety or to circulate for impact?",
+        "Are you focused on what you lack or on what you have and can grow?"
+      ]
     },
-    "replacementThoughts": []
+    "replacementThoughts": [
+      "Money is a neutral tool; I assign it its meaning.",
+      "My worth is not measured by my bank account.",
+      "I can feel secure even as my financial picture changes.",
+      "Every dollar I spend can be a choice for a better world.",
+      "I am a good steward of the resources I have.",
+      "Building wealth can be a creative and joyful act.",
+      "I release old stories and welcome a new financial reality.",
+      "My financial well-being is constantly expanding.",
+      "I trust my ability to create the resources I need.",
+      "Abundance is my birthright; I claim it now."
+    ]
   }
 ]

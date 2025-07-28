@@ -4,10 +4,39 @@
     "subcategories": ["Romance", "Friendship", "Family"],
     "summaryForVectorization": "Exploring connection, trust, boundaries, intimacy.",
     "miningPrompts": {
-      "neutralize": [],
-      "commonGround": [],
-      "dataExtraction": []
+      "neutralize": [
+        "If you could watch this interaction on a screen, what would you notice?",
+        "What is the energetic texture of this relationship right now?",
+        "Where does the feeling of this connection live in your body?",
+        "Without needing to fix it, can you just sit with this feeling for a moment?",
+        "What does this relationship pattern remind you of?"
+      ],
+      "commonGround": [
+        "How is this pattern or belief trying to protect your heart?",
+        "What past hurt might be asking for safety through this behavior?",
+        "What deep need for connection is hidden within this frustration?",
+        "In what way does this belief try to prevent you from being abandoned?",
+        "Could this boundary be a loving act toward yourself?"
+      ],
+      "dataExtraction": [
+        "Is this action about seeking validation or offering authentic connection?",
+        "Does this boundary feel like a wall or a gate?",
+        "Are you prioritizing someone else's comfort over your own truth?",
+        "Is this relationship defined by shared history or by present-day alignment?",
+        "Do you feel you are giving from a full cup or an empty one?"
+      ]
     },
-    "replacementThoughts": []
+    "replacementThoughts": [
+      "I can love others while honoring my own needs.",
+      "My boundaries are a sacred expression of self-respect.",
+      "I attract relationships that mirror my inner wholeness.",
+      "Healthy conflict can bring greater intimacy and understanding.",
+      "I release the need to manage others' emotions.",
+      "Each relationship is an assignment for my growth.",
+      "I deserve to feel safe, seen, and cherished.",
+      "I can communicate my needs with clarity and kindness.",
+      "Authentic connection feels calm, not chaotic.",
+      "I allow my relationships to evolve as I do."
+    ]
   }
 ]

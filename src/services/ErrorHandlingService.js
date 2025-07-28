@@ -165,7 +165,7 @@ class ErrorHandlingService {
     const errorInfo = {
       title: this.getErrorTitle(componentName, error),
       message: this.getErrorMessage(componentName, error),
-      canRetry: this.canRetryError(error),
+      canRetry: true, // Always allow retry for component errors
       canFallback: this.canFallbackError(componentName),
       recoveryOptions: this.getRecoveryOptions(componentName, error)
     };
@@ -285,6 +285,10 @@ class ErrorHandlingService {
    * Determine if error can be retried
    */
   canRetryError(error) {
+    if (error.isRetryable) {
+      return true;
+    }
+
     const retryableErrors = [
       'NetworkError',
       'TimeoutError',
@@ -292,11 +296,13 @@ class ErrorHandlingService {
       'TypeError' // Often network-related
     ];
     
+    const is5xxError = /5\d{2}/.test(error.message);
+
     return retryableErrors.some(type => 
       error.name === type || 
       error.message.toLowerCase().includes(type.toLowerCase()) ||
       error.toString().toLowerCase().includes(type.toLowerCase())
-    );
+    ) || is5xxError;
   }
 
   /**
@@ -319,13 +325,11 @@ class ErrorHandlingService {
   getRecoveryOptions(componentName, error) {
     const options = [];
     
-    if (this.canRetryError(error)) {
-      options.push({
-        type: 'retry',
-        label: 'Try Again',
-        action: 'retry'
-      });
-    }
+    options.push({
+      type: 'retry',
+      label: 'Try Again',
+      action: 'retry'
+    });
     
     if (this.canFallbackError(componentName)) {
       options.push({
@@ -432,6 +436,28 @@ class ErrorHandlingService {
    * Export error log for debugging
    */
   exportErrorLog() {
+    const redact = (data) => {
+      if (typeof data !== 'object' || data === null) {
+        return data;
+      }
+
+      if (Array.isArray(data)) {
+        return data.map(redact);
+      }
+
+      const redactedObject = {};
+      for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          if (key === 'userText' || key === 'sessionData') {
+            redactedObject[key] = '[REDACTED]';
+          } else {
+            redactedObject[key] = redact(data[key]);
+          }
+        }
+      }
+      return redactedObject;
+    };
+
     return {
       timestamp: Date.now(),
       stats: this.getErrorStats(),
@@ -443,11 +469,7 @@ class ErrorHandlingService {
           name: entry.error.name,
           message: entry.error.message
         },
-        context: {
-          ...entry.context,
-          // Remove potentially sensitive data
-          sessionData: entry.context.sessionData ? '[PRESERVED]' : undefined
-        }
+        context: redact(entry.context),
       }))
     };
   }

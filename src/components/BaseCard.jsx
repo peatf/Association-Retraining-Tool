@@ -153,7 +153,7 @@ const BaseCard = ({
         
         {error && (
           <ErrorState
-            title="Card Loading Issue"
+            title="Something went wrong"
             message={typeof error === 'string' ? error : "This card encountered an issue loading its content."}
             error={typeof error === 'object' ? error : null}
             onRetry={() => window.location.reload()}
