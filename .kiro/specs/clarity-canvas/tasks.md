@@ -111,7 +111,7 @@
   - Include data-testid attributes for automated testing
   - _Requirements: 1.1, 1.2, 1.3, 9.1, 9.2_
 
-- [ ] 9. Centering Exercise Off-Ramp
+- [x] 9. Centering Exercise Off-Ramp
 
   - Build CenteringExercise.jsx component for users not ready to proceed
   - Create gentle, supportive content for emotional regulation

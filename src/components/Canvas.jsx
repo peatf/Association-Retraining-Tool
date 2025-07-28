@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Breadcrumb from './Breadcrumb.jsx';
 import ErrorState from './common/ErrorState.jsx';
 import ReadinessGate from './ReadinessGate.jsx';
+import CenteringExercise from './CenteringExercise.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -98,6 +99,7 @@ const LaneContent = styled.div`
 
 function Canvas() {
   const [error, setError] = useState(null);
+  const [showCenteringExercise, setShowCenteringExercise] = useState(false);
 
   const handleComponentError = (error, info) => {
     console.error("Caught an error:", error, info);
@@ -106,6 +108,23 @@ function Canvas() {
 
   const resetError = () => {
     setError(null);
+  };
+
+  const handleReady = (intensity) => {
+    console.log("Ready with intensity:", intensity);
+    // Proceed to the main flow
+  };
+
+  const handleNotReady = () => {
+    setShowCenteringExercise(true);
+  };
+
+  const handleCenteringComplete = () => {
+    setShowCenteringExercise(false);
+  };
+
+  const handleExit = () => {
+    setShowCenteringExercise(false);
   };
 
   if (error) {
@@ -143,7 +162,11 @@ function Canvas() {
             <h3>Readiness Assessment</h3>
           </LaneHeader>
           <LaneContent>
-            <ReadinessGate />
+            {showCenteringExercise ? (
+              <CenteringExercise onComplete={handleCenteringComplete} onExit={handleExit} />
+            ) : (
+              <ReadinessGate onReady={handleReady} onNotReady={handleNotReady} />
+            )}
           </LaneContent>
         </LaneCard>
 
