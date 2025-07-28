@@ -9,6 +9,7 @@ import ReadinessGate from './ReadinessGate.jsx';
 import CenteringExercise from './CenteringExercise.jsx';
 import { useSession } from '../context/SessionContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import CardNeutralize from './CardNeutralize.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -194,20 +195,16 @@ function Canvas() {
         )}
 
         {/* Mining Lane */}
-        <LaneCard>
-          <LaneHeader>
-            <h3>Thought Mining</h3>
-          </LaneHeader>
-          <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Thought Mining cards will be implemented in Phase 4
-            </div>
-          </LaneContent>
-        </LaneCard>
+        {!showReadinessGate && (
+          <LaneCard>
+            <LaneHeader>
+              <h3>Thought Mining</h3>
+            </LaneHeader>
+            <LaneContent>
+              <CardNeutralize onComplete={() => console.log('Neutralize complete')} />
+            </LaneContent>
+          </LaneCard>
+        )}
 
         {/* Picker Lane */}
         <LaneCard className="picker-lane">
