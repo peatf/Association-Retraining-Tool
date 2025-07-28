@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Breadcrumb from './Breadcrumb.jsx';
 import ErrorState from './common/ErrorState.jsx';
+import ReadinessGate from './ReadinessGate.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -142,13 +143,7 @@ function Canvas() {
             <h3>Readiness Assessment</h3>
           </LaneHeader>
           <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Readiness Gate will be implemented in Phase 3
-            </div>
+            <ReadinessGate />
           </LaneContent>
         </LaneCard>
 
