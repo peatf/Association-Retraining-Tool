@@ -10,6 +10,7 @@ import CenteringExercise from './CenteringExercise.jsx';
 import { useSession } from '../context/SessionContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardNeutralize from './CardNeutralize.jsx';
+import CardCommonGround from './CardCommonGround.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -105,6 +106,7 @@ function Canvas() {
   const [error, setError] = useState(null);
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
   const [showReadinessGate, setShowReadinessGate] = useState(true);
+  const [showCommonGround, setShowCommonGround] = useState(false);
 
   const handleComponentError = (error, info) => {
     console.error("Caught an error:", error, info);
@@ -201,7 +203,11 @@ function Canvas() {
               <h3>Thought Mining</h3>
             </LaneHeader>
             <LaneContent>
-              <CardNeutralize onComplete={() => console.log('Neutralize complete')} />
+              {!showCommonGround ? (
+                <CardNeutralize onComplete={() => setShowCommonGround(true)} />
+              ) : (
+                <CardCommonGround onComplete={() => console.log('Common Ground complete')} />
+              )}
             </LaneContent>
           </LaneCard>
         )}
