@@ -78,27 +78,30 @@ const CardDataExtraction = ({ onComplete }) => {
       <div style={{ padding: '1rem' }}>
         {prompts.map((prompt, index) => {
           const parts = prompt.split(' or ');
-          const optionA = parts[0].replace('A: ', '');
-          const optionB = parts[1].replace('B: ', '');
-          return (
-            <div key={index} style={{ marginBottom: '1rem' }}>
-              <p>{prompt}</p>
-              <div>
-                <OptionButton
-                  selected={answers[prompt] === 'A'}
-                  onClick={() => handleAnswerSelect(prompt, 'A')}
-                >
-                  {optionA}
-                </OptionButton>
-                <OptionButton
-                  selected={answers[prompt] === 'B'}
-                  onClick={() => handleAnswerSelect(prompt, 'B')}
-                >
-                  {optionB}
-                </OptionButton>
+          if (parts.length === 2) {
+            const optionA = parts[0].replace('A: ', '');
+            const optionB = parts[1].replace('B: ', '');
+            return (
+              <div key={index} style={{ marginBottom: '1rem' }}>
+                <p>{prompt}</p>
+                <div>
+                  <OptionButton
+                    selected={answers[prompt] === 'A'}
+                    onClick={() => handleAnswerSelect(prompt, 'A')}
+                  >
+                    {optionA}
+                  </OptionButton>
+                  <OptionButton
+                    selected={answers[prompt] === 'B'}
+                    onClick={() => handleAnswerSelect(prompt, 'B')}
+                  >
+                    {optionB}
+                  </OptionButton>
+                </div>
               </div>
-            </div>
-          );
+            );
+          }
+          return <p key={index}>{prompt}</p>;
         })}
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
           <h4>Summary</h4>

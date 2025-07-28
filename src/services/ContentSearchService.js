@@ -5,7 +5,7 @@
  * Enhanced with error handling and graceful degradation.
  */
 
-import errorHandlingService from './ErrorHandlingService';
+import errorHandlingService from '/src/services/ErrorHandlingService.js';
 
 class ContentSearchService {
   constructor() {
