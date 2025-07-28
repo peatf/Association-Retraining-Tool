@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CardNeutralize from './CardNeutralize.jsx';
 import CardCommonGround from './CardCommonGround.jsx';
 import CardDataExtraction from './CardDataExtraction.jsx';
+import ThoughtMining from './ThoughtMining.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -107,8 +108,6 @@ function Canvas() {
   const [error, setError] = useState(null);
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
   const [showReadinessGate, setShowReadinessGate] = useState(true);
-  const [showCommonGround, setShowCommonGround] = useState(false);
-  const [showDataExtraction, setShowDataExtraction] = useState(false);
 
   const handleComponentError = (error, info) => {
     console.error("Caught an error:", error, info);
@@ -205,13 +204,7 @@ function Canvas() {
               <h3>Thought Mining</h3>
             </LaneHeader>
             <LaneContent>
-              {!showCommonGround ? (
-                <CardNeutralize onComplete={() => setShowCommonGround(true)} />
-              ) : !showDataExtraction ? (
-                <CardCommonGround onComplete={() => setShowDataExtraction(true)} />
-              ) : (
-                <CardDataExtraction onComplete={() => console.log('Data Extraction complete')} />
-              )}
+              <ThoughtMining onComplete={() => console.log('Thought Mining complete')} />
             </LaneContent>
           </LaneCard>
         )}
