@@ -42,6 +42,7 @@ export function SessionProvider({ children }) {
   // Initialize session on mount
   useEffect(() => {
     initializeSession();
+    migrateLegacySession();
     
     // Cleanup on unmount
     return () => {
@@ -310,6 +311,18 @@ export function SessionProvider({ children }) {
       miningResultsCount: Object.keys(canvasState.miningResults).length,
       legacySessionHealth: sessionManagerRef.current?.getSessionHealth()
     };
+  };
+
+  const migrateLegacySession = () => {
+    if (sessionManagerRef.current) {
+      const legacyState = sessionManagerRef.current.getCurrentState();
+      if (legacyState) {
+        updateCanvasState({
+          selectedTopic: legacyState.selectedTopic,
+          intensity: legacyState.intensity,
+        });
+      }
+    }
   };
 
   // Content pipeline integration helpers

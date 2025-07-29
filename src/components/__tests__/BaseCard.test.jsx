@@ -35,7 +35,7 @@ describe('BaseCard Component', () => {
   it('shows loading state correctly', () => {
     render(<BaseCard {...defaultProps} loading={true} />);
     
-    expect(screen.getByText('Loading content...')).toBeInTheDocument();
+    expect(screen.getByTestId('test-card-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('test-card')).toHaveAttribute('aria-busy', 'true');
   });
 

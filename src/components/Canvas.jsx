@@ -1,9 +1,19 @@
 // Main Canvas component - Layout container for therapeutic cards
 // Manages lane-based layout and navigation between canvas states
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import Breadcrumb from './Breadcrumb.jsx';
+import ErrorState from './common/ErrorState.jsx';
+import ReadinessGate from './ReadinessGate.jsx';
+import CenteringExercise from './CenteringExercise.jsx';
+import { useSession } from '../context/SessionContext.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
+import CardNeutralize from './CardNeutralize.jsx';
+import CardCommonGround from './CardCommonGround.jsx';
+import CardDataExtraction from './CardDataExtraction.jsx';
+import ThoughtMining from './ThoughtMining.jsx';
+import ThoughtPicker from './ThoughtPicker.jsx';
 
 const CanvasLayout = styled.div`
   display: flex;
@@ -95,6 +105,57 @@ const LaneContent = styled.div`
 `;
 
 function Canvas() {
+  const { updateCanvasState } = useSession();
+  const [error, setError] = useState(null);
+  const [showCenteringExercise, setShowCenteringExercise] = useState(false);
+  const [showReadinessGate, setShowReadinessGate] = useState(true);
+
+  const handleComponentError = (error, info) => {
+    console.error("Caught an error:", error, info);
+    setError(error);
+  };
+
+  const resetError = () => {
+    setError(null);
+  };
+
+  const handleReady = (intensity) => {
+    console.log("Ready with intensity:", intensity);
+    updateCanvasState({ isReady: true, intensity: intensity });
+    Sentry.captureMessage(`Readiness complete with intensity ${intensity}`);
+    setShowReadinessGate(false);
+  };
+
+  const handleNotReady = () => {
+    setShowCenteringExercise(true);
+  };
+
+  const handleCenteringComplete = () => {
+    setShowCenteringExercise(false);
+  };
+
+  const handleExit = () => {
+    setShowCenteringExercise(false);
+  };
+
+  const thoughtMiningComponent = useMemo(() => <ThoughtMining onComplete={() => console.log('Thought Mining complete')} />, []);
+  const thoughtPickerComponent = useMemo(() => <ThoughtPicker />, []);
+
+  if (error) {
+    return (
+      <CanvasLayout>
+        <ErrorState
+          title="Oops! Something went wrong in the Canvas."
+          message="We've encountered an issue displaying the canvas. You can try to refresh the component or return to the previous state."
+          onRetry={resetError}
+          retryText="Refresh Canvas"
+          error={error}
+          showDetails={true}
+        />
+      </CanvasLayout>
+    );
+  }
+
   return (
     <CanvasLayout>
       <Breadcrumb />
@@ -105,56 +166,65 @@ function Canvas() {
           A private, interactive space to work through challenging thoughts 
           and discover new perspectives through guided therapeutic exercises.
         </p>
+        <button onClick={() => handleComponentError(new Error("Test Error"))}>Simulate Error</button>
       </WelcomeMessage>
 
       <CanvasLanes>
         {/* Readiness Lane */}
-        <LaneCard>
-          <LaneHeader>
-            <h3>Readiness Assessment</h3>
-          </LaneHeader>
-          <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Readiness Gate will be implemented in Phase 3
-            </div>
-          </LaneContent>
-        </LaneCard>
+        {showReadinessGate && (
+          <LaneCard>
+            <LaneHeader>
+              <h3>Readiness Assessment</h3>
+            </LaneHeader>
+            <LaneContent>
+            <AnimatePresence mode="wait">
+              {showCenteringExercise ? (
+                <motion.div
+                  key="centering"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                >
+                  <CenteringExercise onComplete={handleCenteringComplete} onExit={handleExit} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="readiness"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                >
+                  <ReadinessGate onReady={handleReady} onNotReady={handleNotReady} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            </LaneContent>
+          </LaneCard>
+        )}
 
         {/* Mining Lane */}
-        <LaneCard>
-          <LaneHeader>
-            <h3>Thought Mining</h3>
-          </LaneHeader>
-          <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Thought Mining cards will be implemented in Phase 4
-            </div>
-          </LaneContent>
-        </LaneCard>
+        {!showReadinessGate && (
+          <LaneCard>
+            <LaneHeader>
+              <h3>Thought Mining</h3>
+            </LaneHeader>
+            <LaneContent>
+              {thoughtMiningComponent}
+            </LaneContent>
+          </LaneCard>
+        )}
 
         {/* Picker Lane */}
-        <LaneCard className="picker-lane">
-          <LaneHeader>
-            <h3>Better-Feeling Thoughts</h3>
-          </LaneHeader>
-          <LaneContent>
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center',
-              color: '#666'
-            }}>
-              Hierarchical Thought Picker will be implemented in Phase 5
-            </div>
-          </LaneContent>
-        </LaneCard>
+        {!showReadinessGate && (
+          <LaneCard className="picker-lane">
+            <LaneHeader>
+              <h3>Better-Feeling Thoughts</h3>
+            </LaneHeader>
+            <LaneContent>
+              {thoughtPickerComponent}
+            </LaneContent>
+          </LaneCard>
+        )}
       </CanvasLanes>
     </CanvasLayout>
   );

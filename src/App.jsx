@@ -1,71 +1,10 @@
 // Main App component for Clarity Canvas
 // Provides canvas container structure and global state management
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
-// Design tokens and theme
-const theme = {
-  colors: {
-    primary: '#3498db',
-    secondary: '#6c757d',
-    success: '#28a745',
-    warning: '#ffc107',
-    error: '#dc3545',
-    background: '#f4f4f9',
-    cardBackground: '#ffffff',
-    cardShadow: 'rgba(0,0,0,0.1)',
-    text: '#333333',
-    textSecondary: '#666666'
-  },
-  
-  typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    sizes: {
-      xs: '0.75rem',
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
-      '2xl': '1.5rem',
-      '3xl': '1.875rem'
-    },
-    weights: {
-      normal: 400,
-      medium: 500,
-      semibold: 600,
-      bold: 700
-    }
-  },
-  
-  spacing: {
-    xs: '0.25rem',
-    sm: '0.5rem',
-    md: '1rem',
-    lg: '1.5rem',
-    xl: '2rem',
-    '2xl': '3rem'
-  },
-  
-  borderRadius: {
-    sm: '4px',
-    md: '8px',
-    lg: '12px'
-  },
-  
-  shadows: {
-    card: '0 2px 4px rgba(0,0,0,0.1)',
-    cardHover: '0 4px 8px rgba(0,0,0,0.15)',
-    cardActive: '0 8px 16px rgba(0,0,0,0.2)'
-  },
-
-  breakpoints: {
-    mobile: '320px',
-    tablet: '768px',
-    desktop: '1024px',
-    wide: '1440px'
-  }
-};
+import theme from './theme';
 
 // Main app container with responsive design
 const AppContainer = styled.div`
@@ -127,9 +66,13 @@ const LanesGrid = styled.div`
     grid-template-columns: 1fr;
     gap: ${props => props.theme.spacing.md};
   }
+
+  @media (max-width: ${props => props.theme.breakpoints.mobile}) {
+    gap: ${props => props.theme.spacing.sm};
+  }
 `;
 
-const LaneCard = styled.div`
+const LaneCard = styled.section`
   background: ${props => props.theme.colors.cardBackground};
   border-radius: ${props => props.theme.borderRadius.lg};
   box-shadow: ${props => props.theme.shadows.card};
@@ -140,12 +83,12 @@ const LaneCard = styled.div`
   }
 `;
 
-const LaneHeader = styled.div`
+const LaneHeader = styled.header`
   padding: ${props => props.theme.spacing.lg};
   border-bottom: 1px solid #eee;
-  background: #f8f9fa;
+  background: ${props => props.theme.colors.background};
   
-  h3 {
+  h2 {
     margin: 0;
     font-size: ${props => props.theme.typography.sizes.lg};
     font-weight: ${props => props.theme.typography.weights.semibold};
@@ -161,9 +104,22 @@ const LaneContent = styled.div`
 `;
 
 function App() {
+  const [currentTheme, setCurrentTheme] = useState('default');
+
+  const toggleTheme = () => {
+    setCurrentTheme(currentTheme === 'default' ? 'highContrast' : 'default');
+  };
+
+  React.useEffect(() => {
+    Sentry.metrics.timing('canvas_load_time', () => {
+      // Your code to measure canvas load time here
+    });
+  }, []);
+
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme[currentTheme]}>
       <AppContainer>
+        <button onClick={toggleTheme}>Toggle Theme</button>
         <CanvasContainer>
           <WelcomeCard>
             <h1>Welcome to Clarity Canvas</h1>
@@ -176,7 +132,7 @@ function App() {
           <LanesGrid>
             <LaneCard>
               <LaneHeader>
-                <h3>Readiness Assessment</h3>
+                <h2>Readiness Assessment</h2>
               </LaneHeader>
               <LaneContent>
                 Readiness Gate will be implemented in Phase 3
@@ -185,7 +141,7 @@ function App() {
 
             <LaneCard>
               <LaneHeader>
-                <h3>Thought Mining</h3>
+                <h2>Thought Mining</h2>
               </LaneHeader>
               <LaneContent>
                 Thought Mining cards will be implemented in Phase 4
@@ -194,7 +150,7 @@ function App() {
 
             <LaneCard>
               <LaneHeader>
-                <h3>Better-Feeling Thoughts</h3>
+                <h2>Better-Feeling Thoughts</h2>
               </LaneHeader>
               <LaneContent>
                 Hierarchical Thought Picker will be implemented in Phase 5

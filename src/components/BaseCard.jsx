@@ -5,8 +5,8 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Spinner, ErrorState } from './common';
+import { motion, useReducedMotion } from 'framer-motion';
+import { SkeletonCard, ErrorState, Spinner } from './common';
 import errorHandlingService from '../services/ErrorHandlingService';
 import './BaseCard.css';
 
@@ -29,6 +29,15 @@ const BaseCard = ({
   'aria-describedby': ariaDescribedBy,
   'aria-label': ariaLabel
 }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const cardRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (isActive && cardRef.current) {
+      cardRef.current.focus();
+    }
+  }, [isActive]);
+
   // Animation variants for card states
   const cardVariants = {
     initial: { 
@@ -88,13 +97,16 @@ const BaseCard = ({
   return (
     <motion.div
       className={`base-card ${getCardStateClass()} ${className}`}
-      variants={cardVariants}
-      initial="initial"
-      animate="animate"
-      whileHover={!disabled && !loading ? "hover" : undefined}
-      whileTap={!disabled && !loading ? "tap" : undefined}
+      variants={shouldReduceMotion ? {} : cardVariants}
+      initial={shouldReduceMotion ? false : "initial"}
+      animate={shouldReduceMotion ? false : "animate"}
+      whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      whileHover={!disabled && !loading && !shouldReduceMotion ? "hover" : undefined}
+      whileTap={!disabled && !loading && !shouldReduceMotion ? "tap" : undefined}
       data-testid={testId}
       id={cardId}
+      ref={cardRef}
       role="region"
       aria-label={ariaLabel || title}
       aria-describedby={ariaDescribedBy || contentId}
@@ -143,11 +155,7 @@ const BaseCard = ({
       >
         {loading && (
           <div className="card-loading-state">
-            <Spinner 
-              size="medium" 
-              message="Loading content..." 
-              aria-label="Card content is loading"
-            />
+            <SkeletonCard testId={`${testId}-skeleton`} />
           </div>
         )}
         
