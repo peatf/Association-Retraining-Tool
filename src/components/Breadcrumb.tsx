@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { useSession } from '../context/SessionContext.jsx';
+import { useSession } from '../context/SessionContext';
 
 const BreadcrumbContainer = styled.nav`
   background: ${props => props.theme.colors.cardBackground};

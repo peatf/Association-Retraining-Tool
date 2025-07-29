@@ -1,10 +1,69 @@
 /**
- * ErrorHandlingService.js
+ * ErrorHandlingService.ts
  * Enhanced error handling service for React components
  * Provides graceful degradation and recovery mechanisms
  */
 
+interface ErrorLogEntry {
+  id?: number;
+  timestamp: number;
+  source: string;
+  message: string;
+  details: Record<string, any>;
+  stack?: string;
+  category?: string;
+  error?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  url?: string;
+  userAgent?: string;
+}
+
+interface FallbackContent {
+  contentService: {
+    categories: string[];
+    subcategories: Record<string, string[]>;
+    miningPrompts: Record<string, string[]>;
+    replacementThoughts: string[];
+  };
+  ui: {
+    loadingMessages: string[];
+    errorMessages: Record<string, string>;
+  };
+}
+
+interface UserFriendlyError {
+  name: string;
+  message: string;
+  title: string;
+  type: string;
+  icon: string;
+  stack?: string;
+}
+
+interface ErrorResult {
+  success: boolean;
+  canRetry: boolean;
+  retryCount?: number;
+  fallbackData: any;
+  error: UserFriendlyError;
+  useFallback?: boolean;
+}
+
+interface ErrorListener {
+  (error: Error, source: string, details: Record<string, any>): void;
+}
+
 class ErrorHandlingService {
+  private errorLog: ErrorLogEntry[];
+  private maxLogSize: number;
+  private retryAttempts: Map<string, number>;
+  private maxRetries: number;
+  private fallbackContent: FallbackContent;
+  private errorListeners: Set<ErrorListener>;
+  
   constructor() {
     this.errorLog = [];
     this.maxLogSize = 100;
@@ -80,18 +139,18 @@ class ErrorHandlingService {
   /**
    * Setup global error handling
    */
-  setupGlobalErrorHandling() {
+  private setupGlobalErrorHandling(): void {
     // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      this.handleError('Unhandled Promise Rejection', event.reason, {
+    window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+      this.logError('Unhandled Promise Rejection', event.reason, {
         promise: event.promise,
         url: window.location.href
       });
     });
 
     // Handle global JavaScript errors
-    window.addEventListener('error', (event) => {
-      this.handleError('Global JavaScript Error', event.error, {
+    window.addEventListener('error', (event: ErrorEvent) => {
+      this.logError('Global JavaScript Error', event.error, {
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
@@ -103,7 +162,11 @@ class ErrorHandlingService {
   /**
    * Handle content service errors with fallback
    */
-  async handleContentServiceError(operation, error, params = {}) {
+  async handleContentServiceError(
+    operation: string, 
+    error: unknown, 
+    params: Record<string, any> = {}
+  ): Promise<ErrorResult> {
     const errorKey = `contentService_${operation}`;
     this.logError('Content Service', error, { operation, params });
 
@@ -135,7 +198,7 @@ class ErrorHandlingService {
   /**
    * Get fallback content data based on operation
    */
-  getFallbackContentData(operation, params) {
+  private getFallbackContentData(operation: string, params: Record<string, any>): any {
     const { contentService } = this.fallbackContent;
     
     switch (operation) {
@@ -213,41 +276,52 @@ class ErrorHandlingService {
   /**
    * Create user-friendly error messages
    */
-  createUserFriendlyError(error, context = '') {
+  createUserFriendlyError(error: unknown, context = ''): UserFriendlyError {
     const baseMessage = this.fallbackContent.ui.errorMessages;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorName = error instanceof Error ? error.name : 'Error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
     
-    if (error.name === 'NetworkError' || error.message.includes('fetch')) {
+    if (errorName === 'NetworkError' || errorMessage.includes('fetch')) {
       return {
+        name: errorName,
         title: "Connection Issue",
         message: baseMessage.networkError,
         type: 'warning',
-        icon: '📡'
+        icon: '📡',
+        stack: errorStack
       };
     }
     
-    if (error.message.includes('content') || context.includes('content')) {
+    if (errorMessage.includes('content') || context.includes('content')) {
       return {
+        name: errorName,
         title: "Content Loading Issue",
         message: baseMessage.contentLoading,
         type: 'warning',
-        icon: '📄'
+        icon: '📄',
+        stack: errorStack
       };
     }
     
-    if (error.message.includes('model') || context.includes('model')) {
+    if (errorMessage.includes('model') || context.includes('model')) {
       return {
+        name: errorName,
         title: "AI Features Unavailable",
         message: baseMessage.modelLoading,
         type: 'info',
-        icon: '🤖'
+        icon: '🤖',
+        stack: errorStack
       };
     }
     
     return {
+      name: errorName,
       title: "Temporary Issue",
       message: baseMessage.generic,
       type: 'error',
-      icon: '⚠️'
+      icon: '⚠️',
+      stack: errorStack
     };
   }
 
@@ -351,17 +425,24 @@ class ErrorHandlingService {
   /**
    * Log error with context
    */
-  logError(category, error, context = {}) {
-    const errorEntry = {
+  logError(category: string, error: unknown, context: Record<string, any> = {}): void {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorName = error instanceof Error ? error.name : 'Error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    const errorEntry: ErrorLogEntry = {
       id: Date.now() + Math.random(),
       timestamp: Date.now(),
+      source: category,
+      message: errorMessage,
+      details: context,
+      stack: errorStack,
       category,
       error: {
-        name: error?.name || 'Unknown',
-        message: error?.message || error?.toString() || 'Unknown error',
-        stack: error?.stack
+        name: errorName,
+        message: errorMessage,
+        stack: errorStack
       },
-      context,
       url: window.location.href,
       userAgent: navigator.userAgent
     };

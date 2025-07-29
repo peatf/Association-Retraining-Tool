@@ -5,8 +5,8 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import contentSearchService from '../../services/ContentSearchService.js';
-import { Spinner, ErrorState } from '../common/index.js';
+import contentSearchService from '../../services/ContentSearchService';
+import { Spinner, ErrorState } from '../common';
 
 const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
   const [categories, setCategories] = useState([]);

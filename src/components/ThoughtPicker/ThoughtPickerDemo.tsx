@@ -9,7 +9,7 @@ import {
   TopicSelector,
   SubTopicReveal,
   ReplacementThoughtList,
-} from "./index.js";
+} from "./index";
 
 const ThoughtPickerDemo = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);

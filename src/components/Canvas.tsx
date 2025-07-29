@@ -3,17 +3,17 @@
 
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-import Breadcrumb from './Breadcrumb.jsx';
-import ErrorState from './common/ErrorState.jsx';
-import ReadinessGate from './ReadinessGate.jsx';
-import CenteringExercise from './CenteringExercise.jsx';
-import { useSession } from '../context/SessionContext.jsx';
+import Breadcrumb from './Breadcrumb';
+import ErrorState from './common/ErrorState';
+import ReadinessGate from './ReadinessGate';
+import CenteringExercise from './CenteringExercise';
+import { useSession } from '../context/SessionContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import CardNeutralize from './CardNeutralize.jsx';
-import CardCommonGround from './CardCommonGround.jsx';
-import CardDataExtraction from './CardDataExtraction.jsx';
-import ThoughtMining from './ThoughtMining.jsx';
-import ThoughtPicker from './ThoughtPicker.jsx';
+import CardNeutralize from './CardNeutralize';
+import CardCommonGround from './CardCommonGround';
+import CardDataExtraction from './CardDataExtraction';
+import ThoughtMining from './ThoughtMining';
+import ThoughtPicker from './ThoughtPicker';
 
 const CanvasLayout = styled.div`
   display: flex;

@@ -5,13 +5,72 @@
  * Enhanced with error handling and graceful degradation.
  */
 
-import errorHandlingService from '/src/services/ErrorHandlingService.js';
+import errorHandlingService from '../services/ErrorHandlingService';
 
-function isValidEntry(entry) {
+interface ContentEntry {
+  category: string;
+  subcategories: string[];
+  summaryForVectorization: string;
+  miningPrompts: {
+    [key: string]: string[];
+  };
+  replacementThoughts: string[];
+  chunks?: Array<{
+    text: string;
+    metadata?: Record<string, any>;
+  }>;
+}
+
+interface ContentIndex {
+  metadata: {
+    categories: string[];
+    subcategories: {
+      [category: string]: string[];
+    };
+    totalEntries?: number;
+    totalChunks?: number;
+  };
+  entries: ContentEntry[];
+  version: string;
+  timestamp: number;
+  fallback?: boolean;
+}
+
+interface ErrorResult {
+  useFallback: boolean;
+  fallbackData: any;
+}
+
+interface SearchResult {
+  text: string;
+  category: string;
+  subcategories: string[];
+  metadata?: Record<string, any>;
+  relevance: number;
+}
+
+interface ContentStats {
+  version: string;
+  timestamp: number;
+  categories: number;
+  totalEntries?: number;
+  totalChunks?: number;
+  subcategoriesPerCategory: Array<{
+    category: string;
+    subcategories: number;
+  }>;
+}
+
+function isValidEntry(entry: any): entry is ContentEntry {
   return entry && entry.category && Array.isArray(entry.subcategories) && entry.summaryForVectorization && entry.miningPrompts && Array.isArray(entry.replacementThoughts);
 }
 
 class ContentSearchService {
+  private contentIndex: ContentIndex | null;
+  private isLoaded: boolean;
+  private loadingPromise: Promise<ContentIndex> | null;
+  private cache: Map<string, any>;
+
   constructor() {
     this.contentIndex = null;
     this.isLoaded = false;
@@ -22,8 +81,8 @@ class ContentSearchService {
   /**
    * Load the content index from the binary file with enhanced error handling
    */
-  async loadContentIndex() {
-    if (this.isLoaded) {
+  async loadContentIndex(): Promise<ContentIndex> {
+    if (this.isLoaded && this.contentIndex) {
       return this.contentIndex;
     }
 
@@ -36,9 +95,9 @@ class ContentSearchService {
     return this.loadingPromise;
   }
 
-  async _performLoad() {
+  private async _performLoad(): Promise<ContentIndex> {
     try {
-      let contentIndexData;
+      let contentIndexData: ContentIndex;
       
       // Check if we're in Node.js environment (for testing)
       if (typeof window === 'undefined') {
@@ -49,7 +108,7 @@ class ContentSearchService {
         
         if (fs.existsSync(indexPath)) {
           const rawData = fs.readFileSync(indexPath, 'utf8');
-          contentIndexData = JSON.parse(rawData);
+          contentIndexData = JSON.parse(rawData) as ContentIndex;
         } else {
           throw new Error('Content index file not found');
         }
@@ -67,7 +126,7 @@ class ContentSearchService {
           if (!response.ok) {
             throw new Error(`Failed to load content index: ${response.status} ${response.statusText}`);
           }
-          contentIndexData = await response.json();
+          contentIndexData = await response.json() as ContentIndex;
         } catch (fetchError) {
           clearTimeout(timeoutId);
           throw fetchError;
@@ -88,7 +147,7 @@ class ContentSearchService {
       });
       
       return this.contentIndex;
-    } catch (error) {
+    } catch (error: unknown) {
       this.loadingPromise = null;
       
       // Handle error with fallback
@@ -96,7 +155,7 @@ class ContentSearchService {
         'loadIndex', 
         error, 
         { operation: 'loadContentIndex' }
-      );
+      ) as ErrorResult;
       
       if (errorResult.useFallback) {
         // Use fallback structure
@@ -125,7 +184,7 @@ class ContentSearchService {
    * Get all top-level categories with error handling
    * @returns {Promise<string[]>} Array of category names
    */
-  async getCategories() {
+  async getCategories(): Promise<string[]> {
     const cacheKey = 'getCategories';
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
@@ -135,18 +194,18 @@ class ContentSearchService {
       return this.cache.get(cacheKey + '-promise');
     }
 
-    const promise = (async () => {
+    const promise = (async (): Promise<string[]> => {
       try {
-        await this.loadContentIndex();
-        const categories = this.contentIndex.metadata.categories || [];
+        const contentIndex = await this.loadContentIndex();
+        const categories = contentIndex.metadata.categories || [];
         this.cache.set(cacheKey, categories);
         return categories;
-      } catch (error) {
+      } catch (error: unknown) {
         const errorResult = await errorHandlingService.handleContentServiceError(
           'getCategories',
           error
-        );
-        return errorResult.fallbackData;
+        ) as ErrorResult;
+        return errorResult.fallbackData || [];
       } finally {
         this.cache.delete(cacheKey + '-promise');
       }
@@ -161,7 +220,7 @@ class ContentSearchService {
    * @param {string} category - The category name
    * @returns {Promise<string[]>} Array of subcategory names
    */
-  async getSubcategories(category) {
+  async getSubcategories(category: string): Promise<string[]> {
     const cacheKey = `getSubcategories-${category}`;
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
@@ -171,19 +230,19 @@ class ContentSearchService {
       return this.cache.get(cacheKey + '-promise');
     }
 
-    const promise = (async () => {
+    const promise = (async (): Promise<string[]> => {
       try {
-        await this.loadContentIndex();
-        const subcategories = this.contentIndex.metadata.subcategories[category] || [];
+        const contentIndex = await this.loadContentIndex();
+        const subcategories = contentIndex.metadata.subcategories[category] || [];
         this.cache.set(cacheKey, subcategories);
         return subcategories;
-      } catch (error) {
+      } catch (error: unknown) {
         const errorResult = await errorHandlingService.handleContentServiceError(
           'getSubcategories',
           error,
           { category }
-        );
-        return errorResult.fallbackData;
+        ) as ErrorResult;
+        return errorResult.fallbackData || [];
       } finally {
         this.cache.delete(cacheKey + '-promise');
       }
@@ -200,7 +259,7 @@ class ContentSearchService {
    * @param {number} maxIntensity - Maximum intensity level (optional)
    * @returns {Promise<string[]>} Array of replacement thoughts
    */
-  async getReplacementThoughts(category, subcategory = null, maxIntensity = 10) {
+  async getReplacementThoughts(category: string, subcategory: string | null = null, maxIntensity: number = 10): Promise<string[]> {
     const cacheKey = `getReplacementThoughts-${category}-${subcategory}-${maxIntensity}`;
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
@@ -210,14 +269,14 @@ class ContentSearchService {
       return this.cache.get(cacheKey + '-promise');
     }
 
-    const promise = (async () => {
+    const promise = (async (): Promise<string[]> => {
       try {
-        await this.loadContentIndex();
+        const contentIndex = await this.loadContentIndex();
 
-        const replacementThoughts = [];
+        const replacementThoughts: string[] = [];
 
         // Find entries that match the category
-        const matchingEntries = this.contentIndex.entries.filter(entry => {
+        const matchingEntries = contentIndex.entries.filter(entry => {
         if (!isValidEntry(entry)) return false;
           if (entry.category !== category) return false;
           if (subcategory && !entry.subcategories.includes(subcategory)) return false;
@@ -235,13 +294,13 @@ class ContentSearchService {
         // This could be enhanced in the future
         this.cache.set(cacheKey, replacementThoughts);
         return replacementThoughts;
-      } catch (error) {
+      } catch (error: unknown) {
         const errorResult = await errorHandlingService.handleContentServiceError(
           'getReplacementThoughts',
           error,
           { category, subcategory, maxIntensity }
-        );
-        return errorResult.fallbackData;
+        ) as ErrorResult;
+        return errorResult.fallbackData || [];
       } finally {
         this.cache.delete(cacheKey + '-promise');
       }
@@ -257,7 +316,7 @@ class ContentSearchService {
    * @param {string} type - The prompt type ('neutralize', 'commonGround', 'dataExtraction')
    * @returns {Promise<string[]>} Array of mining prompts
    */
-  async getMiningPrompts(category, type) {
+  async getMiningPrompts(category: string, type: string): Promise<string[]> {
     const cacheKey = `getMiningPrompts-${category}-${type}`;
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
@@ -267,14 +326,14 @@ class ContentSearchService {
       return this.cache.get(cacheKey + '-promise');
     }
 
-    const promise = (async () => {
+    const promise = (async (): Promise<string[]> => {
       try {
-        await this.loadContentIndex();
+        const contentIndex = await this.loadContentIndex();
 
-        const prompts = [];
+        const prompts: string[] = [];
 
         // Find entries that match the category
-        const matchingEntries = this.contentIndex.entries.filter(entry =>
+        const matchingEntries = contentIndex.entries.filter(entry =>
           isValidEntry(entry) && entry.category === category
         );
 
@@ -287,13 +346,13 @@ class ContentSearchService {
 
         this.cache.set(cacheKey, prompts);
         return prompts;
-      } catch (error) {
+      } catch (error: unknown) {
         const errorResult = await errorHandlingService.handleContentServiceError(
           'getMiningPrompts',
           error,
           { category, type }
-        );
-        return errorResult.fallbackData;
+        ) as ErrorResult;
+        return errorResult.fallbackData || [];
       } finally {
         this.cache.delete(cacheKey + '-promise');
       }
@@ -305,17 +364,17 @@ class ContentSearchService {
 
   /**
    * Search content by text query
-   * @param {string} query - Search query
-   * @param {string} category - Optional category filter
-   * @returns {Promise<Object[]>} Array of matching content chunks
+   * @param query - Search query
+   * @param category - Optional category filter
+   * @returns Array of matching content chunks
    */
-  async searchContent(query, category = null) {
-    await this.loadContentIndex();
+  async searchContent(query: string, category: string | null = null): Promise<SearchResult[]> {
+    const contentIndex = await this.loadContentIndex();
     
-    const results = [];
+    const results: SearchResult[] = [];
     const queryLower = query.toLowerCase();
     
-    for (const entry of this.contentIndex.entries) {
+    for (const entry of contentIndex.entries) {
       if (category && entry.category !== category) continue;
       
       // Search through chunks
@@ -339,8 +398,11 @@ class ContentSearchService {
   /**
    * Simple relevance calculation
    * @private
+   * @param text - The content text
+   * @param query - The search query
+   * @returns Relevance score
    */
-  calculateRelevance(text, query) {
+  private calculateRelevance(text: string, query: string): number {
     const textLower = text.toLowerCase();
     const queryLower = query.toLowerCase();
     
@@ -355,18 +417,18 @@ class ContentSearchService {
 
   /**
    * Get content statistics
-   * @returns {Promise<Object>} Statistics about the content index
+   * @returns Statistics about the content index
    */
-  async getStats() {
-    await this.loadContentIndex();
+  async getStats(): Promise<ContentStats> {
+    const contentIndex = await this.loadContentIndex();
     
     return {
-      version: this.contentIndex.version,
-      timestamp: this.contentIndex.timestamp,
-      categories: this.contentIndex.metadata.categories.length,
-      totalEntries: this.contentIndex.metadata.totalEntries,
-      totalChunks: this.contentIndex.metadata.totalChunks,
-      subcategoriesPerCategory: Object.entries(this.contentIndex.metadata.subcategories)
+      version: contentIndex.version,
+      timestamp: contentIndex.timestamp,
+      categories: contentIndex.metadata.categories.length,
+      totalEntries: contentIndex.metadata.totalEntries,
+      totalChunks: contentIndex.metadata.totalChunks,
+      subcategoriesPerCategory: Object.entries(contentIndex.metadata.subcategories)
         .map(([cat, subs]) => ({ category: cat, subcategories: subs.length }))
     };
   }

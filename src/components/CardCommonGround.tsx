@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BaseCard from './BaseCard';
 import { useSession } from '../context/SessionContext';
-import contentSearchService from '../services/ContentSearchService.js';
+import contentSearchService from '../services/ContentSearchService';
 import { Spinner, ErrorState } from './common';
 
 const CardCommonGround = ({ onComplete }) => {

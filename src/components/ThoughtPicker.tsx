@@ -1,8 +1,8 @@
 import React, { Suspense, memo } from 'react';
 import styled from 'styled-components';
-import { useSession } from '../context/SessionContext.jsx';
+import { useSession } from '../context/SessionContext';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import BaseCard from './BaseCard.jsx';
+import BaseCard from './BaseCard';
 import { Spinner } from './common';
 
 const TopicSelector = React.lazy(() => import('./ThoughtPicker/TopicSelector.jsx'));
