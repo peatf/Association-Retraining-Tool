@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSession } from '../context/SessionContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import BaseCard from './BaseCard.jsx';
 import TopicSelector from './ThoughtPicker/TopicSelector.jsx';
 import SubTopicReveal from './ThoughtPicker/SubTopicReveal.jsx';
@@ -15,6 +15,7 @@ const IntensitySlider = styled.input`
 const ThoughtPicker = () => {
   const { canvasState, updateCanvasState, addInsight } = useSession();
   const { selectedTopic, selectedSubcategory, intensity, selectedThought } = canvasState;
+  const shouldReduceMotion = useReducedMotion();
 
   const handleTopicSelect = (topic) => {
     updateCanvasState({ selectedTopic: topic, selectedSubcategory: null });
@@ -36,9 +37,9 @@ const ThoughtPicker = () => {
   return (
     <BaseCard title="Better-Feeling Thoughts" showActions={false}>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={shouldReduceMotion ? {} : { opacity: 0 }}
+        animate={shouldReduceMotion ? {} : { opacity: 1 }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5 }}
       >
         <TopicSelector onTopicSelect={handleTopicSelect} selectedTopic={selectedTopic} />
         <div>

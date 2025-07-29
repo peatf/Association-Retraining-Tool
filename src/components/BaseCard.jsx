@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { SkeletonCard, ErrorState, Spinner } from './common';
 import errorHandlingService from '../services/ErrorHandlingService';
 import './BaseCard.css';
@@ -29,6 +29,8 @@ const BaseCard = ({
   'aria-describedby': ariaDescribedBy,
   'aria-label': ariaLabel
 }) => {
+  const shouldReduceMotion = useReducedMotion();
+
   // Animation variants for card states
   const cardVariants = {
     initial: { 
@@ -88,11 +90,13 @@ const BaseCard = ({
   return (
     <motion.div
       className={`base-card ${getCardStateClass()} ${className}`}
-      variants={cardVariants}
-      initial="initial"
-      animate="animate"
-      whileHover={!disabled && !loading ? "hover" : undefined}
-      whileTap={!disabled && !loading ? "tap" : undefined}
+      variants={shouldReduceMotion ? {} : cardVariants}
+      initial={shouldReduceMotion ? false : "initial"}
+      animate={shouldReduceMotion ? false : "animate"}
+      whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      whileHover={!disabled && !loading && !shouldReduceMotion ? "hover" : undefined}
+      whileTap={!disabled && !loading && !shouldReduceMotion ? "tap" : undefined}
       data-testid={testId}
       id={cardId}
       role="region"

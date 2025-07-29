@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import CardNeutralize from './CardNeutralize.jsx';
 import CardCommonGround from './CardCommonGround.jsx';
 import CardDataExtraction from './CardDataExtraction.jsx';
@@ -19,6 +19,7 @@ const ProgressStep = styled.div`
 
 const ThoughtMining = ({ onComplete }) => {
   const [step, setStep] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   const handleNextStep = () => {
     setStep(step + 1);
@@ -47,9 +48,9 @@ const ThoughtMining = ({ onComplete }) => {
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
+          initial={shouldReduceMotion ? {} : { opacity: 0, x: 50 }}
+          animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
+          exit={shouldReduceMotion ? {} : { opacity: 0, x: -50 }}
         >
           {renderStep()}
         </motion.div>
