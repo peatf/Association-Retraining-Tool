@@ -23,7 +23,11 @@ const SkeletonWrapper = styled.div`
   height: 100px;
 `;
 
-const SkeletonCard = ({testId}) => {
+interface SkeletonCardProps {
+  testId?: string;
+}
+
+const SkeletonCard = ({testId}: SkeletonCardProps) => {
   return <SkeletonWrapper data-testid={testId} />;
 };
 

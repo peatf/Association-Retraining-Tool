@@ -7,10 +7,15 @@ const IntensitySlider = styled.input`
   margin: 1rem 0;
 `;
 
-const ReadinessGate = ({ onReady, onNotReady }) => {
+interface ReadinessGateProps {
+  onReady: (intensity: number) => void;
+  onNotReady: () => void;
+}
+
+const ReadinessGate = ({ onReady, onNotReady }: ReadinessGateProps) => {
   const [intensity, setIntensity] = useState(5);
 
-  const getIntensityMessage = (value) => {
+  const getIntensityMessage = (value: number) => {
     const numValue = Number(value);
     if (numValue <= 3) return "A gentle exploration.";
     if (numValue <= 7) return "A moderate level of challenge.";
@@ -18,7 +23,15 @@ const ReadinessGate = ({ onReady, onNotReady }) => {
   };
 
   return (
-    <BaseCard title="Are you ready to begin?">
+    <BaseCard 
+      title="Are you ready to begin?"
+      onActivate={() => {}}
+      onComplete={() => onReady(intensity)}
+      testId="readiness-gate"
+      onSkip={onNotReady}
+      aria-describedby="readiness-description"
+      aria-label="Are you ready to begin?"
+    >
       <div style={{ padding: '1rem' }}>
         <p>This tool is designed to help you work through challenging thoughts. It's most effective when you're in a calm and reflective state.</p>
 
@@ -29,7 +42,7 @@ const ReadinessGate = ({ onReady, onNotReady }) => {
           min="0"
           max="10"
           value={intensity}
-          onChange={(e) => setIntensity(e.target.value)}
+          onChange={(e) => setIntensity(Number(e.target.value))}
           data-testid="intensity-slider"
         />
         <div data-testid="intensity-value">Intensity: {intensity}</div>

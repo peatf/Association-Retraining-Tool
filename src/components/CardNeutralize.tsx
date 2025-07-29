@@ -5,7 +5,11 @@ import { useSession } from '../context/SessionContext';
 import contentSearchService from '../services/ContentSearchService';
 import { Spinner, ErrorState } from './common';
 
-const PromptButton = styled.button`
+interface PromptButtonProps {
+  selected?: boolean;
+}
+
+const PromptButton = styled.button<PromptButtonProps>`
   display: block;
   width: 100%;
   padding: 1rem;
@@ -21,22 +25,26 @@ const PromptButton = styled.button`
   }
 `;
 
-const CardNeutralize = ({ onComplete }) => {
+interface CardNeutralizeProps {
+  onComplete: () => void;
+}
+
+const CardNeutralize = ({ onComplete }: CardNeutralizeProps) => {
   const { canvasState, updateCanvasState } = useSession();
-  const [prompts, setPrompts] = useState([]);
+  const [prompts, setPrompts] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedPrompt, setSelectedPrompt] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPrompts = async () => {
       try {
         setLoading(true);
-        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic, 'neutralize');
+        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic || '', 'neutralize');
         setPrompts(fetchedPrompts);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };
@@ -46,7 +54,7 @@ const CardNeutralize = ({ onComplete }) => {
     }
   }, [canvasState.selectedTopic]);
 
-  const handlePromptSelect = (prompt) => {
+  const handlePromptSelect = (prompt: string) => {
     setSelectedPrompt(prompt);
   };
 
@@ -68,11 +76,20 @@ const CardNeutralize = ({ onComplete }) => {
   }
 
   if (error) {
-    return <ErrorState title="Error loading prompts" message={error.message} />;
+    return <ErrorState title="Error loading prompts" message={error.message} aria-label="Error loading prompts" />;
   }
 
   return (
-    <BaseCard title="Neutralize the Thought" onComplete={handleComplete} completionText="Continue">
+    <BaseCard 
+      title="Neutralize the Thought" 
+      onComplete={handleComplete} 
+      completionText="Continue"
+      onActivate={() => {}}
+      testId="neutralize-card"
+      onSkip={() => {}}
+      aria-describedby="neutralize-description"
+      aria-label="Neutralize the Thought"
+    >
       <div style={{ padding: '1rem' }}>
         <p>Select a prompt to help neutralize the thought:</p>
         <div>

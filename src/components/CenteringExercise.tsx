@@ -2,9 +2,22 @@ import React from 'react';
 import styled from 'styled-components';
 import BaseCard from './BaseCard';
 
-const CenteringExercise = ({ onComplete, onExit }) => {
+interface CenteringExerciseProps {
+  onComplete: () => void;
+  onExit: () => void;
+}
+
+const CenteringExercise = ({ onComplete, onExit }: CenteringExerciseProps) => {
   return (
-    <BaseCard title="A Moment to Center">
+    <BaseCard 
+      title="A Moment to Center"
+      onActivate={() => {}}
+      onComplete={onComplete}
+      testId="centering-exercise"
+      onSkip={onExit}
+      aria-describedby="centering-description"
+      aria-label="A Moment to Center"
+    >
       <div style={{ padding: '1rem' }}>
         <p>
           Let's take a moment to ground ourselves. Find a comfortable position, either sitting or lying down.

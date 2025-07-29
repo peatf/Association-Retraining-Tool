@@ -5,7 +5,11 @@ import { useSession } from '../context/SessionContext';
 import contentSearchService from '../services/ContentSearchService';
 import { Spinner, ErrorState } from './common';
 
-const OptionButton = styled.button`
+interface OptionButtonProps {
+  selected?: boolean;
+}
+
+const OptionButton = styled.button<OptionButtonProps>`
   padding: 0.5rem 1rem;
   margin: 0 0.5rem;
   background-color: ${props => props.selected ? '#e0e0e0' : '#f0f0f0'};
@@ -18,22 +22,26 @@ const OptionButton = styled.button`
   }
 `;
 
-const CardDataExtraction = ({ onComplete }) => {
+interface CardDataExtractionProps {
+  onComplete: () => void;
+}
+
+const CardDataExtraction = ({ onComplete }: CardDataExtractionProps) => {
   const { canvasState, updateCanvasState } = useSession();
-  const [prompts, setPrompts] = useState([]);
+  const [prompts, setPrompts] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [answers, setAnswers] = useState({});
+  const [error, setError] = useState<Error | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchPrompts = async () => {
       try {
         setLoading(true);
-        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic, 'dataExtraction');
+        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic || '', 'dataExtraction');
         setPrompts(fetchedPrompts);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };
@@ -43,7 +51,7 @@ const CardDataExtraction = ({ onComplete }) => {
     }
   }, [canvasState.selectedTopic]);
 
-  const handleAnswerSelect = (prompt, answer) => {
+  const handleAnswerSelect = (prompt: string, answer: string) => {
     setAnswers({ ...answers, [prompt]: answer });
   };
 
@@ -61,23 +69,32 @@ const CardDataExtraction = ({ onComplete }) => {
   };
 
   if (loading) {
-    return <Spinner message="Loading prompts..." />;
+    return <Spinner message="Loading prompts..." aria-label="Loading prompts" />;
   }
 
   if (error) {
-    return <ErrorState title="Error loading prompts" message={error.message} />;
+    return <ErrorState title="Error loading prompts" message={error.message} aria-label="Error loading prompts" />;
   }
 
-  const summary = Object.values(answers).reduce((acc, answer) => {
+  const summary = Object.values(answers).reduce((acc: Record<string, number>, answer: string) => {
     acc[answer] = (acc[answer] || 0) + 1;
     return acc;
   }, {});
 
   return (
-    <BaseCard title="Data Extraction" onComplete={handleComplete} completionText="Continue">
+    <BaseCard 
+      title="Data Extraction" 
+      onComplete={handleComplete} 
+      completionText="Continue"
+      onActivate={() => {}}
+      testId="data-extraction-card"
+      onSkip={() => {}}
+      aria-describedby="data-extraction-description"
+      aria-label="Data Extraction"
+    >
       <div style={{ padding: '1rem' }}>
         {prompts.map((prompt, index) => {
-          const parts = prompt.split(' or ');
+          const parts = (prompt as string).split(' or ');
           if (parts.length === 2) {
             const optionA = parts[0].replace('A: ', '');
             const optionB = parts[1].replace('B: ', '');

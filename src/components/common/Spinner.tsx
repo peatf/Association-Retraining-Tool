@@ -6,13 +6,20 @@
 import React from 'react';
 import './Spinner.css';
 
+interface SpinnerProps {
+  size?: 'small' | 'medium' | 'large';
+  message?: string;
+  className?: string;
+  'aria-label'?: string;
+}
+
 const Spinner = ({ 
   size = 'medium', 
   message = 'Loading...', 
   className = '',
   'aria-label': ariaLabel 
-}) => {
-  const sizeClasses = {
+}: SpinnerProps) => {
+  const sizeClasses: Record<string, string> = {
     small: 'spinner-small',
     medium: 'spinner-medium', 
     large: 'spinner-large'

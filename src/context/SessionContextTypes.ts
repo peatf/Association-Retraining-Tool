@@ -23,12 +23,14 @@ export interface CanvasState {
   selectedCategory: string | null;
   selectedSubcategory: string | null;
   selectedThoughts: string[];
+  selectedThought?: string | null; // Add this for backward compatibility
   
   // Export Data
   minedInsights: Array<{
     text: string;
     timestamp: string;
     source: string;
+    type?: string; // Add type field for insights
     metadata?: Record<string, any>;
   }>;
   exportableData: Record<string, any>;
@@ -41,7 +43,12 @@ export interface SessionContextValue {
   resetSession: () => void;
   goBack: () => void;
   goForward: () => void;
-  addInsight: (insight: { text: string; source: string; metadata?: Record<string, any> }) => void;
+  addInsight: (insight: { 
+    text: string; 
+    source: string; 
+    type?: string;
+    metadata?: Record<string, any> 
+  }) => void;
   updateJourney: (laneInfo: { 
     lane: string;
     completed?: boolean;

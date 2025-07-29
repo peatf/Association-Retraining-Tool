@@ -110,7 +110,7 @@ function Canvas() {
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
   const [showReadinessGate, setShowReadinessGate] = useState(true);
 
-  const handleComponentError = (error, info) => {
+  const handleComponentError = (error: Error, info?: any) => {
     console.error("Caught an error:", error, info);
     setError(error);
   };
@@ -119,10 +119,9 @@ function Canvas() {
     setError(null);
   };
 
-  const handleReady = (intensity) => {
+  const handleReady = (intensity: number) => {
     console.log("Ready with intensity:", intensity);
     updateCanvasState({ isReady: true, intensity: intensity });
-    Sentry.captureMessage(`Readiness complete with intensity ${intensity}`);
     setShowReadinessGate(false);
   };
 
