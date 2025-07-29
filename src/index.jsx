@@ -6,13 +6,16 @@ import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 import './style.css';
 import { SessionProvider } from './context/SessionContext.jsx';
+import featureFlags from './config/featureFlags.js';
 
-ReactDOM.createRoot(document.getElementById('app-container')).render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <SessionProvider>
-        <App />
-      </SessionProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
-)
+if (featureFlags.useReactCanvas) {
+  ReactDOM.createRoot(document.getElementById('app-container')).render(
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <SessionProvider>
+          <App />
+        </SessionProvider>
+      </ThemeProvider>
+    </React.StrictMode>,
+  )
+}
