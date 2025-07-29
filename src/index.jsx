@@ -8,6 +8,12 @@ import './style.css';
 import { SessionProvider } from './context/SessionContext.jsx';
 import featureFlags from './config/featureFlags.js';
 
+Sentry.init({
+  dsn: 'YOUR_SENTRY_DSN',
+  integrations: [new Sentry.BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
+
 if (featureFlags.useReactCanvas) {
   ReactDOM.createRoot(document.getElementById('app-container')).render(
     <React.StrictMode>

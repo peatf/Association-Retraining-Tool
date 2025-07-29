@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Therapeutic Reframing Engine</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <link rel="manifest" href="manifest.json">
     <style>
         /* React Canvas Override - Show React content when active */
         #app-container[data-react-root] {
@@ -34,6 +35,18 @@
 </head>
 <body>
     <div id="app-container"></div>
+    <script
+      src="https://browser.sentry-cdn.com/7.28.1/bundle.min.js"
+      integrity="sha384-CRVB4G+J9jXKNvMWD69H/8cZk3cQv+EaPz2T2z2p/JRLsI/R9xR/XBbquD+PzT4"
+      crossorigin="anonymous"
+    ></script>
     <script type="module" src="src/index.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
 </body>
 </html>
