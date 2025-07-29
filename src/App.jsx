@@ -66,6 +66,10 @@ const LanesGrid = styled.div`
     grid-template-columns: 1fr;
     gap: ${props => props.theme.spacing.md};
   }
+
+  @media (max-width: ${props => props.theme.breakpoints.mobile}) {
+    gap: ${props => props.theme.spacing.sm};
+  }
 `;
 
 const LaneCard = styled.section`

@@ -1,6 +1,6 @@
 import React, { useState, Suspense, memo } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion, useDrag } from 'framer-motion';
 import { Spinner } from './common';
 
 const CardNeutralize = React.lazy(() => import('./CardNeutralize.jsx'));
@@ -27,6 +27,24 @@ const ThoughtMining = memo(({ onComplete }) => {
     setStep(step + 1);
   };
 
+  const handlePrevStep = () => {
+    setStep(step - 1);
+  };
+
+  const dragControls = useDrag({
+    onDragEnd: (event, info) => {
+      if (info.offset.x > 100) {
+        if (step > 0) {
+          handlePrevStep();
+        }
+      } else if (info.offset.x < -100) {
+        if (step < 2) {
+          handleNextStep();
+        }
+      }
+    },
+  });
+
   const renderStep = () => {
     switch (step) {
       case 0:
@@ -41,7 +59,7 @@ const ThoughtMining = memo(({ onComplete }) => {
   };
 
   return (
-    <div>
+    <div {...dragControls}>
       <ProgressIndicator aria-live="polite">
         <ProgressStep active={step === 0}>1. Neutralize</ProgressStep>
         <ProgressStep active={step === 1}>2. Common Ground</ProgressStep>
