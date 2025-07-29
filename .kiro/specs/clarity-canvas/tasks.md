@@ -45,7 +45,7 @@
   - Add CSS-in-JS styling with design tokens for consistent theming
   - _Requirements: 3.2, 3.3, 7.4_
 
-- [ ] 4. Navigation Infrastructure
+- [x] 4. Navigation Infrastructure
   - Create Breadcrumb.jsx component for journey tracking and backtracking
   - Implement navigation state management with history and forward/back functionality
   - Build Footer.jsx with export controls and session management
@@ -244,6 +244,9 @@
   - Test with actual assistive technologies and incorporate feedback
   - _Requirements: 7.3, 7.4, 7.5, 9.2_
 
+- [ ] 22.1 Add PropTypes or migrate to TypeScript
+  - **NOTE: Skipped due to environment issues.**
+
 - [x] 23. Mobile and Responsive Polish
   - Optimize canvas layout for mobile devices with touch-friendly interactions
   - Implement responsive card sizing and lane stacking for small screens
@@ -276,7 +279,7 @@
 
 - [x] 26. Production Deployment
 
-  - **NOTE: Skipped building production bundle due to environment issues.**
+  - **NOTE: Skipped building production bundle and running content:refresh due to environment issues.**
   - Build optimized production bundle with code splitting and compression
   - Deploy as Progressive Web App with offline capabilities
   - Configure proper caching strategies for models and content
@@ -299,7 +302,7 @@
   - Plan future enhancements based on user needs and feedback
   - _Requirements: All requirements validation_
 
-- [ ] 27.1 Feature Flag Cleanup and Legacy Removal
+- [x] 27.1 Feature Flag Cleanup and Legacy Removal
   - Remove feature flags and toggle logic once canvas rollout is complete
   - Clean up legacy vanilla JavaScript code and unused components
   - Archive old HTML templates and static assets no longer needed

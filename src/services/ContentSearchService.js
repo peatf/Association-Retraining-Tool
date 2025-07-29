@@ -7,6 +7,10 @@
 
 import errorHandlingService from '/src/services/ErrorHandlingService.js';
 
+function isValidEntry(entry) {
+  return entry && entry.category && Array.isArray(entry.subcategories) && entry.summaryForVectorization && entry.miningPrompts && Array.isArray(entry.replacementThoughts);
+}
+
 class ContentSearchService {
   constructor() {
     this.contentIndex = null;
@@ -214,6 +218,7 @@ class ContentSearchService {
 
         // Find entries that match the category
         const matchingEntries = this.contentIndex.entries.filter(entry => {
+        if (!isValidEntry(entry)) return false;
           if (entry.category !== category) return false;
           if (subcategory && !entry.subcategories.includes(subcategory)) return false;
           return true;
@@ -270,7 +275,7 @@ class ContentSearchService {
 
         // Find entries that match the category
         const matchingEntries = this.contentIndex.entries.filter(entry =>
-          entry.category === category
+          isValidEntry(entry) && entry.category === category
         );
 
         // Extract mining prompts from matching entries
