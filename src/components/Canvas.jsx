@@ -1,7 +1,7 @@
 // Main Canvas component - Layout container for therapeutic cards
 // Manages lane-based layout and navigation between canvas states
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import Breadcrumb from './Breadcrumb.jsx';
 import ErrorState from './common/ErrorState.jsx';
@@ -137,6 +137,9 @@ function Canvas() {
     setShowCenteringExercise(false);
   };
 
+  const thoughtMiningComponent = useMemo(() => <ThoughtMining onComplete={() => console.log('Thought Mining complete')} />, []);
+  const thoughtPickerComponent = useMemo(() => <ThoughtPicker />, []);
+
   if (error) {
     return (
       <CanvasLayout>
@@ -205,7 +208,7 @@ function Canvas() {
               <h3>Thought Mining</h3>
             </LaneHeader>
             <LaneContent>
-              <ThoughtMining onComplete={() => console.log('Thought Mining complete')} />
+              {thoughtMiningComponent}
             </LaneContent>
           </LaneCard>
         )}
@@ -217,7 +220,7 @@ function Canvas() {
               <h3>Better-Feeling Thoughts</h3>
             </LaneHeader>
             <LaneContent>
-              <ThoughtPicker />
+              {thoughtPickerComponent}
             </LaneContent>
           </LaneCard>
         )}

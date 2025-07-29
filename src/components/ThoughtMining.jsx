@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, memo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import CardNeutralize from './CardNeutralize.jsx';
-import CardCommonGround from './CardCommonGround.jsx';
-import CardDataExtraction from './CardDataExtraction.jsx';
+import { Spinner } from './common';
+
+const CardNeutralize = React.lazy(() => import('./CardNeutralize.jsx'));
+const CardCommonGround = React.lazy(() => import('./CardCommonGround.jsx'));
+const CardDataExtraction = React.lazy(() => import('./CardDataExtraction.jsx'));
 
 const ProgressIndicator = styled.div`
   display: flex;
@@ -17,7 +19,7 @@ const ProgressStep = styled.div`
   color: ${props => props.active ? 'blue' : 'inherit'};
 `;
 
-const ThoughtMining = ({ onComplete }) => {
+const ThoughtMining = memo(({ onComplete }) => {
   const [step, setStep] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
@@ -52,7 +54,9 @@ const ThoughtMining = ({ onComplete }) => {
           animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
           exit={shouldReduceMotion ? {} : { opacity: 0, x: -50 }}
         >
-          {renderStep()}
+          <Suspense fallback={<Spinner />}>
+            {renderStep()}
+          </Suspense>
         </motion.div>
       </AnimatePresence>
       {step > 0 && (
@@ -64,6 +68,6 @@ const ThoughtMining = ({ onComplete }) => {
       )}
     </div>
   );
-};
+});
 
 export default ThoughtMining;

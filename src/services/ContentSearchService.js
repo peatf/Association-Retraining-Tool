@@ -12,6 +12,7 @@ class ContentSearchService {
     this.contentIndex = null;
     this.isLoaded = false;
     this.loadingPromise = null;
+    this.cache = new Map();
   }
 
   /**
@@ -121,16 +122,34 @@ class ContentSearchService {
    * @returns {Promise<string[]>} Array of category names
    */
   async getCategories() {
-    try {
-      await this.loadContentIndex();
-      return this.contentIndex.metadata.categories || [];
-    } catch (error) {
-      const errorResult = await errorHandlingService.handleContentServiceError(
-        'getCategories', 
-        error
-      );
-      return errorResult.fallbackData;
+    const cacheKey = 'getCategories';
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
     }
+
+    if (this.cache.has(cacheKey + '-promise')) {
+      return this.cache.get(cacheKey + '-promise');
+    }
+
+    const promise = (async () => {
+      try {
+        await this.loadContentIndex();
+        const categories = this.contentIndex.metadata.categories || [];
+        this.cache.set(cacheKey, categories);
+        return categories;
+      } catch (error) {
+        const errorResult = await errorHandlingService.handleContentServiceError(
+          'getCategories',
+          error
+        );
+        return errorResult.fallbackData;
+      } finally {
+        this.cache.delete(cacheKey + '-promise');
+      }
+    })();
+
+    this.cache.set(cacheKey + '-promise', promise);
+    return promise;
   }
 
   /**
@@ -139,17 +158,35 @@ class ContentSearchService {
    * @returns {Promise<string[]>} Array of subcategory names
    */
   async getSubcategories(category) {
-    try {
-      await this.loadContentIndex();
-      return this.contentIndex.metadata.subcategories[category] || [];
-    } catch (error) {
-      const errorResult = await errorHandlingService.handleContentServiceError(
-        'getSubcategories', 
-        error, 
-        { category }
-      );
-      return errorResult.fallbackData;
+    const cacheKey = `getSubcategories-${category}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
     }
+
+    if (this.cache.has(cacheKey + '-promise')) {
+      return this.cache.get(cacheKey + '-promise');
+    }
+
+    const promise = (async () => {
+      try {
+        await this.loadContentIndex();
+        const subcategories = this.contentIndex.metadata.subcategories[category] || [];
+        this.cache.set(cacheKey, subcategories);
+        return subcategories;
+      } catch (error) {
+        const errorResult = await errorHandlingService.handleContentServiceError(
+          'getSubcategories',
+          error,
+          { category }
+        );
+        return errorResult.fallbackData;
+      } finally {
+        this.cache.delete(cacheKey + '-promise');
+      }
+    })();
+
+    this.cache.set(cacheKey + '-promise', promise);
+    return promise;
   }
 
   /**
@@ -160,36 +197,53 @@ class ContentSearchService {
    * @returns {Promise<string[]>} Array of replacement thoughts
    */
   async getReplacementThoughts(category, subcategory = null, maxIntensity = 10) {
-    try {
-      await this.loadContentIndex();
-      
-      const replacementThoughts = [];
-      
-      // Find entries that match the category
-      const matchingEntries = this.contentIndex.entries.filter(entry => {
-        if (entry.category !== category) return false;
-        if (subcategory && !entry.subcategories.includes(subcategory)) return false;
-        return true;
-      });
-
-      // Extract replacement thoughts from matching entries
-      for (const entry of matchingEntries) {
-        if (entry.replacementThoughts && Array.isArray(entry.replacementThoughts)) {
-          replacementThoughts.push(...entry.replacementThoughts);
-        }
-      }
-
-      // For now, we don't have intensity levels in the data structure
-      // This could be enhanced in the future
-      return replacementThoughts;
-    } catch (error) {
-      const errorResult = await errorHandlingService.handleContentServiceError(
-        'getReplacementThoughts', 
-        error, 
-        { category, subcategory, maxIntensity }
-      );
-      return errorResult.fallbackData;
+    const cacheKey = `getReplacementThoughts-${category}-${subcategory}-${maxIntensity}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
     }
+
+    if (this.cache.has(cacheKey + '-promise')) {
+      return this.cache.get(cacheKey + '-promise');
+    }
+
+    const promise = (async () => {
+      try {
+        await this.loadContentIndex();
+
+        const replacementThoughts = [];
+
+        // Find entries that match the category
+        const matchingEntries = this.contentIndex.entries.filter(entry => {
+          if (entry.category !== category) return false;
+          if (subcategory && !entry.subcategories.includes(subcategory)) return false;
+          return true;
+        });
+
+        // Extract replacement thoughts from matching entries
+        for (const entry of matchingEntries) {
+          if (entry.replacementThoughts && Array.isArray(entry.replacementThoughts)) {
+            replacementThoughts.push(...entry.replacementThoughts);
+          }
+        }
+
+        // For now, we don't have intensity levels in the data structure
+        // This could be enhanced in the future
+        this.cache.set(cacheKey, replacementThoughts);
+        return replacementThoughts;
+      } catch (error) {
+        const errorResult = await errorHandlingService.handleContentServiceError(
+          'getReplacementThoughts',
+          error,
+          { category, subcategory, maxIntensity }
+        );
+        return errorResult.fallbackData;
+      } finally {
+        this.cache.delete(cacheKey + '-promise');
+      }
+    })();
+
+    this.cache.set(cacheKey + '-promise', promise);
+    return promise;
   }
 
   /**
@@ -199,32 +253,49 @@ class ContentSearchService {
    * @returns {Promise<string[]>} Array of mining prompts
    */
   async getMiningPrompts(category, type) {
-    try {
-      await this.loadContentIndex();
-      
-      const prompts = [];
-      
-      // Find entries that match the category
-      const matchingEntries = this.contentIndex.entries.filter(entry => 
-        entry.category === category
-      );
-
-      // Extract mining prompts from matching entries
-      for (const entry of matchingEntries) {
-        if (entry.miningPrompts && entry.miningPrompts[type]) {
-          prompts.push(...entry.miningPrompts[type]);
-        }
-      }
-
-      return prompts;
-    } catch (error) {
-      const errorResult = await errorHandlingService.handleContentServiceError(
-        'getMiningPrompts', 
-        error, 
-        { category, type }
-      );
-      return errorResult.fallbackData;
+    const cacheKey = `getMiningPrompts-${category}-${type}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
     }
+
+    if (this.cache.has(cacheKey + '-promise')) {
+      return this.cache.get(cacheKey + '-promise');
+    }
+
+    const promise = (async () => {
+      try {
+        await this.loadContentIndex();
+
+        const prompts = [];
+
+        // Find entries that match the category
+        const matchingEntries = this.contentIndex.entries.filter(entry =>
+          entry.category === category
+        );
+
+        // Extract mining prompts from matching entries
+        for (const entry of matchingEntries) {
+          if (entry.miningPrompts && entry.miningPrompts[type]) {
+            prompts.push(...entry.miningPrompts[type]);
+          }
+        }
+
+        this.cache.set(cacheKey, prompts);
+        return prompts;
+      } catch (error) {
+        const errorResult = await errorHandlingService.handleContentServiceError(
+          'getMiningPrompts',
+          error,
+          { category, type }
+        );
+        return errorResult.fallbackData;
+      } finally {
+        this.cache.delete(cacheKey + '-promise');
+      }
+    })();
+
+    this.cache.set(cacheKey + '-promise', promise);
+    return promise;
   }
 
   /**

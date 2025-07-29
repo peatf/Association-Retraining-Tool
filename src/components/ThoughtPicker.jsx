@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { Suspense, memo } from 'react';
 import styled from 'styled-components';
 import { useSession } from '../context/SessionContext.jsx';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import BaseCard from './BaseCard.jsx';
-import TopicSelector from './ThoughtPicker/TopicSelector.jsx';
-import SubTopicReveal from './ThoughtPicker/SubTopicReveal.jsx';
-import ReplacementThoughtList from './ThoughtPicker/ReplacementThoughtList.jsx';
+import { Spinner } from './common';
+
+const TopicSelector = React.lazy(() => import('./ThoughtPicker/TopicSelector.jsx'));
+const SubTopicReveal = React.lazy(() => import('./ThoughtPicker/SubTopicReveal.jsx'));
+const ReplacementThoughtList = React.lazy(() => import('./ThoughtPicker/ReplacementThoughtList.jsx'));
 
 const IntensitySlider = styled.input`
   width: 100%;
   margin: 1rem 0;
 `;
 
-const ThoughtPicker = () => {
+const ThoughtPicker = memo(() => {
   const { canvasState, updateCanvasState, addInsight } = useSession();
   const { selectedTopic, selectedSubcategory, intensity, selectedThought } = canvasState;
   const shouldReduceMotion = useReducedMotion();
@@ -41,7 +43,9 @@ const ThoughtPicker = () => {
         animate={shouldReduceMotion ? {} : { opacity: 1 }}
         transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.5 }}
       >
-        <TopicSelector onTopicSelect={handleTopicSelect} selectedTopic={selectedTopic} />
+        <Suspense fallback={<Spinner />}>
+          <TopicSelector onTopicSelect={handleTopicSelect} selectedTopic={selectedTopic} />
+        </Suspense>
         <div>
           <label htmlFor="intensity-slider">Intensity</label>
           <IntensitySlider
@@ -60,7 +64,9 @@ const ThoughtPicker = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
             >
-              <SubTopicReveal selectedCategory={selectedTopic} onSubTopicSelect={handleSubTopicSelect} selectedSubTopic={selectedSubcategory} />
+              <Suspense fallback={<Spinner />}>
+                <SubTopicReveal selectedCategory={selectedTopic} onSubTopicSelect={handleSubTopicSelect} selectedSubTopic={selectedSubcategory} />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
@@ -71,13 +77,15 @@ const ThoughtPicker = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
             >
-              <ReplacementThoughtList
-                category={selectedTopic}
-                subcategory={selectedSubcategory}
-                intensity={intensity}
-                onThoughtSelect={handleThoughtSelect}
-                selectedThought={selectedThought}
-              />
+              <Suspense fallback={<Spinner />}>
+                <ReplacementThoughtList
+                  category={selectedTopic}
+                  subcategory={selectedSubcategory}
+                  intensity={intensity}
+                  onThoughtSelect={handleThoughtSelect}
+                  selectedThought={selectedThought}
+                />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
@@ -91,6 +99,6 @@ const ThoughtPicker = () => {
       </motion.div>
     </BaseCard>
   );
-};
+});
 
 export default ThoughtPicker;
