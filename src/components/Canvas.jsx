@@ -122,6 +122,7 @@ function Canvas() {
   const handleReady = (intensity) => {
     console.log("Ready with intensity:", intensity);
     updateCanvasState({ isReady: true, intensity: intensity });
+    Sentry.captureMessage(`Readiness complete with intensity ${intensity}`);
     setShowReadinessGate(false);
   };
 

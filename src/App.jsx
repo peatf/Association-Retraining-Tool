@@ -110,6 +110,12 @@ function App() {
     setCurrentTheme(currentTheme === 'default' ? 'highContrast' : 'default');
   };
 
+  React.useEffect(() => {
+    Sentry.metrics.timing('canvas_load_time', () => {
+      // Your code to measure canvas load time here
+    });
+  }, []);
+
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <AppContainer>

@@ -24,7 +24,10 @@ const ThoughtMining = memo(({ onComplete }) => {
   const shouldReduceMotion = useReducedMotion();
 
   const handleNextStep = () => {
-    setStep(step + 1);
+    Sentry.metrics.timing(`thought_mining_step_${step}_duration`, () => {
+      setStep(step + 1);
+      Sentry.captureMessage(`Thought mining step ${step} complete`);
+    });
   };
 
   const handlePrevStep = () => {

@@ -92,7 +92,10 @@ const ThoughtPicker = memo(() => {
         </AnimatePresence>
         {selectedThought && (
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button className="btn-primary" onClick={() => console.log('Thought Picker complete')}>
+            <button className="btn-primary" onClick={() => {
+              console.log('Thought Picker complete');
+              Sentry.captureMessage('Thought picker complete');
+            }}>
               Done
             </button>
           </div>
