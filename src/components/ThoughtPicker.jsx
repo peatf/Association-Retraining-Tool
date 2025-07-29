@@ -63,6 +63,7 @@ const ThoughtPicker = memo(() => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
+              aria-live="polite"
             >
               <Suspense fallback={<Spinner />}>
                 <SubTopicReveal selectedCategory={selectedTopic} onSubTopicSelect={handleSubTopicSelect} selectedSubTopic={selectedSubcategory} />

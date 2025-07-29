@@ -42,7 +42,7 @@ const ThoughtMining = memo(({ onComplete }) => {
 
   return (
     <div>
-      <ProgressIndicator>
+      <ProgressIndicator aria-live="polite">
         <ProgressStep active={step === 0}>1. Neutralize</ProgressStep>
         <ProgressStep active={step === 1}>2. Common Ground</ProgressStep>
         <ProgressStep active={step === 2}>3. Data Extraction</ProgressStep>

@@ -30,6 +30,13 @@ const BaseCard = ({
   'aria-label': ariaLabel
 }) => {
   const shouldReduceMotion = useReducedMotion();
+  const cardRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (isActive && cardRef.current) {
+      cardRef.current.focus();
+    }
+  }, [isActive]);
 
   // Animation variants for card states
   const cardVariants = {
@@ -99,6 +106,7 @@ const BaseCard = ({
       whileTap={!disabled && !loading && !shouldReduceMotion ? "tap" : undefined}
       data-testid={testId}
       id={cardId}
+      ref={cardRef}
       role="region"
       aria-label={ariaLabel || title}
       aria-describedby={ariaDescribedBy || contentId}
