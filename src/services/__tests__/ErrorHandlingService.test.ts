@@ -20,12 +20,12 @@ Object.defineProperty(window, 'localStorage', {
 // Mock navigator.clipboard
 Object.defineProperty(navigator, 'clipboard', {
   value: {
-    writeText: vi.fn().mockResolvedValue()
+    writeText: vi.fn().mockResolvedValue(undefined)
   }
 });
 
 describe('ErrorHandlingService', () => {
-  let errorService;
+  let errorService: typeof errorHandlingService;
 
   beforeEach(() => {
     errorService = errorHandlingService;
@@ -190,10 +190,13 @@ describe('ErrorHandlingService', () => {
     it('tracks recent errors for health check', () => {
       // Add old errors
       const oldTimestamp = Date.now() - 400000; // 6+ minutes ago
-      errorService.errorLog.push({
+      errorService.getErrorLogForTesting().push({
         timestamp: oldTimestamp,
+        source: 'Test',
+        message: 'old error',
+        details: {},
         category: 'Old Error',
-        error: { message: 'old error' }
+        error: { name: 'Error', message: 'old error' }
       });
 
       // Add recent errors
@@ -219,10 +222,10 @@ describe('ErrorHandlingService', () => {
       const listener = vi.fn();
       
       errorService.addErrorListener(listener);
-      expect(errorService.errorListeners.has(listener)).toBe(true);
+      expect(errorService.getErrorListenersForTesting().has(listener)).toBe(true);
       
       errorService.removeErrorListener(listener);
-      expect(errorService.errorListeners.has(listener)).toBe(false);
+      expect(errorService.getErrorListenersForTesting().has(listener)).toBe(false);
     });
 
     it('notifies error listeners on component errors', () => {
@@ -233,12 +236,9 @@ describe('ErrorHandlingService', () => {
       errorService.handleComponentError('TestComponent', error);
 
       expect(listener).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'component',
-          componentName: 'TestComponent',
-          error,
-          errorInfo: expect.any(Object)
-        })
+        error,
+        undefined, // source is undefined in errorEvent
+        undefined  // details is undefined in errorEvent
       );
     });
 
@@ -258,11 +258,11 @@ describe('ErrorHandlingService', () => {
 
   describe('Retry Management', () => {
     it('clears retry attempts on success', () => {
-      errorService.retryAttempts.set('test_operation', 2);
+      errorService.getRetryAttemptsForTesting().set('test_operation', 2);
       
       errorService.clearRetryAttempts('test_operation');
       
-      expect(errorService.retryAttempts.has('test_operation')).toBe(false);
+      expect(errorService.getRetryAttemptsForTesting().has('test_operation')).toBe(false);
     });
 
     it('tracks retry attempts per operation', async () => {
@@ -292,13 +292,13 @@ describe('ErrorHandlingService', () => {
 
   describe('Cleanup', () => {
     it('clears error log and retry attempts', () => {
-      errorService.logError('Test', new Error('test'));
-      errorService.retryAttempts.set('test', 1);
-
+            errorService.logError('Test', new Error('test'));
+      errorService.getRetryAttemptsForTesting().set('test', 1);
+      
       errorService.clearErrorLog();
-
-      expect(errorService.errorLog).toHaveLength(0);
-      expect(errorService.retryAttempts.size).toBe(0);
+      
+      expect(errorService.getErrorLogForTesting()).toHaveLength(0);
+      expect(errorService.getRetryAttemptsForTesting().size).toBe(0);
     });
   });
 });

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, test, beforeEach, expect } from 'vitest';
 import { ThemeProvider } from 'styled-components';
 import Breadcrumb from '../Breadcrumb.jsx';
 import { SessionProvider } from '../../context/SessionContext.jsx';
@@ -13,33 +13,54 @@ const mockTheme = {
   colors: {
     primary: '#3498db',
     secondary: '#6c757d',
+    background: '#f4f4f9',
     cardBackground: '#ffffff',
-    textSecondary: '#666666'
+    text: '#2c3e50',
+    textSecondary: '#666666',
+    white: '#ffffff',
+    error: '#9b2226'
   },
   typography: {
+    fontFamily: {
+      heading: 'system-ui, sans-serif',
+      body: 'system-ui, sans-serif'
+    },
     sizes: {
-      xs: '0.75rem',
       sm: '0.875rem',
-      base: '1rem'
+      md: '1rem',
+      lg: '1.2rem',
+      xl: '1.5rem',
+      '2xl': '2rem'
     },
     weights: {
+      light: 300,
+      regular: 400,
       medium: 500,
-      semibold: 600
+      semibold: 600,
+      bold: 700,
+      extrabold: 800
     }
   },
   spacing: {
     xs: '0.25rem',
     sm: '0.5rem',
     md: '1rem',
-    lg: '1.5rem'
+    lg: '1.5rem',
+    xl: '2rem'
   },
   borderRadius: {
     sm: '4px',
-    md: '8px'
+    md: '8px',
+    lg: '15px'
+  },
+  shadows: {
+    card: '0 2px 4px rgba(0,0,0,0.1)',
+    cardHover: '0 4px 8px rgba(0,0,0,0.15)'
   },
   breakpoints: {
     mobile: '320px',
-    tablet: '768px'
+    tablet: '768px',
+    desktop: '1024px'
   }
 };
 
@@ -58,7 +79,12 @@ vi.mock('../../js/SessionStateManager.js', () => {
 });
 
 // Test wrapper component
-const TestWrapper = ({ children, initialState = {} }) => {
+interface TestWrapperProps {
+  children: React.ReactNode;
+  initialState?: Record<string, any>;
+}
+
+const TestWrapper: React.FC<TestWrapperProps> = ({ children, initialState = {} }) => {
   return (
     <ThemeProvider theme={mockTheme}>
       <SessionProvider>
@@ -300,7 +326,7 @@ describe('Breadcrumb Component', () => {
       );
 
       expect(screen.getByText(/current: readiness/i)).toBeInTheDocument();
-      expect(screen.getByText(/assess emotional readiness/i)).toBeInTheDocument();
+      expect(screen.getByText(/assess your readiness to work through thoughts/i)).toBeInTheDocument();
     });
   });
 

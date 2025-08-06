@@ -2,6 +2,7 @@ import React, { Suspense, memo } from 'react';
 import styled from 'styled-components';
 import { useSession } from '../context/SessionContext';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import * as Sentry from '@sentry/react';
 import BaseCard from './BaseCard';
 import { Spinner } from './common';
 
@@ -14,24 +15,39 @@ const IntensitySlider = styled.input`
   margin: 1rem 0;
 `;
 
+interface Topic {
+  id: string;
+  name: string;
+}
+
+interface Subcategory {
+  id: string;
+  name: string;
+}
+
+interface Thought {
+  id: string;
+  content: string;
+}
+
 const ThoughtPicker = memo(() => {
   const { canvasState, updateCanvasState, addInsight } = useSession();
   const { selectedTopic, selectedSubcategory, intensity, selectedThought } = canvasState;
   const shouldReduceMotion = useReducedMotion();
 
-  const handleTopicSelect = (topic) => {
+  const handleTopicSelect = (topic: string): void => {
     updateCanvasState({ selectedTopic: topic, selectedSubcategory: null });
   };
 
-  const handleSubTopicSelect = (subcategory) => {
+  const handleSubTopicSelect = (subcategory: string | null): void => {
     updateCanvasState({ selectedSubcategory: subcategory });
   };
 
-  const handleThoughtSelect = (thought) => {
+  const handleThoughtSelect = (thought: string): void => {
     updateCanvasState({ selectedThought: thought });
     addInsight({
       type: 'replacement_thought',
-      content: thought,
+      text: thought,
       source: 'thought_picker'
     });
   };
@@ -53,8 +69,8 @@ const ThoughtPicker = memo(() => {
             id="intensity-slider"
             min="0"
             max="10"
-            value={intensity}
-            onChange={(e) => updateCanvasState({ intensity: e.target.value })}
+            value={intensity || 5}
+            onChange={(e) => updateCanvasState({ intensity: parseInt(e.target.value) })}
           />
         </div>
         <AnimatePresence>
@@ -82,9 +98,9 @@ const ThoughtPicker = memo(() => {
                 <ReplacementThoughtList
                   category={selectedTopic}
                   subcategory={selectedSubcategory}
-                  intensity={intensity}
+                  intensity={intensity || 5}
                   onThoughtSelect={handleThoughtSelect}
-                  selectedThought={selectedThought}
+                  selectedThought={selectedThought || null}
                 />
               </Suspense>
             </motion.div>

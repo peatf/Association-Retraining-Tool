@@ -31,7 +31,7 @@ const SessionContextExample = () => {
   } = useSession();
 
   // Example: Readiness assessment
-  const handleReadinessCheck = (isReady, intensity) => {
+  const handleReadinessCheck = (isReady: boolean, intensity: number) => {
     updateCanvasState({ 
       isReady, 
       intensity 
@@ -43,35 +43,40 @@ const SessionContextExample = () => {
     
     // Track the readiness decision
     addInsight({
+      text: `Readiness assessment: ${isReady ? 'Ready' : 'Not ready'} (intensity: ${intensity})`,
+      source: 'readiness_gate',
       type: 'readiness_assessment',
-      isReady,
-      intensity,
-      source: 'readiness_gate'
+      metadata: { isReady, intensity }
     });
   };
 
   // Example: Content interaction tracking
-  const handlePromptSelection = async (promptId, promptText) => {
+  const handlePromptSelection = async (promptId: string, promptText: string) => {
     try {
       // Track the interaction
-      trackContentInteraction('mining_prompt', promptId, 'selected');
+      trackContentInteraction?.({
+        type: 'mining_prompt',
+        content: promptId,
+        metadata: { action: 'selected' }
+      });
       
       // Prepare query for content pipeline
-      const query = prepareContentQuery('getMiningPrompts', {
+      const query = prepareContentQuery?.({ type: 'getMiningPrompts', params: {
         topic: canvasState.selectedTopic,
         type: 'neutralize'
-      });
+      }});
       
       console.log('Content query prepared:', query);
       
       // Simulate content loading and track progress
-      trackMiningProgress('neutralize', 'prompt_selected', {
-        promptId,
-        promptText
+      trackMiningProgress?.({
+        type: 'neutralize',
+        step: 'prompt_selected',
+        data: { promptId, promptText }
       });
       
     } catch (error) {
-      handleContentError(error, {
+      handleContentError?.(error as Error, {
         action: 'prompt_selection',
         promptId,
         currentLane: canvasState.currentLane
@@ -80,8 +85,8 @@ const SessionContextExample = () => {
   };
 
   // Example: Mining completion
-  const handleMiningComplete = (miningType, results) => {
-    updateMiningResults(miningType, results);
+  const handleMiningComplete = (miningType: string, results: Record<string, any>) => {
+    updateMiningResults?.({ [miningType]: results });
     
     // Navigate to next step
     if (miningType === 'dataExtraction') {
@@ -91,12 +96,12 @@ const SessionContextExample = () => {
 
   // Example: Getting insights by type
   const getContentInteractions = () => {
-    return getInsightsByType('content_interaction');
+    return getInsightsByType?.('content_interaction') || [];
   };
 
   // Example: Session health check
   const checkSessionHealth = () => {
-    const metrics = getSessionMetrics();
+    const metrics = getSessionMetrics?.() || {};
     console.log('Current session health:', metrics);
     
     if (metrics.sessionDuration > 30 * 60 * 1000) { // 30 minutes
@@ -149,8 +154,8 @@ const SessionContextExample = () => {
       <div className="insights">
         <h3>Recent Insights</h3>
         {canvasState.minedInsights.slice(-3).map((insight, index) => (
-          <div key={insight.id || index} className="insight-item">
-            <strong>{insight.type}:</strong> {JSON.stringify(insight.content || insight)}
+          <div key={index} className="insight-item">
+            <strong>{insight.type || 'insight'}:</strong> {insight.text}
           </div>
         ))}
       </div>

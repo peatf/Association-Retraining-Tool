@@ -5,14 +5,14 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import ErrorState from '../common/ErrorState';
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }) => <button {...props}>{children}</button>
+    div: ({ children, ...props }: { children: React.ReactNode; [key: string]: any }) => <div {...props}>{children}</div>,
+    button: ({ children, ...props }: { children: React.ReactNode; [key: string]: any }) => <button {...props}>{children}</button>
   }
 }));
 
@@ -46,13 +46,15 @@ describe('ErrorState', () => {
   });
 
   it('calls onRetry when retry button is clicked', async () => {
-    const onRetry = vi.fn().mockResolvedValue();
+    const onRetry = vi.fn().mockResolvedValue(undefined);
     render(<ErrorState {...defaultProps} onRetry={onRetry} />);
     
     const retryButton = screen.getByTestId('test-error-retry');
     fireEvent.click(retryButton);
     
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(onRetry).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('shows loading state during retry', async () => {

@@ -1,5 +1,39 @@
 # React Application Setup - Task 1 Complete ✅
 
+## 🚀 Getting Started
+
+### Quick Setup
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# Application available at http://localhost:5173
+
+# Run tests
+npm test
+npx playwright test
+
+# Build for production
+npm run build
+```
+
+### Key Commands
+- **Development**: `npm run dev` - Hot reload development server
+- **Testing**: `npm test` - Unit and component tests
+- **E2E Testing**: `npx playwright test` - End-to-end user flows
+- **Production Build**: `npm run build` - Optimized static assets
+- **Preview**: `npm run preview` - Preview production build locally
+
+### Architecture Overview
+The Clarity Canvas uses a **lane-based interface** where users progress through therapeutic workflows:
+1. **Readiness Gate** → Emotional readiness assessment
+2. **Thought Mining** → Three-step thought exploration  
+3. **Thought Picker** → Hierarchical replacement thought selection
+
+---
+
 ## Overview
 Successfully implemented React-based Clarity Canvas interface with comprehensive setup and configuration.
 

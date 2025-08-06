@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, test, expect } from 'vitest';
 import { SessionProvider, useSession } from '../SessionContext';
 
 // Test component that verifies legacy integration
@@ -28,7 +28,7 @@ const LegacyIntegrationTestComponent = () => {
   };
 
   const getMetrics = () => {
-    const metrics = getSessionMetrics();
+    const metrics = getSessionMetrics?.();
     console.log('Session metrics:', metrics);
   };
 

@@ -8,6 +8,23 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+interface ErrorStateProps {
+  title?: string;
+  message?: string;
+  error?: Error | null;
+  onRetry?: (() => void | Promise<void>) | null;
+  onFallback?: (() => void) | null;
+  onReport?: ((errorReport: any) => void) | null;
+  retryText?: string;
+  fallbackText?: string;
+  reportText?: string;
+  showDetails?: boolean;
+  testId?: string;
+  className?: string;
+  icon?: string;
+  type?: 'error' | 'warning' | 'info';
+}
+
 const ErrorContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -50,7 +67,11 @@ const ErrorActions = styled.div`
   justify-content: center;
 `;
 
-const ErrorButton = styled(motion.button)`
+interface ErrorButtonProps {
+  primary?: boolean;
+}
+
+const ErrorButton = styled(motion.button)<ErrorButtonProps>`
   background: ${props => props.primary ? '#dc3545' : '#6c757d'};
   color: white;
   border: none;
@@ -102,7 +123,7 @@ const ErrorDetails = styled.details`
   }
 `;
 
-const ErrorState = ({
+const ErrorState: React.FC<ErrorStateProps> = ({
   title = "Something went wrong",
   message = "We encountered an unexpected issue. Please try again.",
   error = null,
@@ -185,8 +206,7 @@ const ErrorState = ({
     animate: { 
       opacity: 1, 
       y: 0, 
-      scale: 1,
-      transition: { duration: 0.3, ease: 'easeOut' }
+      scale: 1
     }
   };
 

@@ -10,7 +10,27 @@ import { SkeletonCard, ErrorState, Spinner } from './common';
 import errorHandlingService from '../services/ErrorHandlingService';
 import './BaseCard.css';
 
-const BaseCard = ({ 
+interface BaseCardProps {
+  title: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+  isCompleted?: boolean;
+  onActivate?: (active: boolean) => void;
+  onComplete?: () => void;
+  loading?: boolean;
+  error?: string | Error | null;
+  testId?: string;
+  className?: string;
+  showActions?: boolean;
+  completionText?: string;
+  skipText?: string;
+  onSkip?: () => void;
+  disabled?: boolean;
+  'aria-describedby'?: string;
+  'aria-label'?: string;
+}
+
+const BaseCard: React.FC<BaseCardProps> = ({ 
   title, 
   children, 
   isActive = false, 
@@ -30,7 +50,7 @@ const BaseCard = ({
   'aria-label': ariaLabel
 }) => {
   const shouldReduceMotion = useReducedMotion();
-  const cardRef = React.useRef(null);
+  const cardRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (isActive && cardRef.current) {
@@ -48,30 +68,19 @@ const BaseCard = ({
     animate: { 
       opacity: 1, 
       y: 0,
-      scale: 1,
-      transition: { 
-        duration: 0.3, 
-        ease: 'easeOut' 
-      }
+      scale: 1
     },
     hover: {
       scale: 1.02,
-      y: -2,
-      transition: { 
-        duration: 0.2, 
-        ease: 'easeInOut' 
-      }
+      y: -2
     },
     tap: {
-      scale: 0.98,
-      transition: { 
-        duration: 0.1 
-      }
+      scale: 0.98
     }
   };
 
   // Determine card state classes
-  const getCardStateClass = () => {
+  const getCardStateClass = (): string => {
     if (error) return 'card-error';
     if (loading) return 'card-loading';
     if (isCompleted) return 'card-completed';
@@ -80,7 +89,7 @@ const BaseCard = ({
   };
 
   // Handle keyboard navigation
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       if (onActivate && !isActive && !disabled) {

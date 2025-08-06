@@ -5,6 +5,22 @@ import React from 'react';
 import styled from 'styled-components';
 import errorHandlingService from '../services/ErrorHandlingService';
 
+interface ErrorButtonProps {
+  primary?: boolean;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+  retryCount: number;
+}
+
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  sessionData?: Record<string, any>;
+}
+
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -46,7 +62,7 @@ const ErrorActions = styled.div`
   justify-content: center;
 `;
 
-const ErrorButton = styled.button`
+const ErrorButton = styled.button<ErrorButtonProps>`
   background: ${props => props.primary ? '#3498db' : '#6c757d'};
   color: white;
   border: none;
@@ -85,8 +101,8 @@ const ErrorDetails = styled.details`
   }
 `;
 
-class CanvasErrorBoundary extends React.Component {
-  constructor(props) {
+class CanvasErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { 
       hasError: false, 
@@ -96,12 +112,12 @@ class CanvasErrorBoundary extends React.Component {
     };
   }
   
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     // Update state so the next render will show the fallback UI
     return { hasError: true, error };
   }
   
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error details for debugging
     console.error('Canvas Error Boundary caught an error:', error, errorInfo);
     
@@ -150,7 +166,9 @@ class CanvasErrorBoundary extends React.Component {
       const sessionData = this.props.sessionData || {};
       
       // Use error handling service to preserve session
-      errorHandlingService.handleSessionError(this.state.error, sessionData);
+      if (this.state.error) {
+        errorHandlingService.handleSessionError(this.state.error, sessionData);
+      }
     } catch (preservationError) {
       console.warn('Could not preserve session data:', preservationError);
     }
@@ -179,15 +197,17 @@ class CanvasErrorBoundary extends React.Component {
       .catch(() => {
         // Fallback: show error in a new window
         const errorWindow = window.open('', '_blank');
-        errorWindow.document.write(`
-          <html>
-            <head><title>Error Report</title></head>
-            <body>
-              <h2>Clarity Canvas Error Report</h2>
-              <pre>${JSON.stringify(errorReport, null, 2)}</pre>
-            </body>
-          </html>
-        `);
+        if (errorWindow) {
+          errorWindow.document.write(`
+            <html>
+              <head><title>Error Report</title></head>
+              <body>
+                <h2>Clarity Canvas Error Report</h2>
+                <pre>${JSON.stringify(errorReport, null, 2)}</pre>
+              </body>
+            </html>
+          `);
+        }
       });
   };
   

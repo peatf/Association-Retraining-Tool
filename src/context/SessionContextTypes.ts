@@ -43,6 +43,7 @@ export interface SessionContextValue {
   resetSession: () => void;
   goBack: () => void;
   goForward: () => void;
+  navigateToLane: (lane: string) => void;
   addInsight: (insight: { 
     text: string; 
     source: string; 
@@ -54,4 +55,13 @@ export interface SessionContextValue {
     completed?: boolean;
     data?: Record<string, any>;
   }) => void;
+  // Additional methods for testing and functionality
+  trackContentInteraction?: (interaction: { type: string; content: string; metadata?: Record<string, any> }) => void;
+  trackMiningProgress?: (progress: { type: string; step: string; data?: Record<string, any> }) => void;
+  updateMiningResults?: (results: Record<string, any>) => void;
+  prepareContentQuery?: (query: { type: string; params: Record<string, any> }) => string;
+  handleContentError?: (error: Error, context: Record<string, any>) => void;
+  getSessionMetrics?: () => Record<string, any>;
+  getInsightsByType?: (type: string) => Array<{ text: string; timestamp: string; source: string; type?: string; metadata?: Record<string, any> }>;
+  legacySessionManager?: any;
 }

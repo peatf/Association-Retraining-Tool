@@ -5,23 +5,30 @@ import { useSession } from '../context/SessionContext';
 import contentSearchService from '../services/ContentSearchService';
 import { Spinner, ErrorState } from './common';
 
-const CardCommonGround = ({ onComplete }) => {
+interface CardCommonGroundProps {
+  onComplete: () => void;
+}
+
+const CardCommonGround: React.FC<CardCommonGroundProps> = ({ onComplete }) => {
   const { canvasState, updateCanvasState } = useSession();
-  const [prompts, setPrompts] = useState([]);
+  const [prompts, setPrompts] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [reflection, setReflection] = useState('');
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
 
   useEffect(() => {
-    const fetchPrompts = async () => {
+    const fetchPrompts = async (): Promise<void> => {
       try {
         setLoading(true);
-        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic, 'commonGround');
+        const fetchedPrompts = await contentSearchService.getMiningPrompts(
+          canvasState.selectedTopic || '', 
+          'commonGround'
+        );
         setPrompts(fetchedPrompts);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err instanceof Error ? err : new Error('Unknown error'));
         setLoading(false);
       }
     };
@@ -31,7 +38,7 @@ const CardCommonGround = ({ onComplete }) => {
     }
   }, [canvasState.selectedTopic]);
 
-  const handleComplete = () => {
+  const handleComplete = (): void => {
     updateCanvasState({
       miningResults: {
         ...canvasState.miningResults,
@@ -52,11 +59,11 @@ const CardCommonGround = ({ onComplete }) => {
     return <ErrorState title="Error loading prompts" message={error.message} />;
   }
 
-  const showNextPrompt = () => {
+  const showNextPrompt = (): void => {
     setCurrentPromptIndex((prevIndex) => (prevIndex + 1) % prompts.length);
   };
 
-  const showPrevPrompt = () => {
+  const showPrevPrompt = (): void => {
     setCurrentPromptIndex((prevIndex) => (prevIndex - 1 + prompts.length) % prompts.length);
   };
 

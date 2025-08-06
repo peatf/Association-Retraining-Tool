@@ -1,15 +1,41 @@
 // Environment configuration for Clarity Canvas
 // Supports dev/staging/prod content branches and feature flags
 
+interface Config {
+  CONTENT_INDEX_PATH: string;
+  CONTENT_BASE_URL: string;
+  CANVAS_ENABLED: boolean;
+  CANVAS_LANES: number;
+  CANVAS_MOBILE_BREAKPOINT: number;
+  MAX_BUNDLE_SIZE: number;
+  LAZY_LOADING_ENABLED: boolean;
+  FEATURE_FLAGS: {
+    REACT_CANVAS: boolean;
+    THOUGHT_MINING: boolean;
+    HIERARCHICAL_PICKER: boolean;
+    ADVANCED_ANIMATIONS: boolean;
+    ERROR_REPORTING: boolean;
+  };
+  NODE_ENV: string;
+  CONTENT_BRANCH: string;
+  AB_TESTING: {
+    enabled: boolean;
+    userId: string;
+    experiments: Record<string, any>;
+  };
+}
+
 class EnvironmentConfig {
+  private config: Config;
+
   constructor() {
     this.config = this.loadConfiguration();
     this.validateConfiguration();
   }
 
-  loadConfiguration() {
+  private loadConfiguration(): Config {
     // Default configuration
-    const defaultConfig = {
+    const defaultConfig: Config = {
       // Content pipeline settings
       CONTENT_INDEX_PATH: './public/content/content-index.bin',
       CONTENT_BASE_URL: './content/raw/',
@@ -52,7 +78,7 @@ class EnvironmentConfig {
     return { ...defaultConfig, ...envOverrides };
   }
 
-  detectEnvironment() {
+  private detectEnvironment(): string {
     // Detect environment from various sources
     if (typeof process !== 'undefined' && process.env) {
       return process.env.NODE_ENV || 'development';
@@ -69,11 +95,11 @@ class EnvironmentConfig {
     return 'production';
   }
 
-  getContentBranch() {
+  private getContentBranch(): string {
     const env = this.detectEnvironment();
     
     // Map environments to content branches
-    const branchMap = {
+    const branchMap: Record<string, string> = {
       development: 'dev',
       staging: 'staging', 
       production: 'main'
@@ -82,15 +108,16 @@ class EnvironmentConfig {
     return branchMap[env] || 'main';
   }
 
-  getEnvironmentOverrides() {
+  private getEnvironmentOverrides(): Partial<Config> {
     const env = this.detectEnvironment();
     
-    const overrides = {
+    const overrides: Record<string, Partial<Config>> = {
       development: {
         FEATURE_FLAGS: {
           REACT_CANVAS: true, // Enable in dev for testing
           THOUGHT_MINING: true,
           HIERARCHICAL_PICKER: true,
+          ADVANCED_ANIMATIONS: true,
           ERROR_REPORTING: true
         },
         CONTENT_INDEX_PATH: './public/content/content-index.bin'
@@ -101,6 +128,7 @@ class EnvironmentConfig {
           REACT_CANVAS: true, // Enable in staging for testing
           THOUGHT_MINING: true,
           HIERARCHICAL_PICKER: false, // Gradual rollout
+          ADVANCED_ANIMATIONS: true,
           ERROR_REPORTING: true
         }
       },
@@ -110,6 +138,7 @@ class EnvironmentConfig {
           REACT_CANVAS: false, // Start disabled in production
           THOUGHT_MINING: false,
           HIERARCHICAL_PICKER: false,
+          ADVANCED_ANIMATIONS: false,
           ERROR_REPORTING: true
         }
       }
@@ -118,7 +147,7 @@ class EnvironmentConfig {
     return overrides[env] || {};
   }
 
-  generateUserId() {
+  private generateUserId(): string {
     // Generate anonymous user ID for A/B testing
     // Uses localStorage to persist across sessions
     let userId = localStorage.getItem('clarity_canvas_user_id');
@@ -131,14 +160,14 @@ class EnvironmentConfig {
     return userId;
   }
 
-  validateConfiguration() {
+  private validateConfiguration() {
     const required = [
       'CONTENT_INDEX_PATH',
       'CONTENT_BASE_URL',
       'NODE_ENV'
     ];
 
-    const missing = required.filter(key => !this.config[key]);
+    const missing = required.filter(key => !(key in this.config));
     
     if (missing.length > 0) {
       throw new Error(`Missing required environment configuration: ${missing.join(', ')}`);
@@ -150,40 +179,40 @@ class EnvironmentConfig {
     }
   }
 
-  async validateContentIndex() {
+  private async validateContentIndex() {
     try {
       const response = await fetch(this.config.CONTENT_INDEX_PATH, { method: 'HEAD' });
       if (!response.ok) {
         console.warn(`Content index not found at ${this.config.CONTENT_INDEX_PATH}. Content pipeline may need to be rebuilt.`);
       }
     } catch (error) {
-      console.warn('Content index validation failed:', error.message);
+      console.warn('Content index validation failed:', error instanceof Error ? error.message : String(error));
     }
   }
 
   // Public API methods
-  get(key) {
+  get(key: keyof Config) {
     return this.config[key];
   }
 
-  getFeatureFlag(flagName) {
+  getFeatureFlag(flagName: keyof Config['FEATURE_FLAGS']) {
     return this.config.FEATURE_FLAGS[flagName] || false;
   }
 
-  isProduction() {
+  isProduction(): boolean {
     return this.config.NODE_ENV === 'production';
   }
 
-  isDevelopment() {
+  isDevelopment(): boolean {
     return this.config.NODE_ENV === 'development';
   }
 
-  getContentPath(filename) {
+  getContentPath(filename: string) {
     return `${this.config.CONTENT_BASE_URL}${filename}`;
   }
 
   // A/B testing methods
-  isInExperiment(experimentName) {
+  isInExperiment(experimentName: string) {
     if (!this.config.AB_TESTING.enabled) {
       return false;
     }
@@ -199,7 +228,7 @@ class EnvironmentConfig {
     return (hash % 100) < experiment.percentage;
   }
 
-  simpleHash(str) {
+  private simpleHash(str: string): number {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
@@ -210,7 +239,7 @@ class EnvironmentConfig {
   }
 
   // Feature flag override for testing
-  setFeatureFlag(flagName, value) {
+  setFeatureFlag(flagName: keyof Config['FEATURE_FLAGS'], value: boolean) {
     if (this.isDevelopment()) {
       this.config.FEATURE_FLAGS[flagName] = value;
       console.log(`Feature flag ${flagName} set to ${value}`);

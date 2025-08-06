@@ -19,7 +19,7 @@ export default defineConfig({
     // Ensure compatibility with existing content pipeline
     rollupOptions: {
       input: {
-        main: './index.html'
+        main: './public/index.html'
       },
       
       // Preserve existing assets structure

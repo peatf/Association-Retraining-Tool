@@ -8,14 +8,24 @@ import React, { useState, useEffect, useMemo } from 'react';
 import contentSearchService from '../../services/ContentSearchService';
 import { Spinner, ErrorState } from '../common';
 
-const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
-  const [categories, setCategories] = useState([]);
+interface TopicSelectorProps {
+  onTopicSelect: (category: string) => void;
+  selectedTopic: string | null;
+}
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+const TopicSelector: React.FC<TopicSelectorProps> = ({ onTopicSelect, selectedTopic }) => {
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Default icons for categories (fallback)
-  const getDefaultIcon = (category) => {
-    const iconMap = {
+  const getDefaultIcon = (category: string): string => {
+    const iconMap: Record<string, string> = {
       'Money': '💰',
       'Relationships': '💕',
       'Self-Image': '🪞',
@@ -25,8 +35,8 @@ const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
   };
 
   // Default descriptions for categories (fallback)
-  const getDefaultDescription = (category) => {
-    const descriptionMap = {
+  const getDefaultDescription = (category: string): string => {
+    const descriptionMap: Record<string, string> = {
       'Money': 'Financial concerns, scarcity, and abundance mindset',
       'Relationships': 'Connection, trust, boundaries, intimacy',
       'Self-Image': 'Self-worth, confidence, and personal identity',
@@ -35,25 +45,7 @@ const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
     return descriptionMap[category] || `Work on ${category.toLowerCase()} related concerns`;
   };
 
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
-
-  const handleTopicClick = (category) => {
-    if (onTopicSelect) {
-      onTopicSelect(category);
-    }
-  };
-
-  const retryLoading = () => {
-    setError(null);
-    setLoading(true);
-    // Re-trigger the useEffect
-    window.location.reload = false; // Remove window.location.reload usage
-    loadCategories();
-  };
-
-  const loadCategories = useMemo(() => async () => {
+  const loadCategories = useMemo(() => async (): Promise<void> => {
     try {
       setLoading(true);
       const cats = await contentSearchService.getCategories();
@@ -66,13 +58,29 @@ const TopicSelector = ({ onTopicSelect, selectedTopic }) => {
       setError(null);
     } catch (err) {
       console.error('Error loading categories:', err);
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Unknown error');
       // Fallback to default categories
       setCategories(['Money', 'Relationships', 'Self-Image']);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  const handleTopicClick = (category: string): void => {
+    if (onTopicSelect) {
+      onTopicSelect(category);
+    }
+  };
+
+  const retryLoading = (): void => {
+    setError(null);
+    setLoading(true);
+    loadCategories();
+  };
 
   if (loading) {
     return (

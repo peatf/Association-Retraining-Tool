@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import contentSearchService from '../../src/services/ContentSearchService.js';
-import errorHandlingService from '../../src/services/ErrorHandlingService.js';
+import contentSearchService from '../../src/services/ContentSearchService.ts';
+
+// Mock the ErrorHandlingService
+vi.mock('../../src/services/ErrorHandlingService.ts', () => ({
+  default: {
+    handleContentServiceError: vi.fn()
+  }
+}));
 
 const mockContentIndex = {
   metadata: {
@@ -71,9 +77,25 @@ describe('ContentSearchService', () => {
   });
 
   it('should handle error when getting categories', async () => {
-    errorHandlingService.handleContentServiceError.mockReturnValue({ fallbackData: ['fallback'] });
-    contentSearchService.isLoaded = false;
+    const { default: errorHandlingService } = await import('../../src/services/ErrorHandlingService.ts');
+    errorHandlingService.handleContentServiceError.mockResolvedValue({ 
+      success: false,
+      canRetry: false, 
+      fallbackData: ['fallback'],
+      useFallback: true 
+    });
+    
+    // Clear cache to ensure we hit the error path
+    contentSearchService.cache.clear();
+    
+    // Mock loadContentIndex to throw an error
+    const originalLoadContentIndex = contentSearchService.loadContentIndex;
+    contentSearchService.loadContentIndex = vi.fn().mockRejectedValue(new Error('Failed to load content'));
+    
     const categories = await contentSearchService.getCategories();
     expect(categories).toEqual(['fallback']);
+    
+    // Restore original method
+    contentSearchService.loadContentIndex = originalLoadContentIndex;
   });
 });

@@ -49,7 +49,7 @@ const ExportButton = styled(motion.button)`
   padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.lg};
   border-radius: ${props => props.theme.borderRadius.md};
   font-size: ${props => props.theme.typography.sizes.sm};
-  font-weight: ${props => props.theme.typography.weights.medium};
+  font-weight: ${props => props.theme.typography.weights.regular};
   cursor: pointer;
   transition: background-color 0.2s ease;
   
@@ -78,7 +78,7 @@ const SessionInfo = styled.div`
   
   @media (max-width: ${props => props.theme.breakpoints.mobile}) {
     flex-direction: column;
-    gap: ${props => props.theme.spacing.xs};
+    gap: ${props => props.theme.spacing.sm};
     text-align: center;
   }
 `;
@@ -87,9 +87,9 @@ const ClearButton = styled(motion.button)`
   background: none;
   border: 1px solid ${props => props.theme.colors.secondary};
   color: ${props => props.theme.colors.secondary};
-  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.md};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borderRadius.sm};
-  font-size: ${props => props.theme.typography.sizes.xs};
+  font-size: ${props => props.theme.typography.sizes.sm};
   cursor: pointer;
   transition: all 0.2s ease;
   
@@ -107,18 +107,17 @@ const ClearButton = styled(motion.button)`
 const InsightCount = styled.span`
   background: ${props => props.theme.colors.primary}20;
   color: ${props => props.theme.colors.primary};
-  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borderRadius.sm};
-  font-size: ${props => props.theme.typography.sizes.xs};
-  font-weight: ${props => props.theme.typography.weights.medium};
+  font-size: ${props => props.theme.typography.sizes.sm};
+  font-weight: ${props => props.theme.typography.weights.regular};
 `;
 
 function Footer() {
-  const { canvasState, clearSession, getSessionMetrics } = useSession();
+  const { canvasState, resetSession } = useSession();
   
   const hasInsights = canvasState.minedInsights && canvasState.minedInsights.length > 0;
   const insightCount = canvasState.minedInsights?.length || 0;
-  const sessionMetrics = getSessionMetrics();
 
   const handleExport = () => {
     if (!hasInsights) return;
@@ -162,7 +161,7 @@ function Footer() {
     
     try {
       const insightText = canvasState.minedInsights
-        .map((insight, index) => `${index + 1}. ${insight.content || insight}`)
+        .map((insight, index) => `${index + 1}. ${insight.text || insight}`)
         .join('\n\n');
       
       await navigator.clipboard.writeText(insightText);
@@ -176,12 +175,12 @@ function Footer() {
 
   const handleClearSession = () => {
     if (window.confirm('Are you sure you want to clear your current session? This will remove all insights and progress.')) {
-      clearSession();
+      resetSession();
     }
   };
 
   // Keyboard navigation handler
-  const handleKeyDown = (event, action, ...args) => {
+  const handleKeyDown = (event: React.KeyboardEvent, action: (...args: any[]) => void, ...args: any[]) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       action(...args);

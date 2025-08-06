@@ -79,7 +79,7 @@ class ErrorHandlingService {
   /**
    * Initialize fallback content for various scenarios
    */
-  initializeFallbackContent() {
+  private initializeFallbackContent(): FallbackContent {
     return {
       contentService: {
         categories: ['Money', 'Relationships', 'Self-Image'],
@@ -222,7 +222,7 @@ class ErrorHandlingService {
   /**
    * Handle component errors with recovery options
    */
-  handleComponentError(componentName, error, context = {}) {
+  handleComponentError(componentName: string, error: unknown, context: Record<string, any> = {}) {
     this.logError('Component Error', error, { componentName, ...context });
 
     const errorInfo = {
@@ -248,12 +248,12 @@ class ErrorHandlingService {
   /**
    * Handle session errors with preservation
    */
-  handleSessionError(error, sessionData = {}) {
+  handleSessionError(error: Error, sessionData: Record<string, any> = {}) {
     this.logError('Session Error', error, { sessionData });
 
     // Preserve session data
     try {
-      const preservedData = {
+      const preservedData: Record<string, any> = {
         timestamp: Date.now(),
         sessionData,
         error: error.message,
@@ -261,7 +261,7 @@ class ErrorHandlingService {
       };
       
       localStorage.setItem('clarity_canvas_recovery', JSON.stringify(preservedData));
-    } catch (storageError) {
+    } catch (storageError: unknown) {
       console.warn('Could not preserve session data:', storageError);
     }
 
@@ -276,7 +276,7 @@ class ErrorHandlingService {
   /**
    * Create user-friendly error messages
    */
-  createUserFriendlyError(error: unknown, context = ''): UserFriendlyError {
+  createUserFriendlyError(error: unknown, context: string = ''): UserFriendlyError {
     const baseMessage = this.fallbackContent.ui.errorMessages;
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorName = error instanceof Error ? error.name : 'Error';
@@ -328,8 +328,8 @@ class ErrorHandlingService {
   /**
    * Get error title based on component and error
    */
-  getErrorTitle(componentName, error) {
-    const componentTitles = {
+  getErrorTitle(componentName: string, error: unknown) {
+    const componentTitles: Record<string, string> = {
       'BaseCard': 'Card Loading Issue',
       'Canvas': 'Canvas Display Issue',
       'ThoughtMining': 'Mining Process Issue',
@@ -343,8 +343,8 @@ class ErrorHandlingService {
   /**
    * Get error message based on component and error
    */
-  getErrorMessage(componentName, error) {
-    const componentMessages = {
+  getErrorMessage(componentName: string, error: unknown) {
+    const componentMessages: Record<string, string> = {
       'BaseCard': 'This card encountered an issue loading its content. You can try again or skip to continue.',
       'Canvas': 'The canvas layout had a display issue. Your progress is saved.',
       'ThoughtMining': 'The thought mining process encountered an issue. Your insights are preserved.',
@@ -358,8 +358,8 @@ class ErrorHandlingService {
   /**
    * Determine if error can be retried
    */
-  canRetryError(error) {
-    if (error.isRetryable) {
+  canRetryError(error: Error): boolean {
+    if ('isRetryable' in error && (error as any).isRetryable) {
       return true;
     }
 
@@ -382,7 +382,7 @@ class ErrorHandlingService {
   /**
    * Determine if component can fallback
    */
-  canFallbackError(componentName) {
+  canFallbackError(componentName: string): boolean {
     const fallbackComponents = [
       'BaseCard',
       'ThoughtMining', 
@@ -396,8 +396,8 @@ class ErrorHandlingService {
   /**
    * Get recovery options for component
    */
-  getRecoveryOptions(componentName, error) {
-    const options = [];
+  getRecoveryOptions(componentName: string, error: unknown) {
+    const options: Array<{ type: string; label: string; action: string }> = [];
     
     options.push({
       type: 'retry',
@@ -460,25 +460,25 @@ class ErrorHandlingService {
   /**
    * Add error listener
    */
-  addErrorListener(listener) {
+  addErrorListener(listener: ErrorListener) {
     this.errorListeners.add(listener);
   }
 
   /**
    * Remove error listener
    */
-  removeErrorListener(listener) {
+  removeErrorListener(listener: ErrorListener) {
     this.errorListeners.delete(listener);
   }
 
   /**
    * Notify error listeners
    */
-  notifyErrorListeners(errorEvent) {
+  notifyErrorListeners(errorEvent: Record<string, any>) {
     this.errorListeners.forEach(listener => {
       try {
-        listener(errorEvent);
-      } catch (listenerError) {
+        listener(errorEvent.error, errorEvent.source, errorEvent.details);
+      } catch (listenerError: unknown) {
         console.error('Error listener failed:', listenerError);
       }
     });
@@ -487,7 +487,7 @@ class ErrorHandlingService {
   /**
    * Clear retry attempts for successful operations
    */
-  clearRetryAttempts(operation) {
+  clearRetryAttempts(operation: string) {
     this.retryAttempts.delete(operation);
   }
 
@@ -495,13 +495,14 @@ class ErrorHandlingService {
    * Get error statistics
    */
   getErrorStats() {
-    const categories = {};
+    const categories: Record<string, number> = {};
     const recentErrors = this.errorLog.filter(
       entry => Date.now() - entry.timestamp < 300000 // Last 5 minutes
     );
 
     this.errorLog.forEach(entry => {
-      categories[entry.category] = (categories[entry.category] || 0) + 1;
+      const category = entry.category || 'unknown';
+      categories[category] = (categories[category] || 0) + 1;
     });
 
     return {
@@ -517,7 +518,7 @@ class ErrorHandlingService {
    * Export error log for debugging
    */
   exportErrorLog() {
-    const redact = (data) => {
+    const redact = (data: any): any => {
       if (typeof data !== 'object' || data === null) {
         return data;
       }
@@ -526,7 +527,7 @@ class ErrorHandlingService {
         return data.map(redact);
       }
 
-      const redactedObject = {};
+      const redactedObject: Record<string, any> = {};
       for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
           if (key === 'userText' || key === 'sessionData') {
@@ -546,11 +547,11 @@ class ErrorHandlingService {
         id: entry.id,
         timestamp: entry.timestamp,
         category: entry.category,
-        error: {
+        error: entry.error ? {
           name: entry.error.name,
           message: entry.error.message
-        },
-        context: redact(entry.context),
+        } : undefined,
+        context: redact(entry.details),
       }))
     };
   }
@@ -570,6 +571,19 @@ class ErrorHandlingService {
   isSystemHealthy() {
     const stats = this.getErrorStats();
     return stats.isHealthy && stats.recentErrors < 3;
+  }
+
+  // Public methods for testing
+  getErrorLogForTesting() {
+    return this.errorLog;
+  }
+
+  getRetryAttemptsForTesting() {
+    return this.retryAttempts;
+  }
+
+  getErrorListenersForTesting() {
+    return this.errorListeners;
   }
 }
 

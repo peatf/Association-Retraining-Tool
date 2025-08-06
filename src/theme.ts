@@ -28,6 +28,7 @@ const theme = {
       cardActive: '0 5px 15px rgba(0, 0, 0, 0.15)',
     },
     typography: {
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       sizes: {
         xs: '0.75rem',
         sm: '0.8rem',
@@ -80,6 +81,7 @@ const theme = {
       cardActive: '0 5px 15px rgba(0, 0, 0, 0.15)',
     },
     typography: {
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       sizes: {
         xs: '0.75rem',
         sm: '0.8rem',

@@ -1,11 +1,20 @@
 import React, { useState, Suspense, memo } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useReducedMotion, useDrag } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import * as Sentry from '@sentry/react';
 import { Spinner } from './common';
 
 const CardNeutralize = React.lazy(() => import('./CardNeutralize.jsx'));
 const CardCommonGround = React.lazy(() => import('./CardCommonGround.jsx'));
 const CardDataExtraction = React.lazy(() => import('./CardDataExtraction.jsx'));
+
+interface ThoughtMiningProps {
+  onComplete: () => void;
+}
+
+interface ProgressStepProps {
+  $active: boolean;
+}
 
 const ProgressIndicator = styled.div`
   display: flex;
@@ -13,40 +22,27 @@ const ProgressIndicator = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ProgressStep = styled.div`
+const ProgressStep = styled.div<ProgressStepProps>`
   padding: 0.5rem;
-  border-bottom: 2px solid ${props => props.active ? 'blue' : 'transparent'};
-  color: ${props => props.active ? 'blue' : 'inherit'};
+  border-bottom: 2px solid ${props => props.$active ? 'blue' : 'transparent'};
+  color: ${props => props.$active ? 'blue' : 'inherit'};
 `;
 
-const ThoughtMining = memo(({ onComplete }) => {
+const ThoughtMining: React.FC<ThoughtMiningProps> = memo(({ onComplete }) => {
   const [step, setStep] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   const handleNextStep = () => {
-    Sentry.metrics.timing(`thought_mining_step_${step}_duration`, () => {
-      setStep(step + 1);
-      Sentry.captureMessage(`Thought mining step ${step} complete`);
-    });
+    // Sentry metrics timing - commented out as metrics API may not be available
+    // Sentry.metrics.timing(`thought_mining_step_${step}_duration`, () => {
+    setStep(step + 1);
+    Sentry.captureMessage(`Thought mining step ${step} complete`);
+    // });
   };
 
   const handlePrevStep = () => {
     setStep(step - 1);
   };
-
-  const dragControls = useDrag({
-    onDragEnd: (event, info) => {
-      if (info.offset.x > 100) {
-        if (step > 0) {
-          handlePrevStep();
-        }
-      } else if (info.offset.x < -100) {
-        if (step < 2) {
-          handleNextStep();
-        }
-      }
-    },
-  });
 
   const renderStep = () => {
     switch (step) {
@@ -62,11 +58,11 @@ const ThoughtMining = memo(({ onComplete }) => {
   };
 
   return (
-    <div {...dragControls}>
+    <div>
       <ProgressIndicator aria-live="polite">
-        <ProgressStep active={step === 0}>1. Neutralize</ProgressStep>
-        <ProgressStep active={step === 1}>2. Common Ground</ProgressStep>
-        <ProgressStep active={step === 2}>3. Data Extraction</ProgressStep>
+        <ProgressStep $active={step === 0}>1. Neutralize</ProgressStep>
+        <ProgressStep $active={step === 1}>2. Common Ground</ProgressStep>
+        <ProgressStep $active={step === 2}>3. Data Extraction</ProgressStep>
       </ProgressIndicator>
       <AnimatePresence mode="wait">
         <motion.div

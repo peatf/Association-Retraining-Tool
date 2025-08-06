@@ -112,7 +112,7 @@ function Canvas() {
 
   const handleComponentError = (error: Error, info?: any) => {
     console.error("Caught an error:", error, info);
-    setError(error);
+    setError(error as any);
   };
 
   const resetError = () => {

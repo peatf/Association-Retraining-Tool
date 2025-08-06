@@ -5,7 +5,23 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-const LaneContainer = styled(motion.div)`
+interface LaneContainerProps {
+  $isActive?: boolean;
+}
+
+interface LaneHeaderProps {
+  $isActive?: boolean;
+}
+
+interface LaneProps {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+  className?: string;
+}
+
+const LaneContainer = styled(motion.div)<LaneContainerProps>`
   background: ${props => props.theme.colors.cardBackground};
   border-radius: ${props => props.theme.borderRadius.lg};
   box-shadow: ${props => props.theme.shadows.card};
@@ -13,7 +29,7 @@ const LaneContainer = styled(motion.div)`
   transition: box-shadow 0.3s ease;
   
   ${props => props.$isActive && `
-    box-shadow: ${props.theme.shadows.cardActive};
+    box-shadow: ${props.theme.shadows.cardHover};
     border: 2px solid ${props.theme.colors.primary};
   `}
   
@@ -22,7 +38,7 @@ const LaneContainer = styled(motion.div)`
   }
 `;
 
-const LaneHeader = styled.div`
+const LaneHeader = styled.div<LaneHeaderProps>`
   padding: ${props => props.theme.spacing.lg};
   border-bottom: 1px solid #eee;
   background: ${props => props.$isActive ? props.theme.colors.primary : '#f8f9fa'};
@@ -56,14 +72,14 @@ const laneVariants = {
   }
 };
 
-function Lane({ 
+const Lane: React.FC<LaneProps> = ({ 
   id, 
   title, 
   children, 
   isActive = false, 
-  className = '',
+  className = '', 
   ...props 
-}) {
+}) => {
   return (
     <LaneContainer
       className={className}
@@ -85,6 +101,6 @@ function Lane({
       </LaneContent>
     </LaneContainer>
   );
-}
+};
 
 export default Lane;

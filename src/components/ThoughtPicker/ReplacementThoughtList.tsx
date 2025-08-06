@@ -8,19 +8,27 @@ import React, { useState, useEffect } from 'react';
 import contentSearchService from '../../services/ContentSearchService';
 import { Spinner, ErrorState } from '../common';
 
-const ReplacementThoughtList = ({ 
+interface ReplacementThoughtListProps {
+  category: string;
+  subcategory?: string | null;
+  intensity?: number;
+  onThoughtSelect: (thought: string) => void;
+  selectedThought: string | null;
+}
+
+const ReplacementThoughtList: React.FC<ReplacementThoughtListProps> = ({ 
   category, 
   subcategory = null, 
   intensity = 10, 
   onThoughtSelect,
   selectedThought 
 }) => {
-  const [replacementThoughts, setReplacementThoughts] = useState([]);
+  const [replacementThoughts, setReplacementThoughts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadReplacementThoughts = async () => {
+    const loadReplacementThoughts = async (): Promise<void> => {
       if (!category) {
         setReplacementThoughts([]);
         return;
@@ -43,7 +51,7 @@ const ReplacementThoughtList = ({
         }
       } catch (err) {
         console.error('Error loading replacement thoughts:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
         setReplacementThoughts([]);
       } finally {
         setLoading(false);
@@ -53,7 +61,7 @@ const ReplacementThoughtList = ({
     loadReplacementThoughts();
   }, [category, subcategory, intensity]);
 
-  const handleThoughtClick = (thought) => {
+  const handleThoughtClick = (thought: string): void => {
     if (onThoughtSelect) {
       onThoughtSelect(thought);
     }
@@ -73,7 +81,7 @@ const ReplacementThoughtList = ({
     );
   }
 
-  const retryLoading = () => {
+  const retryLoading = (): void => {
     setError(null);
     setLoading(true);
     // Re-trigger useEffect by updating dependencies

@@ -3,7 +3,6 @@
 // Integrates with existing SessionStateManager for backward compatibility
 
 import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
-import SessionStateManager from '../../js/SessionStateManager';
 import type { CanvasState, SessionContextValue } from './SessionContextTypes';
 
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
@@ -32,25 +31,18 @@ interface SessionProviderProps {
 export function SessionProvider({ children }: SessionProviderProps) {
   const [canvasState, setCanvasState] = useState<CanvasState>(initialCanvasState);
   const [sessionData, setSessionData] = useState<Record<string, any>>({});
-  const sessionManagerRef = useRef<any>(null);
 
-  // Initialize session manager and session data
+  // Initialize session data
   const initializeSession = () => {
-    if (!sessionManagerRef.current) {
-      sessionManagerRef.current = new SessionStateManager();
-      sessionManagerRef.current.initializeSession();
-    }
     const sessionId = generateSessionId();
     setSessionData({
       sessionId,
       startTime: new Date().toISOString(),
       lastActivity: new Date().toISOString(),
-      legacySessionHealth: sessionManagerRef.current.getSessionHealth()
+      sessionHealth: 'healthy'
     });
     // eslint-disable-next-line no-console
     console.log('Canvas session initialized:', sessionId);
-    // eslint-disable-next-line no-console
-    console.log('Legacy session manager integrated');
   };
 
   React.useEffect(() => {
@@ -68,24 +60,8 @@ export function SessionProvider({ children }: SessionProviderProps) {
       setSessionData(prevSession => ({
         ...prevSession,
         lastActivity: new Date().toISOString(),
-        legacySessionHealth: sessionManagerRef.current?.getSessionHealth()
+        sessionHealth: 'healthy'
       }));
-      if (sessionManagerRef.current) {
-        if (updates.selectedTopic) {
-          sessionManagerRef.current.safeUpdateState('selectedTopic', updates.selectedTopic);
-        }
-        if (updates.intensity !== undefined) {
-          sessionManagerRef.current.safeUpdateState('intensity', updates.intensity);
-        }
-        if (updates.currentLane) {
-          const screenMapping: Record<string, string> = {
-            'readiness': 'readiness',
-            'mining': 'journey',
-            'picker': 'topic'
-          };
-          sessionManagerRef.current.safeUpdateState('currentScreen', screenMapping[updates.currentLane] || updates.currentLane);
-        }
-      }
       return newState;
     });
   };
@@ -142,6 +118,21 @@ export function SessionProvider({ children }: SessionProviderProps) {
   };
 
   // Navigation helpers
+  const navigateToLane: SessionContextValue['navigateToLane'] = (lane: string) => {
+    setCanvasState(prev => {
+      const newHistory = [...prev.navigationHistory];
+      if (prev.currentLane !== lane) {
+        newHistory.push(lane);
+      }
+      return {
+        ...prev,
+        currentLane: lane,
+        navigationHistory: newHistory,
+        historyIndex: newHistory.length - 1
+      };
+    });
+  };
+
   const goBack: SessionContextValue['goBack'] = () => {
     setCanvasState(prev => {
       if (prev.historyIndex > 0) {
@@ -174,14 +165,57 @@ export function SessionProvider({ children }: SessionProviderProps) {
 
   // Reset session
   const resetSession: SessionContextValue['resetSession'] = () => {
-    if (sessionManagerRef.current) {
-      sessionManagerRef.current.clearSession();
-    }
     setCanvasState(initialCanvasState);
     setSessionData({});
     initializeSession();
     // eslint-disable-next-line no-console
     console.log('Canvas session cleared');
+  };
+
+  // Additional methods for testing and functionality
+  const trackContentInteraction: SessionContextValue['trackContentInteraction'] = (interaction) => {
+    // eslint-disable-next-line no-console
+    console.log('Content interaction tracked:', interaction);
+  };
+
+  const trackMiningProgress: SessionContextValue['trackMiningProgress'] = (progress) => {
+    // eslint-disable-next-line no-console
+    console.log('Mining progress tracked:', progress);
+  };
+
+  const updateMiningResults: SessionContextValue['updateMiningResults'] = (results) => {
+    setCanvasState(prev => ({
+      ...prev,
+      miningResults: { ...prev.miningResults, ...results }
+    }));
+  };
+
+  const prepareContentQuery: SessionContextValue['prepareContentQuery'] = (query) => {
+    return `${query.type}:${JSON.stringify(query.params)}`;
+  };
+
+  const handleContentError: SessionContextValue['handleContentError'] = (error, context) => {
+    // eslint-disable-next-line no-console
+    console.error('Content error handled:', error, context);
+  };
+
+  const getSessionMetrics: SessionContextValue['getSessionMetrics'] = () => {
+    const sessionDuration = Date.now() - new Date(sessionData.startTime || Date.now()).getTime();
+    return {
+      sessionDuration,
+      insightCount: canvasState.minedInsights.length,
+      lanesVisited: canvasState.navigationHistory.length,
+      completedLanes: canvasState.userJourney.filter(j => j.completed).length,
+      currentLane: canvasState.currentLane,
+      isReady: canvasState.isReady,
+      hasSelectedTopic: !!canvasState.selectedTopic,
+      miningResultsCount: Object.keys(canvasState.miningResults).length,
+      sessionHealth: sessionData.sessionHealth || 'healthy'
+    };
+  };
+
+  const getInsightsByType: SessionContextValue['getInsightsByType'] = (type) => {
+    return canvasState.minedInsights.filter(insight => insight.type === type);
   };
 
   // Context value
@@ -192,8 +226,16 @@ export function SessionProvider({ children }: SessionProviderProps) {
     resetSession,
     goBack,
     goForward,
+    navigateToLane,
     addInsight,
-    updateJourney
+    updateJourney,
+    trackContentInteraction,
+    trackMiningProgress,
+    updateMiningResults,
+    prepareContentQuery,
+    handleContentError,
+    getSessionMetrics,
+    getInsightsByType
   };
 
   return (

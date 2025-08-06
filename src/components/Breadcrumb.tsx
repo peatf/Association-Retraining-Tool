@@ -6,6 +6,18 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useSession } from '../context/SessionContext';
 
+interface LaneConfig {
+  name: string;
+  description: string;
+  icon: string;
+}
+
+interface StepButtonProps {
+  isActive: boolean;
+  isCompleted: boolean;
+  isClickable: boolean;
+}
+
 const BreadcrumbContainer = styled.nav`
   background: ${props => props.theme.colors.cardBackground};
   border-bottom: 1px solid #eee;
@@ -52,14 +64,14 @@ const JourneyStep = styled.li`
   gap: ${props => props.theme.spacing.sm};
 `;
 
-const StepButton = styled(motion.button)`
+const StepButton = styled(motion.button)<StepButtonProps>`
   background: ${props => props.isActive ? props.theme.colors.primary : 'transparent'};
   color: ${props => props.isActive ? 'white' : props.isCompleted ? props.theme.colors.primary : props.theme.colors.textSecondary};
   border: 1px solid ${props => props.isActive ? props.theme.colors.primary : props.isCompleted ? props.theme.colors.primary : props.theme.colors.secondary};
-  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borderRadius.md};
   font-size: ${props => props.theme.typography.sizes.sm};
-  font-weight: ${props => props.isActive ? props.theme.typography.weights.semibold : props.theme.typography.weights.medium};
+  font-weight: ${props => props.isActive ? props.theme.typography.weights.semibold : props.theme.typography.weights.regular};
   cursor: ${props => props.isClickable ? 'pointer' : 'default'};
   transition: all 0.2s ease;
   text-decoration: none;
@@ -82,8 +94,8 @@ const StepButton = styled(motion.button)`
   }
   
   @media (max-width: ${props => props.theme.breakpoints.mobile}) {
-    padding: ${props => props.theme.spacing.xs};
-    font-size: ${props => props.theme.typography.sizes.xs};
+    padding: ${props => props.theme.spacing.sm};
+    font-size: ${props => props.theme.typography.sizes.sm};
   }
 `;
 
@@ -111,15 +123,15 @@ const NavButton = styled(motion.button)`
   background: ${props => props.theme.colors.secondary};
   color: white;
   border: none;
-  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.md};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borderRadius.sm};
   font-size: ${props => props.theme.typography.sizes.sm};
-  font-weight: ${props => props.theme.typography.weights.medium};
+  font-weight: ${props => props.theme.typography.weights.regular};
   cursor: pointer;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
-  gap: ${props => props.theme.spacing.xs};
+  gap: ${props => props.theme.spacing.sm};
   
   &:hover:not(:disabled) {
     background: ${props => props.theme.colors.secondary}dd;
@@ -136,8 +148,8 @@ const NavButton = styled(motion.button)`
   }
   
   @media (max-width: ${props => props.theme.breakpoints.mobile}) {
-    padding: ${props => props.theme.spacing.xs};
-    font-size: ${props => props.theme.typography.sizes.xs};
+    padding: ${props => props.theme.spacing.sm};
+    font-size: ${props => props.theme.typography.sizes.sm};
   }
 `;
 
@@ -150,7 +162,7 @@ const JourneyInfo = styled.div`
   
   @media (max-width: ${props => props.theme.breakpoints.mobile}) {
     flex-direction: column;
-    gap: ${props => props.theme.spacing.xs};
+    gap: ${props => props.theme.spacing.sm};
     text-align: center;
   }
 `;
@@ -158,9 +170,9 @@ const JourneyInfo = styled.div`
 const ProgressIndicator = styled.div`
   background: ${props => props.theme.colors.secondary}33;
   border-radius: ${props => props.theme.borderRadius.sm};
-  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
-  font-size: ${props => props.theme.typography.sizes.xs};
-  font-weight: ${props => props.theme.typography.weights.medium};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  font-size: ${props => props.theme.typography.sizes.sm};
+  font-weight: ${props => props.theme.typography.weights.regular};
   
   span {
     color: ${props => props.theme.colors.primary};
@@ -168,27 +180,21 @@ const ProgressIndicator = styled.div`
 `;
 
 // Lane configuration with display names and navigation rules
-const LANE_CONFIG = {
+const LANE_CONFIG: Record<string, LaneConfig> = {
   readiness: {
     name: 'Readiness',
-    icon: '🎯',
-    description: 'Assess emotional readiness',
-    canNavigateBack: false,
-    canNavigateForward: true
+    description: 'Assess your readiness to work through thoughts',
+    icon: '🔍'
   },
   mining: {
-    name: 'Mining',
-    icon: '⛏️',
-    description: 'Extract thought data',
-    canNavigateBack: true,
-    canNavigateForward: true
+    name: 'Thought Mining',
+    description: 'Explore and identify challenging thoughts',
+    icon: '⛏️'
   },
   picker: {
-    name: 'Picker',
-    icon: '🎨',
-    description: 'Find better thoughts',
-    canNavigateBack: true,
-    canNavigateForward: false
+    name: 'Better Thoughts',
+    description: 'Discover more helpful perspectives',
+    icon: '💡'
   }
 };
 
@@ -208,7 +214,7 @@ function Breadcrumb() {
   const totalSteps = LANE_ORDER.length;
   const progressPercentage = Math.round((completedSteps / totalSteps) * 100);
 
-  const handleStepClick = (targetLane) => {
+  const handleStepClick = (targetLane: string): void => {
     const targetIndex = LANE_ORDER.indexOf(targetLane);
     const currentIndex = LANE_ORDER.indexOf(currentLane);
     
@@ -221,14 +227,14 @@ function Breadcrumb() {
     }
   };
 
-  const handleBackNavigation = () => {
+  const handleBackNavigation = (): void => {
     if (canGoBack) {
       const previousLane = LANE_ORDER[currentIndex - 1];
       navigateToLane(previousLane);
     }
   };
 
-  const handleForwardNavigation = () => {
+  const handleForwardNavigation = (): void => {
     if (canGoForward) {
       const nextLane = LANE_ORDER[currentIndex + 1];
       navigateToLane(nextLane);
@@ -236,7 +242,7 @@ function Breadcrumb() {
   };
 
   // Keyboard navigation handler
-  const handleKeyDown = (event, action, ...args) => {
+  const handleKeyDown = (event: React.KeyboardEvent, action: (...args: any[]) => void, ...args: any[]): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       action(...args);
@@ -244,7 +250,7 @@ function Breadcrumb() {
   };
 
   // Check if a step is clickable
-  const isStepClickable = (lane) => {
+  const isStepClickable = (lane: string): boolean => {
     const targetIndex = LANE_ORDER.indexOf(lane);
     const currentIndex = LANE_ORDER.indexOf(currentLane);
     const isCompleted = userJourney.some(step => step.lane === lane && step.completed);
@@ -254,7 +260,7 @@ function Breadcrumb() {
   };
 
   // Check if a step is completed
-  const isStepCompleted = (lane) => {
+  const isStepCompleted = (lane: string): boolean => {
     return userJourney.some(step => step.lane === lane && step.completed);
   };
 

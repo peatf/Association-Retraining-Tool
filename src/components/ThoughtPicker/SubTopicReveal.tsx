@@ -8,13 +8,19 @@ import React, { useState, useEffect } from 'react';
 import contentSearchService from '../../services/ContentSearchService';
 import { Spinner, ErrorState } from '../common';
 
-const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }) => {
-  const [subcategories, setSubcategories] = useState([]);
+interface SubTopicRevealProps {
+  selectedCategory: string;
+  onSubTopicSelect: (subcategory: string | null) => void;
+  selectedSubTopic: string | null;
+}
+
+const SubTopicReveal: React.FC<SubTopicRevealProps> = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }) => {
+  const [subcategories, setSubcategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadSubcategories = async () => {
+    const loadSubcategories = async (): Promise<void> => {
       if (!selectedCategory) {
         setSubcategories([]);
         return;
@@ -32,7 +38,7 @@ const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }
         }
       } catch (err) {
         console.error('Error loading subcategories:', err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Unknown error');
         setSubcategories([]);
       } finally {
         setLoading(false);
@@ -42,7 +48,7 @@ const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }
     loadSubcategories();
   }, [selectedCategory]);
 
-  const handleSubTopicClick = (subcategory) => {
+  const handleSubTopicClick = (subcategory: string | null): void => {
     if (onSubTopicSelect) {
       onSubTopicSelect(subcategory);
     }
@@ -62,7 +68,7 @@ const SubTopicReveal = ({ selectedCategory, onSubTopicSelect, selectedSubTopic }
     );
   }
 
-  const retryLoading = () => {
+  const retryLoading = (): void => {
     setError(null);
     setLoading(true);
     // Re-trigger the useEffect by changing selectedCategory state

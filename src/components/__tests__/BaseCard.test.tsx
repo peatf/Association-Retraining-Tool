@@ -12,7 +12,12 @@ describe('BaseCard Component', () => {
   const defaultProps = {
     title: 'Test Card',
     testId: 'test-card',
-    children: <div>Test content</div>
+    children: <div>Test content</div>,
+    onActivate: vi.fn(),
+    onComplete: vi.fn(),
+    onSkip: vi.fn(),
+    'aria-describedby': 'test-description',
+    'aria-label': 'Test Card'
   };
 
   it('renders with basic props', () => {

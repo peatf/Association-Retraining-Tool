@@ -11,28 +11,28 @@ import {
   ReplacementThoughtList,
 } from "./index";
 
-const ThoughtPickerDemo = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [selectedThought, setSelectedThought] = useState(null);
+const ThoughtPickerDemo: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedThought, setSelectedThought] = useState<string | null>(null);
   const [intensity, setIntensity] = useState(7);
 
-  const handleCategorySelect = (category) => {
+  const handleCategorySelect = (category: string): void => {
     setSelectedCategory(category);
     setSelectedSubcategory(null); // Reset subcategory when category changes
     setSelectedThought(null); // Reset thought when category changes
   };
 
-  const handleSubcategorySelect = (subcategory) => {
+  const handleSubcategorySelect = (subcategory: string | null): void => {
     setSelectedSubcategory(subcategory);
     setSelectedThought(null); // Reset thought when subcategory changes
   };
 
-  const handleThoughtSelect = (thought) => {
+  const handleThoughtSelect = (thought: string): void => {
     setSelectedThought(thought);
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setSelectedThought(null);
