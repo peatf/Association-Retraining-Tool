@@ -18,9 +18,6 @@ export default defineConfig({
     
     // Ensure compatibility with existing content pipeline
     rollupOptions: {
-      input: {
-        main: './public/index.html'
-      },
       
       // Preserve existing assets structure
       output: {
@@ -44,7 +41,7 @@ export default defineConfig({
   // Development server configuration
   server: {
     port: 3000,
-    open: true,
+    open: false,
     
     // Serve existing content pipeline files
     fs: {

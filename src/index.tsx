@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { ThemeProvider } from 'styled-components';
-import theme from './theme';
 import './style.css';
-import { SessionProvider } from './context/SessionContext';
 import CanvasErrorBoundary from './components/CanvasErrorBoundary';
 import * as Sentry from '@sentry/react';
 
@@ -19,13 +16,9 @@ const container = document.getElementById('app-container');
 if (container) {
   ReactDOM.createRoot(container).render(
     <React.StrictMode>
-      <ThemeProvider theme={theme as any}>
-        <SessionProvider>
-          <CanvasErrorBoundary>
-            <App />
-          </CanvasErrorBoundary>
-        </SessionProvider>
-      </ThemeProvider>
+      <CanvasErrorBoundary>
+        <App />
+      </CanvasErrorBoundary>
     </React.StrictMode>,
   );
 }

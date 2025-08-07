@@ -2,37 +2,45 @@
 
 ## Introduction
 
-Clarity Canvas is an offline, privacy-first digital therapeutic tool that guides users through personalized thought-processing journeys via an interactive, card-based "canvas" interface. It leverages on-device AI for intelligent thought classification, powerful semantic search across a proprietary content library, and crisp summarization of insights. The system is explicitly not a chatbot but a modular, non-linear therapeutic toolkit.
+Clarity Canvas is an offline, privacy-first digital therapeutic tool that guides users through personalized thought-processing journeys via an interactive, card-based "canvas" interface. The system implements a specific three-step therapeutic process: Readiness Gate assessment, detailed Thought Mining with neutralization and either/or data extraction, and a hierarchical Better-Feeling Thought Picker with 4-level progression. It leverages on-device AI for intelligent thought classification, powerful semantic search across a proprietary content library, and crisp summarization of insights. The system is explicitly not a chatbot but a structured therapeutic methodology delivered through an interactive interface.
 
 ## Requirements
 
-### Requirement 1: Readiness Gate System
+### Requirement 1: Enhanced Readiness Gate Assessment
 
-**User Story:** As a user seeking therapeutic support, I want a mandatory readiness assessment before beginning deep work, so that I am emotionally prepared and can be guided to appropriate alternatives if not ready.
+**User Story:** As a user seeking therapeutic support, I want a comprehensive readiness assessment that evaluates my emotional state and mental readiness before beginning deep work, so that I am properly prepared and can be guided to appropriate alternatives if not ready.
 
 #### Acceptance Criteria
 
 1. WHEN a user first accesses the system THEN they SHALL encounter a Readiness Gate as the mandatory entry point
-2. WHEN the Readiness Gate loads THEN it SHALL present a simple Yes/No prompt asking if they feel ready to move through a thought pattern
-3. WHEN the Readiness Gate loads THEN it SHALL include an intensity slider to assess emotional state
-4. WHEN a user indicates they are not ready THEN they SHALL be guided to a gentle off-ramp (centering exercise) not a dead end
-5. WHEN a user indicates readiness THEN they SHALL proceed to the Thought Mining sequence
-6. WHEN the off-ramp is completed THEN users SHALL have the option to return to the Readiness Gate
+2. WHEN the Readiness Gate loads THEN it SHALL present a clear Yes/No prompt asking "Do you feel ready to move through a thought pattern?"
+3. WHEN the Readiness Gate loads THEN it SHALL include an intensity slider (0-10) to assess current emotional state with clear labeling
+4. WHEN a user indicates they are not ready THEN they SHALL be guided to a gentle off-ramp with a brief centering exercise, not a dead end
+5. WHEN the centering exercise is provided THEN it SHALL include grounding techniques like describing surroundings, counting breaths, or simple mindfulness
+6. WHEN a user indicates readiness THEN they SHALL proceed to determine if they need the Thought Mining sequence
+7. WHEN the off-ramp is completed THEN users SHALL have the option to return to the Readiness Gate or exit gracefully
 
-### Requirement 2: Thought Mining Card System
+### Requirement 2: Comprehensive Thought Mining Sequence
 
-**User Story:** As a user ready to process thoughts, I want an interactive card-based system that helps me extract data from persistent thoughts through a structured sequence, so that I can understand and work with my thought patterns effectively.
+**User Story:** As a user ready to process persistent thoughts, I want a structured three-phase mining system that helps me neutralize emotional charge, understand protective intention, and extract core data through either/or prompts, so that I can transform my relationship with difficult thoughts.
 
 #### Acceptance Criteria
 
-1. WHEN a user passes the Readiness Gate THEN they SHALL see options to determine if data extraction is needed from their thought
-2. WHEN a thought is identified as loud, disruptive, or looping THEN the system SHALL offer the Thought Mining sequence
-3. WHEN Thought Mining begins THEN it SHALL present interactive cards in sequence: Neutralize Voice → Common Ground → Data Extraction
-4. WHEN the Neutralize Voice card is activated THEN it SHALL help the user separate from the emotional charge using ContentSearchService.getMiningPrompts('category', 'neutralize')
-5. WHEN the Common Ground card is activated THEN it SHALL guide understanding of the thought's protective intention using ContentSearchService.getMiningPrompts('category', 'commonGround')
-6. WHEN the Data Extraction card is activated THEN it SHALL present either/or style prompts using ContentSearchService.getMiningPrompts('category', 'dataExtraction')
-7. WHEN any card is completed THEN the user SHALL have the option to conclude the process or continue
-8. WHEN the mining sequence completes THEN users SHALL be routed to the Better-Feeling Thought Picker
+1. WHEN a user passes the Readiness Gate THEN they SHALL be asked if they have a thought that is loud, disruptive, or looping
+2. WHEN a persistent thought is identified THEN the system SHALL offer the complete Thought Mining sequence
+3. WHEN Thought Mining begins THEN it SHALL present three sequential phases: Neutralize the Voice → Build Common Ground → Data Extraction
+4. WHEN Phase 1 (Neutralize the Voice) begins THEN it SHALL guide users through a 5-step neutralization process
+5. WHEN Step 1 of neutralization occurs THEN users SHALL name the thought and feel the initial emotional charge (measured 1-10)
+6. WHEN Step 2 occurs THEN users SHALL state the thought without adding drama or energy
+7. WHEN Step 3 occurs THEN users SHALL neutralize with acknowledgment using phrases like "It's okay that I feel this way"
+8. WHEN Step 4 occurs THEN users SHALL distract with mildness (describe surroundings, count breaths, etc.)
+9. WHEN Step 5 occurs THEN users SHALL recheck the emotional charge and note any reduction
+10. WHEN Phase 2 (Build Common Ground) begins THEN it SHALL help users understand the thought's protective intention
+11. WHEN common ground exploration occurs THEN users SHALL identify what role the thought is trying to play and what it thinks it protects them from
+12. WHEN Phase 3 (Data Extraction) begins THEN it SHALL present structured either/or questions for mining core insights
+13. WHEN either/or questions are presented THEN they SHALL be formatted as clear A/B choices (e.g., "Does this doubt feel like it's trying to keep you safe?" vs "Or does it feel like it's telling you you're on the wrong path?")
+14. WHEN mining completes THEN users SHALL thank the thought genuinely and offer it an updated job based on extracted insights
+15. WHEN any phase is completed THEN users SHALL have the option to conclude the process or continue to the next phase
 
 ### Requirement 3: Card & Lane Canvas Interface
 
@@ -48,18 +56,24 @@ Clarity Canvas is an offline, privacy-first digital therapeutic tool that guides
 6. WHEN the session is active THEN the system SHALL be ephemeral-by-default with no automatic saving
 7. WHEN users want to preserve insights THEN a clearly visible "Copy/Export" button SHALL be present in the footer
 
-### Requirement 4: Hierarchical Better-Feeling Thought Picker
+### Requirement 4: 4-Level Hierarchical Better-Feeling Thought Picker
 
-**User Story:** As a user completing thought mining or seeking direct insight, I want a hierarchical selector for finding relevant better-feeling thoughts, so that I can access personalized therapeutic content based on my specific needs.
+**User Story:** As a user completing thought mining or seeking direct insight, I want a hierarchical selector with 4 progressive levels of better-feeling thoughts, so that I can find statements that match my current emotional capacity and gradually build toward more empowered beliefs.
 
 #### Acceptance Criteria
 
 1. WHEN users access the thought picker THEN they SHALL select from top-level topics (Money, Relationships, Self-Image)
-2. WHEN a top-level topic is selected THEN "invisible" sub-topics SHALL be revealed based on ContentSearchService.getSubcategories()
+2. WHEN a top-level topic is selected THEN "invisible" sub-topics SHALL be revealed based on user input and ContentSearchService.getSubcategories()
 3. WHEN sub-topics are revealed THEN they SHALL be populated dynamically from the content pipeline
-4. WHEN selections are made THEN relevant insights SHALL be filtered using ContentSearchService.getReplacementThoughts()
-5. WHEN thoughts are presented THEN they SHALL be hierarchically organized and easily navigable
-6. WHEN users find suitable thoughts THEN they SHALL be able to export or copy them
+4. WHEN replacement thoughts are displayed THEN they SHALL be organized into exactly 4 hierarchical levels
+5. WHEN Level 1 thoughts are shown THEN they SHALL be the most neutral and believable starting points
+6. WHEN Level 2 thoughts are shown THEN they SHALL represent gentle improvement from Level 1
+7. WHEN Level 3 thoughts are shown THEN they SHALL offer moderate empowerment and positive perspective
+8. WHEN Level 4 thoughts are shown THEN they SHALL be the most empowered and aspirational beliefs
+9. WHEN thoughts are presented THEN each SHALL be clearly labeled with its level (1-4) to create clear progression
+10. WHEN users select thoughts THEN they SHALL be able to choose from any level that feels authentic to them
+11. WHEN thoughts are selected THEN they SHALL be added to the user's collection for export
+12. WHEN users find suitable thoughts THEN they SHALL be able to export or copy their complete selection
 
 ### Requirement 5: Content Pipeline Integration
 

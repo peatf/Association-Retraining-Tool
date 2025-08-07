@@ -132,29 +132,37 @@
 
 **Definition of Done**: Complete thought mining flow with Neutralize, Common Ground, and Data Extraction cards that dynamically load content from ContentSearchService.
 
-- [x] 11. Card Neutralize Implementation
+- [ ] 11. 5-Step Neutralization Card Implementation
 
-  - Create CardNeutralize.jsx that loads prompts using ContentSearchService.getMiningPrompts(topic, 'neutralize')
-  - Implement prompt selection interface with clear visual feedback
-  - Add completion logic that captures selected prompt and timestamp
-  - Include error handling for content loading failures with retry mechanisms
-  - _Requirements: 2.4, 5.1, 8.1, 9.1_
+  - Create CardNeutralize.jsx implementing the complete 5-step neutralization process
+  - Build Step 1: Name thought and measure initial emotional charge (1-10 slider)
+  - Build Step 2: State thought without drama (text input with gentle guidance)
+  - Build Step 3: Neutralize with acknowledgment (guided text input with examples)
+  - Build Step 4: Distract with mildness (selection of grounding activities)
+  - Build Step 5: Recheck charge and measure reduction (1-10 slider with comparison)
+  - Add progress tracking and step-by-step completion logic with charge reduction calculation
+  - _Requirements: 2.4, 2.5, 2.6, 2.7, 2.8, 2.9_
 
-- [x] 12. Card Common Ground Implementation
+- [ ] 12. Enhanced Common Ground Card Implementation
 
-  - Build CardCommonGround.jsx using ContentSearchService.getMiningPrompts(topic, 'commonGround')
-  - Create interface for exploring protective intention questions
-  - Implement insights capture with textarea for user reflections
-  - Add completion logic that saves insights and progression state
-  - _Requirements: 2.5, 5.1, 8.1, 9.1_
+  - Build CardCommonGround.jsx focusing on understanding the thought's protective intention
+  - Create interface for exploring "what role is this thought trying to play" and "what does it think it protects me from"
+  - Implement guided reflection prompts that help users see the thought as a messenger rather than enemy
+  - Add insights capture with textarea for user reflections on protective purpose
+  - Include ContentSearchService integration for topic-specific protective intention prompts
+  - Add completion logic that saves insights and prepares data for either/or extraction phase
+  - _Requirements: 2.10, 2.11, 5.1, 8.1, 9.1_
 
-- [x] 13. Card Data Extraction Implementation
+- [ ] 13. Either/Or Data Extraction Card Implementation
 
-  - Create CardDataExtraction.jsx with ContentSearchService.getMiningPrompts(topic, 'dataExtraction')
-  - Build either/or question interface with clear option selection
-  - Implement response tracking and extracted data summarization
-  - Add completion logic that captures all responses and core insights
-  - _Requirements: 2.6, 5.1, 8.1, 9.1_
+  - Create CardDataExtraction.jsx with structured either/or prompts using ContentSearchService.getMiningPrompts(topic, 'dataExtraction')
+  - Build A/B choice interface with clear option selection (e.g., "Does this doubt feel like it's trying to keep you safe?" vs "Or does it feel like it's telling you you're on the wrong path?")
+  - Implement response tracking that captures both choice and reasoning for each either/or question
+  - Add "Thank the Thought" completion phase with genuine gratitude messaging
+  - Build "Offer Updated Job" system that generates new roles for the thought based on extracted insights
+  - Include job selection interface with both suggested options and custom input capability
+  - Add completion logic that captures all responses, gratitude expression, and new job assignment
+  - _Requirements: 2.12, 2.13, 2.14, 2.15, 5.1, 8.1, 9.1_
 
 - [x] 14. Thought Mining Container
   - Build ThoughtMining.jsx to orchestrate the three-card sequence
@@ -169,28 +177,33 @@
 
 **Definition of Done**: A complete hierarchical thought selection system that works within the canvas layout and connects to the content pipeline.
 
-- [x] 15. Thought Picker Canvas Integration
+- [ ] 15. 4-Level Hierarchical Thought Picker Implementation
 
-  - Integrate existing TopicSelector.jsx, SubTopicReveal.jsx, and ReplacementThoughtList.jsx into canvas
-  - Adapt components to work with canvas state management and navigation
-  - Ensure components use ContentSearchService for all content queries
-  - Add canvas-specific styling and animations consistent with card system
-  - _Requirements: 4.1, 4.2, 4.3, 5.1_
+  - Create ThoughtPicker.jsx with 4-level hierarchical organization system
+  - Build topic selection interface for Money, Relationships, and Self-Image categories
+  - Implement dynamic subcategory revelation based on user input and ContentSearchService.getSubcategories()
+  - Create 4-level thought organization: Level 1 (most neutral/believable) → Level 4 (most empowered/aspirational)
+  - Add clear level labeling and progression indicators for user guidance
+  - Ensure components use ContentSearchService for all content queries with level-based filtering
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.1_
 
-- [x] 16. Hierarchical Selection Flow
+- [ ] 16. Level-Based Thought Organization and Display
 
-  - Implement topic selection that reveals subcategories dynamically
-  - Create smooth transitions between selection levels with breadcrumb navigation
-  - Add filtering logic for replacement thoughts based on category, subcategory, and intensity
-  - Include selection state management that integrates with overall canvas state
-  - _Requirements: 4.4, 4.5, 3.3_
+  - Implement thought organization logic that sorts replacement thoughts into exactly 4 hierarchical levels
+  - Create visual distinction between levels with clear descriptions (neutral → gentle → moderate → empowered)
+  - Build level-specific filtering and display system that shows appropriate thoughts for each progression stage
+  - Add level progression guidance that helps users understand when to move between levels
+  - Include selection state management that tracks which level each thought was selected from
+  - _Requirements: 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 3.3_
 
-- [x] 17. Thought Export and Capture
-  - Build thought selection interface with export capabilities
-  - Implement copy/export functionality for selected insights
-  - Add selected thoughts to canvas insights collection
-  - Create completion flow that integrates with overall session management
-  - _Requirements: 4.6, 3.6, 5.1_
+- [ ] 17. Multi-Level Thought Selection and Export
+  - Build thought selection interface that allows choosing from any level that feels authentic
+  - Implement selection tracking that preserves level information for each chosen thought
+  - Add export functionality that includes level progression data in the final collection
+  - Create completion flow that shows selected thoughts organized by level
+  - Include copy/export functionality for the complete hierarchical selection
+  - Add integration with overall session management for insight preservation
+  - _Requirements: 4.10, 4.11, 4.12, 3.6, 5.1_
 
 ## Phase 6: Content Pipeline Enhancement
 
@@ -198,13 +211,16 @@
 
 **Definition of Done**: Content pipeline generates properly structured mining prompts for neutralize, commonGround, and dataExtraction categories.
 
-- [x] 18. Mining Prompts Content Structure
+- [ ] 18. Enhanced Mining Prompts Content Structure
 
-  - Update content/raw/\*.json files to include comprehensive miningPrompts sections
-  - Create neutralize prompts (5 per category) for voice neutralization exercises
-  - Author commonGround prompts (5 per category) for protective intention exploration
-  - Write dataExtraction prompts (5 per category) as either/or questions for data mining
-  - _Requirements: 2.4, 2.5, 2.6, 5.1_
+  - Update content/raw/\*.json files to include comprehensive miningPrompts sections for the new therapeutic methodology
+  - Create 5-step neutralization guidance content (step-by-step instructions for charge reduction process)
+  - Author commonGround prompts focusing on protective intention exploration ("what role is this thought trying to play")
+  - Write dataExtraction prompts as structured either/or A/B choice questions with clear options
+  - Add "thank the thought" messaging templates and "new job" suggestion content for each topic
+  - Create 4-level hierarchical replacement thoughts with clear level progression (neutral → gentle → moderate → empowered)
+  - Include grounding activity options for the "distract with mildness" step
+  - _Requirements: 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 2.14, 2.15, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.1_
 
 - [x] 19. Content Pipeline Integration Testing
   - Verify ContentSearchService.getMiningPrompts() returns properly formatted prompts

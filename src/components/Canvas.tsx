@@ -7,6 +7,7 @@ import Breadcrumb from './Breadcrumb';
 import ErrorState from './common/ErrorState';
 import ReadinessGate from './ReadinessGate';
 import CenteringExercise from './CenteringExercise';
+import TopicSelector from './TopicSelector';
 import { useSession } from '../context/SessionContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardNeutralize from './CardNeutralize';
@@ -105,10 +106,13 @@ const LaneContent = styled.div`
 `;
 
 function Canvas() {
-  const { updateCanvasState } = useSession();
+  const { canvasState, updateCanvasState } = useSession();
   const [error, setError] = useState(null);
   const [showCenteringExercise, setShowCenteringExercise] = useState(false);
-  const [showReadinessGate, setShowReadinessGate] = useState(true);
+  const [showTopicSelector, setShowTopicSelector] = useState(true);
+  const [showReadinessGate, setShowReadinessGate] = useState(false);
+  const [showThoughtMining, setShowThoughtMining] = useState(false);
+  const [showThoughtPicker, setShowThoughtPicker] = useState(false);
 
   const handleComponentError = (error: Error, info?: any) => {
     console.error("Caught an error:", error, info);
@@ -119,10 +123,17 @@ function Canvas() {
     setError(null);
   };
 
-  const handleReady = (intensity: number) => {
-    console.log("Ready with intensity:", intensity);
-    updateCanvasState({ isReady: true, intensity: intensity });
+  const handleReady = (data: { userThought: string; hasPersistentThought: boolean }) => {
+    console.log("Ready with thought data:", data);
     setShowReadinessGate(false);
+    
+    if (data.hasPersistentThought) {
+      // User has persistent thought - go to thought mining (which includes topic selection)
+      setShowThoughtMining(true);
+    } else {
+      // User doesn't have persistent thought - go directly to thought picker
+      setShowThoughtPicker(true);
+    }
   };
 
   const handleNotReady = () => {
@@ -137,8 +148,21 @@ function Canvas() {
     setShowCenteringExercise(false);
   };
 
-  const thoughtMiningComponent = useMemo(() => <ThoughtMining onComplete={() => console.log('Thought Mining complete')} />, []);
-  const thoughtPickerComponent = useMemo(() => <ThoughtPicker />, []);
+
+
+  const handleTopicSelectionComplete = (data: { hasPersistentThought: boolean; selectedTopic: string }) => {
+    console.log("Topic selection complete:", data);
+    setShowTopicSelector(false);
+    setShowReadinessGate(true);
+  };
+
+  const handleThoughtMiningComplete = () => {
+    console.log("Thought mining complete");
+    setShowThoughtMining(false);
+    setShowThoughtPicker(true);
+  };
+
+
 
   if (error) {
     return (
@@ -169,6 +193,25 @@ function Canvas() {
       </WelcomeMessage>
 
       <CanvasLanes>
+        {/* Topic Selection Lane */}
+        {showTopicSelector && (
+          <LaneCard>
+            <LaneHeader>
+              <h3>Choose Your Focus Area</h3>
+            </LaneHeader>
+            <LaneContent>
+              <motion.div
+                key="topic-selector"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+              >
+                <TopicSelector onComplete={handleTopicSelectionComplete} />
+              </motion.div>
+            </LaneContent>
+          </LaneCard>
+        )}
+
         {/* Readiness Lane */}
         {showReadinessGate && (
           <LaneCard>
@@ -201,26 +244,42 @@ function Canvas() {
           </LaneCard>
         )}
 
-        {/* Mining Lane */}
-        {!showReadinessGate && (
+
+
+        {/* Thought Mining Lane */}
+        {showThoughtMining && (
           <LaneCard>
             <LaneHeader>
               <h3>Thought Mining</h3>
             </LaneHeader>
             <LaneContent>
-              {thoughtMiningComponent}
+              <motion.div
+                key="thought-mining"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+              >
+                <ThoughtMining onComplete={handleThoughtMiningComplete} />
+              </motion.div>
             </LaneContent>
           </LaneCard>
         )}
 
-        {/* Picker Lane */}
-        {!showReadinessGate && (
+        {/* Better-Feeling Thoughts Lane */}
+        {showThoughtPicker && (
           <LaneCard className="picker-lane">
             <LaneHeader>
               <h3>Better-Feeling Thoughts</h3>
             </LaneHeader>
             <LaneContent>
-              {thoughtPickerComponent}
+              <motion.div
+                key="thought-picker"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+              >
+                <ThoughtPicker />
+              </motion.div>
             </LaneContent>
           </LaneCard>
         )}

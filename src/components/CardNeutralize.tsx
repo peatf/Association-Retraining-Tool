@@ -5,25 +5,162 @@ import { useSession } from '../context/SessionContext';
 import contentSearchService from '../services/ContentSearchService';
 import { Spinner, ErrorState } from './common';
 
-interface PromptButtonProps {
-  selected?: boolean;
-}
-
-const PromptButton = styled.button<PromptButtonProps>`
-  display: block;
-  width: 100%;
+const NeutralizeContainer = styled.div`
   padding: 1rem;
-  margin-bottom: 0.5rem;
-  text-align: left;
-  background-color: ${props => props.selected ? '#e0e0e0' : '#f0f0f0'};
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
+`;
 
-  &:hover {
-    background-color: #e0e0e0;
+const StepProgress = styled.div`
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div<{ width: number }>`
+  height: 100%;
+  background: #3498db;
+  width: ${props => props.width}%;
+  transition: width 0.3s ease;
+`;
+
+const StepContainer = styled.div`
+  margin-bottom: 2rem;
+`;
+
+const StepTitle = styled.h4`
+  color: #333;
+  margin-bottom: 0.5rem;
+`;
+
+const StepInstruction = styled.p`
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+`;
+
+const IntensitySlider = styled.div`
+  margin: 1rem 0;
+`;
+
+const SliderInput = styled.input`
+  width: 100%;
+  margin: 0.5rem 0;
+`;
+
+const SliderLabels = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const TextInput = styled.div`
+  margin: 1rem 0;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  min-height: 80px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
   }
 `;
+
+const ActivitySelection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+`;
+
+const ActivityOption = styled.button`
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+  }
+`;
+
+const StepSummary = styled.div`
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+
+  h5 {
+    margin: 0 0 0.5rem 0;
+    color: #495057;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+  }
+`;
+
+const ContinueButton = styled.button`
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #2980b9;
+  }
+
+  &:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+  }
+`;
+
+interface NeutralizationStep {
+  id: number;
+  title: string;
+  instruction: string;
+  component: 'slider' | 'text' | 'select' | 'instruction';
+  options?: string[];
+  placeholder?: string;
+}
+
+interface StepData {
+  initialCharge: number;
+  observerShiftComplete: boolean;
+  thirdPersonReword: string;
+  distractionActivity: string;
+  finalCharge: number;
+}
 
 interface CardNeutralizeProps {
   onComplete: () => void;
@@ -31,79 +168,209 @@ interface CardNeutralizeProps {
 
 const CardNeutralize = ({ onComplete }: CardNeutralizeProps) => {
   const { canvasState, updateCanvasState } = useSession();
-  const [prompts, setPrompts] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [stepData, setStepData] = useState<StepData>({
+    initialCharge: 5,
+    observerShiftComplete: false,
+    thirdPersonReword: '',
+    distractionActivity: '',
+    finalCharge: 5
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPrompts = async () => {
-      try {
-        setLoading(true);
-        const fetchedPrompts = await contentSearchService.getMiningPrompts(canvasState.selectedTopic || '', 'neutralize');
-        setPrompts(fetchedPrompts);
-        setLoading(false);
-      } catch (err) {
-        setError(err as Error);
-        setLoading(false);
-      }
-    };
-
-    if (canvasState.selectedTopic) {
-      fetchPrompts();
+  const neutralizationSteps: NeutralizationStep[] = [
+    {
+      id: 1,
+      title: "Name the Thought, Feel the Charge",
+      instruction: "Rate the emotional intensity of this thought (1-10):",
+      component: "slider"
+    },
+    {
+      id: 2,
+      title: "Observer Shift",
+      instruction: "Either say out loud to yourself or in your mind the thought in a voice that sounds monotone",
+      component: "instruction"
+    },
+    {
+      id: 3,
+      title: "Third-Person Reword",
+      instruction: "If this were a line in a novel describing someone else, how would the narrator phrase it?",
+      component: "text",
+      placeholder: "She is having the thought that people won't take her seriously..."
+    },
+    {
+      id: 4,
+      title: "Distract with Mildness",
+      instruction: "Choose a gentle distraction activity:",
+      component: "select",
+      options: [
+        "Describe the room you're in",
+        "Name colors around you", 
+        "Describe the texture of your shirt",
+        "Count your breaths to 10",
+        "Pet your cat/dog",
+        "Other mindful activity"
+      ]
+    },
+    {
+      id: 5,
+      title: "Recheck the Charge",
+      instruction: "What number is it now? Even a drop from 7 to 5 means you've reclaimed energetic control:",
+      component: "slider"
     }
-  }, [canvasState.selectedTopic]);
+  ];
 
-  const handlePromptSelect = (prompt: string) => {
-    setSelectedPrompt(prompt);
-  };
-
-  const handleComplete = () => {
-    updateCanvasState({
-      miningResults: {
-        ...canvasState.miningResults,
-        neutralize: {
-          prompt: selectedPrompt,
-          timestamp: new Date().toISOString(),
+  const handleStepComplete = (stepId: number, value: any) => {
+    const stepKey = {
+      1: 'initialCharge',
+      2: 'observerShiftComplete', 
+      3: 'thirdPersonReword',
+      4: 'distractionActivity',
+      5: 'finalCharge'
+    }[stepId] as keyof StepData;
+    
+    const newStepData = { ...stepData, [stepKey]: value };
+    setStepData(newStepData);
+    
+    if (stepId < 5) {
+      setCurrentStep(stepId + 1);
+    } else {
+      // Complete neutralization process
+      const chargeReduction = newStepData.initialCharge - value;
+      updateCanvasState({
+        miningResults: {
+          ...canvasState.miningResults,
+          neutralize: {
+            type: 'neutralize',
+            steps: newStepData,
+            chargeReduction,
+            timestamp: new Date().toISOString()
+          },
         },
-      },
-    });
-    onComplete();
+      });
+      onComplete();
+    }
   };
 
-  if (loading) {
-    return <Spinner message="Loading prompts..." />;
-  }
-
-  if (error) {
-    return <ErrorState title="Error loading prompts" message={error.message} aria-label="Error loading prompts" />;
-  }
+  const currentStepConfig = neutralizationSteps[currentStep - 1];
 
   return (
     <BaseCard 
-      title="Neutralize the Thought" 
-      onComplete={handleComplete} 
-      completionText="Continue"
+      title="Neutralize the Voice" 
       onActivate={() => {}}
-      testId="neutralize-card"
+      testId="card-neutralize"
       onSkip={() => {}}
       aria-describedby="neutralize-description"
-      aria-label="Neutralize the Thought"
+      aria-label="Neutralize the Voice"
+      showActions={false}
     >
-      <div style={{ padding: '1rem' }}>
-        <p>Select a prompt to help neutralize the thought:</p>
-        <div>
-          {prompts.map((prompt, index) => (
-            <PromptButton
-              key={index}
-              selected={selectedPrompt === prompt}
-              onClick={() => handlePromptSelect(prompt)}
-            >
-              {prompt}
-            </PromptButton>
-          ))}
-        </div>
-      </div>
+      <NeutralizeContainer>
+        <StepProgress>
+          <span>Step {currentStep} of 5</span>
+          <ProgressBar>
+            <ProgressFill width={(currentStep / 5) * 100} />
+          </ProgressBar>
+        </StepProgress>
+        
+        <StepContainer>
+          <StepTitle>{currentStepConfig.title}</StepTitle>
+          <StepInstruction>{currentStepConfig.instruction}</StepInstruction>
+          
+          {currentStepConfig.component === 'slider' && (
+            <IntensitySlider>
+              <SliderInput
+                type="range"
+                min="1"
+                max="10"
+                value={stepData[currentStep === 1 ? 'initialCharge' : 'finalCharge']}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  const stepKey = currentStep === 1 ? 'initialCharge' : 'finalCharge';
+                  setStepData(prev => ({ ...prev, [stepKey]: value }));
+                }}
+                onMouseUp={(e) => handleStepComplete(currentStep, parseInt((e.target as HTMLInputElement).value))}
+                onTouchEnd={(e) => handleStepComplete(currentStep, parseInt((e.target as HTMLInputElement).value))}
+                data-testid={`neutralize-step-${currentStep}-slider`}
+              />
+              <SliderLabels>
+                <span>1 - Calm</span>
+                <span>10 - Overwhelming</span>
+              </SliderLabels>
+              <div style={{ textAlign: 'center', marginTop: '0.5rem', color: '#666' }}>
+                Current value: {stepData[currentStep === 1 ? 'initialCharge' : 'finalCharge']}
+              </div>
+            </IntensitySlider>
+          )}
+          
+          {currentStepConfig.component === 'text' && (
+            <TextInput>
+              <TextArea
+                placeholder={currentStepConfig.placeholder}
+                value={stepData.thirdPersonReword}
+                onChange={(e) => setStepData(prev => ({ 
+                  ...prev, 
+                  thirdPersonReword: e.target.value 
+                }))}
+                data-testid={`neutralize-step-${currentStep}-text`}
+              />
+              <ContinueButton 
+                onClick={() => handleStepComplete(currentStep, stepData.thirdPersonReword)}
+                disabled={!stepData.thirdPersonReword.trim()}
+              >
+                Continue
+              </ContinueButton>
+            </TextInput>
+          )}
+
+          {currentStepConfig.component === 'instruction' && (
+            <div style={{ margin: '1rem 0' }}>
+              <div style={{ 
+                background: '#f8f9fa', 
+                padding: '1rem', 
+                borderRadius: '4px', 
+                marginBottom: '1rem',
+                borderLeft: '4px solid #3498db'
+              }}>
+                <p style={{ margin: 0, fontStyle: 'italic' }}>
+                  Have the user prepend the phrase "My mind just produced the thought..." (in a monotone) and speak/hear it once more.
+                </p>
+              </div>
+              <ContinueButton 
+                onClick={() => handleStepComplete(currentStep, true)}
+              >
+                I've Done This Step
+              </ContinueButton>
+            </div>
+          )}
+          
+          {currentStepConfig.component === 'select' && (
+            <ActivitySelection>
+              {currentStepConfig.options?.map((option, index) => (
+                <ActivityOption
+                  key={index}
+                  onClick={() => handleStepComplete(currentStep, option)}
+                  data-testid={`neutralize-step-${currentStep}-option-${index}`}
+                >
+                  {option}
+                </ActivityOption>
+              ))}
+            </ActivitySelection>
+          )}
+        </StepContainer>
+        
+        {currentStep > 1 && (
+          <StepSummary>
+            <h5>Progress so far:</h5>
+            <ul>
+              {currentStep > 1 && <li>Initial charge: {stepData.initialCharge}/10</li>}
+              {currentStep > 2 && <li>Observer shift: Completed</li>}
+              {currentStep > 3 && <li>Third-person reword: "{stepData.thirdPersonReword}"</li>}
+              {currentStep > 4 && <li>Distraction: {stepData.distractionActivity}</li>}
+            </ul>
+          </StepSummary>
+        )}
+      </NeutralizeContainer>
     </BaseCard>
   );
 };

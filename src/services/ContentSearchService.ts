@@ -7,14 +7,27 @@
 
 import errorHandlingService from '../services/ErrorHandlingService';
 
+interface EitherOrPrompt {
+  question: string;
+  optionA: string;
+  optionB: string;
+}
+
 interface ContentEntry {
   category: string;
   subcategories: string[];
   summaryForVectorization: string;
   miningPrompts: {
-    [key: string]: string[];
+    neutralize?: string[];
+    commonGround?: string[];
+    dataExtraction?: (string | EitherOrPrompt)[];
   };
-  replacementThoughts: string[];
+  replacementThoughts: string[] | {
+    level1?: string[];
+    level2?: string[];
+    level3?: string[];
+    level4?: string[];
+  };
   chunks?: Array<{
     text: string;
     metadata?: Record<string, any>;
@@ -62,7 +75,7 @@ interface ContentStats {
 }
 
 function isValidEntry(entry: any): entry is ContentEntry {
-  return entry && entry.category && Array.isArray(entry.subcategories) && entry.summaryForVectorization && entry.miningPrompts && Array.isArray(entry.replacementThoughts);
+  return entry && entry.category && Array.isArray(entry.subcategories) && entry.summaryForVectorization && entry.miningPrompts && (Array.isArray(entry.replacementThoughts) || typeof entry.replacementThoughts === 'object');
 }
 
 class ContentSearchService {
@@ -277,7 +290,7 @@ class ContentSearchService {
 
         // Find entries that match the category
         const matchingEntries = contentIndex.entries.filter(entry => {
-        if (!isValidEntry(entry)) return false;
+          if (!isValidEntry(entry)) return false;
           if (entry.category !== category) return false;
           if (subcategory && !entry.subcategories.includes(subcategory)) return false;
           return true;
@@ -285,13 +298,30 @@ class ContentSearchService {
 
         // Extract replacement thoughts from matching entries
         for (const entry of matchingEntries) {
-          if (entry.replacementThoughts && Array.isArray(entry.replacementThoughts)) {
-            replacementThoughts.push(...entry.replacementThoughts);
+          if (entry.replacementThoughts) {
+            if (Array.isArray(entry.replacementThoughts)) {
+              // Legacy format - flat array
+              replacementThoughts.push(...entry.replacementThoughts);
+            } else if (typeof entry.replacementThoughts === 'object') {
+              // New hierarchical format - combine all levels
+              const leveledThoughts = entry.replacementThoughts as {
+                level1?: string[];
+                level2?: string[];
+                level3?: string[];
+                level4?: string[];
+              };
+              
+              // Collect thoughts from all levels
+              for (let level = 1; level <= 4; level++) {
+                const levelKey = `level${level}` as keyof typeof leveledThoughts;
+                if (leveledThoughts[levelKey]) {
+                  replacementThoughts.push(...leveledThoughts[levelKey]!);
+                }
+              }
+            }
           }
         }
 
-        // For now, we don't have intensity levels in the data structure
-        // This could be enhanced in the future
         this.cache.set(cacheKey, replacementThoughts);
         return replacementThoughts;
       } catch (error: unknown) {
@@ -308,6 +338,77 @@ class ContentSearchService {
 
     this.cache.set(cacheKey + '-promise', promise);
     return promise;
+  }
+
+  /**
+   * Get hierarchical replacement thoughts organized by level
+   * @param {string} category - The category name
+   * @param {string} subcategory - The subcategory name (optional)
+   * @returns {Promise<Record<string, string[]>>} Object with level1-level4 arrays
+   */
+  async getHierarchicalReplacementThoughts(category: string, subcategory: string | null = null): Promise<Record<string, string[]>> {
+    const cacheKey = `getHierarchicalReplacementThoughts-${category}-${subcategory}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
+    }
+
+    try {
+      const contentIndex = await this.loadContentIndex();
+
+      const hierarchicalThoughts: Record<string, string[]> = {
+        level1: [],
+        level2: [],
+        level3: [],
+        level4: []
+      };
+
+      // Find entries that match the category
+      const matchingEntries = contentIndex.entries.filter(entry => {
+        if (!isValidEntry(entry)) return false;
+        if (entry.category !== category) return false;
+        if (subcategory && !entry.subcategories.includes(subcategory)) return false;
+        return true;
+      });
+
+      // Extract hierarchical replacement thoughts from matching entries
+      for (const entry of matchingEntries) {
+        if (entry.replacementThoughts && typeof entry.replacementThoughts === 'object' && !Array.isArray(entry.replacementThoughts)) {
+          const leveledThoughts = entry.replacementThoughts as {
+            level1?: string[];
+            level2?: string[];
+            level3?: string[];
+            level4?: string[];
+          };
+          
+          // Collect thoughts from each level
+          for (let level = 1; level <= 4; level++) {
+            const levelKey = `level${level}` as keyof typeof leveledThoughts;
+            if (leveledThoughts[levelKey]) {
+              hierarchicalThoughts[levelKey].push(...leveledThoughts[levelKey]!);
+            }
+          }
+        } else if (Array.isArray(entry.replacementThoughts)) {
+          // Legacy format - distribute evenly across levels
+          const thoughts = entry.replacementThoughts;
+          const thoughtsPerLevel = Math.ceil(thoughts.length / 4);
+          
+          hierarchicalThoughts.level1.push(...thoughts.slice(0, thoughtsPerLevel));
+          hierarchicalThoughts.level2.push(...thoughts.slice(thoughtsPerLevel, thoughtsPerLevel * 2));
+          hierarchicalThoughts.level3.push(...thoughts.slice(thoughtsPerLevel * 2, thoughtsPerLevel * 3));
+          hierarchicalThoughts.level4.push(...thoughts.slice(thoughtsPerLevel * 3));
+        }
+      }
+
+      this.cache.set(cacheKey, hierarchicalThoughts);
+      return hierarchicalThoughts;
+    } catch (error: unknown) {
+      const errorResult = await errorHandlingService.handleContentServiceError(
+        'getHierarchicalReplacementThoughts',
+        error,
+        { category, subcategory }
+      ) as ErrorResult;
+      return errorResult.fallbackData || { level1: [], level2: [], level3: [], level4: [] };
+    }
   }
 
   /**
@@ -339,8 +440,25 @@ class ContentSearchService {
 
         // Extract mining prompts from matching entries
         for (const entry of matchingEntries) {
-          if (entry.miningPrompts && entry.miningPrompts[type]) {
-            prompts.push(...entry.miningPrompts[type]);
+          if (entry.miningPrompts && entry.miningPrompts[type as keyof typeof entry.miningPrompts]) {
+            const typePrompts = entry.miningPrompts[type as keyof typeof entry.miningPrompts];
+            if (typePrompts) {
+              // Handle both string arrays and EitherOrPrompt arrays
+              if (type === 'dataExtraction') {
+                // For data extraction, convert EitherOrPrompt objects to strings
+                typePrompts.forEach((prompt: any) => {
+                  if (typeof prompt === 'string') {
+                    prompts.push(prompt);
+                  } else if (prompt.question) {
+                    // Convert EitherOrPrompt to string format for backward compatibility
+                    prompts.push(prompt.question);
+                  }
+                });
+              } else {
+                // For other types, just add strings
+                prompts.push(...(typePrompts as string[]));
+              }
+            }
           }
         }
 
@@ -360,6 +478,50 @@ class ContentSearchService {
 
     this.cache.set(cacheKey + '-promise', promise);
     return promise;
+  }
+
+  /**
+   * Get either/or data extraction prompts for a specific category
+   * @param {string} category - The category name
+   * @returns {Promise<EitherOrPrompt[]>} Array of either/or prompts
+   */
+  async getEitherOrPrompts(category: string): Promise<EitherOrPrompt[]> {
+    const cacheKey = `getEitherOrPrompts-${category}`;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
+    }
+
+    try {
+      const contentIndex = await this.loadContentIndex();
+
+      const eitherOrPrompts: EitherOrPrompt[] = [];
+
+      // Find entries that match the category
+      const matchingEntries = contentIndex.entries.filter(entry =>
+        isValidEntry(entry) && entry.category === category
+      );
+
+      // Extract either/or prompts from matching entries
+      for (const entry of matchingEntries) {
+        if (entry.miningPrompts && entry.miningPrompts.dataExtraction) {
+          entry.miningPrompts.dataExtraction.forEach((prompt: any) => {
+            if (typeof prompt === 'object' && prompt.question && prompt.optionA && prompt.optionB) {
+              eitherOrPrompts.push(prompt as EitherOrPrompt);
+            }
+          });
+        }
+      }
+
+      this.cache.set(cacheKey, eitherOrPrompts);
+      return eitherOrPrompts;
+    } catch (error: unknown) {
+      const errorResult = await errorHandlingService.handleContentServiceError(
+        'getEitherOrPrompts',
+        error,
+        { category }
+      ) as ErrorResult;
+      return errorResult.fallbackData || [];
+    }
   }
 
   /**

@@ -1,0 +1,414 @@
+/* Inner Garden Global Styles */
+/* Garden-specific styling and keyframe animations for the immersive experience */
+
+/* === GARDEN CSS VARIABLES === */
+:root {
+  /* Z-Index System */
+  --z-garden-background: 0;
+  --z-garden-clouds-back: 1;
+  --z-garden-stars: 2;
+  --z-garden-clouds-front: 3;
+  --z-garden-ui-base: 4;
+  --z-garden-interactive: 5;
+  --z-garden-flowers: 6;
+  --z-garden-overlays: 7;
+  --z-garden-controls: 8;
+  --z-garden-modals: 9;
+  --z-garden-dialogs: 999;
+  
+  /* Garden Color Palette */
+  --garden-night-primary: #0a0b1e;
+  --garden-night-secondary: #1a1d3a;
+  --garden-moonlight: rgba(220, 230, 255, 0.8);
+  --garden-starlight: rgba(255, 255, 255, 0.9);
+  --garden-glow-soft: rgba(180, 200, 255, 0.3);
+  --garden-glow-bright: rgba(180, 200, 255, 0.7);
+  
+  /* Garden Field Colors */
+  --garden-money-primary: #d4af37;
+  --garden-relationships-primary: #e91e63;
+  --garden-selfimage-primary: #9c27b0;
+  
+  /* Garden Spacing */
+  --garden-unit: 8px;
+  --garden-spacing-xs: calc(var(--garden-unit) * 0.5);
+  --garden-spacing-sm: var(--garden-unit);
+  --garden-spacing-md: calc(var(--garden-unit) * 2);
+  --garden-spacing-lg: calc(var(--garden-unit) * 3);
+  --garden-spacing-xl: calc(var(--garden-unit) * 4);
+  --garden-spacing-xxl: calc(var(--garden-unit) * 6);
+  
+  /* Garden Transitions */
+  --garden-transition-fast: 0.2s ease-out;
+  --garden-transition-normal: 0.4s ease-out;
+  --garden-transition-slow: 0.8s ease-out;
+  --garden-transition-cinematic: 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* Garden Border Radius */
+  --garden-radius-sm: 4px;
+  --garden-radius-md: 8px;
+  --garden-radius-lg: 16px;
+  --garden-radius-xl: 24px;
+  --garden-radius-round: 50%;
+  
+  /* Garden Shadows */
+  --garden-shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --garden-shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --garden-shadow-strong: 0 16px 50px rgba(0, 0, 0, 0.25);
+  --garden-shadow-glow: 0 0 20px rgba(180, 200, 255, 0.4);
+}
+
+/* === GARDEN KEYFRAME ANIMATIONS === */
+
+/* Cloud Movement Animations */
+@keyframes driftBack {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(100px); }
+}
+
+@keyframes driftFront {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(150px); }
+}
+
+/* Star Twinkling Animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Gate Breathing Glow */
+@keyframes breathing {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* Flower Wiggle for Pickable Elements */
+@keyframes pickerWiggle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(1deg); }
+  75% { transform: translateY(2px) rotate(-1deg); }
+}
+
+/* Petal Drift Animation */
+@keyframes petalDrift {
+  0% { transform: translateY(-10px) translateX(-5px) rotate(0deg); opacity: 0.7; }
+  50% { transform: translateY(10px) translateX(5px) rotate(180deg); opacity: 1; }
+  100% { transform: translateY(30px) translateX(-5px) rotate(360deg); opacity: 0.3; }
+}
+
+/* Root Growth Animation */
+@keyframes rootGrowth {
+  0% { transform: scaleY(0) translateY(50%); opacity: 0; }
+  100% { transform: scaleY(1) translateY(0); opacity: 1; }
+}
+
+/* Flower State Transitions */
+@keyframes flowerBloom {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Sunlight Sweep */
+@keyframes sunlightSweep {
+  0% { opacity: 0; transform: translateX(-100%); }
+  50% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+/* Moonlight Pulse */
+@keyframes moonlightPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(220, 230, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(220, 230, 255, 0.6); }
+}
+
+/* Gentle Sway for Gates and Flowers */
+@keyframes gentleSway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+/* === GARDEN LAYOUT SYSTEM === */
+
+.garden-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--garden-night-primary);
+}
+
+.garden-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.garden-interactive {
+  pointer-events: auto;
+}
+
+.garden-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-garden-background);
+}
+
+/* === GARDEN ANIMATION CLASSES === */
+
+.garden-drift-slow {
+  animation: driftBack 20s linear infinite;
+}
+
+.garden-drift-fast {
+  animation: driftFront 15s linear infinite;
+}
+
+.garden-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+.garden-breathing {
+  animation: breathing 4s ease-in-out infinite;
+}
+
+.garden-wiggle {
+  animation: pickerWiggle 3s ease-in-out infinite;
+  animation-delay: var(--wiggle-delay, 0s);
+}
+
+.garden-sway {
+  animation: gentleSway 6s ease-in-out infinite;
+  animation-delay: var(--sway-delay, 0s);
+}
+
+.garden-moonlight-pulse {
+  animation: moonlightPulse 2s ease-in-out infinite;
+}
+
+/* === GARDEN RESPONSIVE BREAKPOINTS === */
+
+/* Mobile (320px - 767px) */
+@media (max-width: 767px) {
+  :root {
+    --garden-unit: 6px;
+  }
+  
+  .garden-container {
+    /* Touch-friendly spacing on mobile */
+  }
+  
+  .garden-interactive {
+    min-height: 44px; /* Touch target size */
+    min-width: 44px;
+  }
+}
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --garden-unit: 7px;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --garden-unit: 8px;
+  }
+}
+
+/* === GARDEN ACCESSIBILITY === */
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-drift-slow,
+  .garden-drift-fast,
+  .garden-twinkle,
+  .garden-breathing,
+  .garden-wiggle,
+  .garden-sway,
+  .garden-moonlight-pulse {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: -1ms !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Garden already optimized for dark themes */
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --garden-glow-soft: rgba(255, 255, 255, 0.8);
+    --garden-glow-bright: rgba(255, 255, 255, 1);
+    --garden-moonlight: rgba(255, 255, 255, 1);
+  }
+}
+
+/* === GARDEN COMPONENT BASE STYLES === */
+
+.garden-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--garden-radius-lg);
+  box-shadow: var(--garden-shadow-soft);
+  transition: all var(--garden-transition-normal);
+}
+
+.garden-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--garden-shadow-medium);
+}
+
+.garden-button {
+  background: var(--garden-moonlight);
+  border: none;
+  border-radius: var(--garden-radius-md);
+  padding: var(--garden-spacing-md) var(--garden-spacing-lg);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--garden-night-primary);
+  cursor: pointer;
+  transition: all var(--garden-transition-fast);
+  box-shadow: var(--garden-shadow-soft);
+}
+
+.garden-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--garden-shadow-glow);
+}
+
+.garden-button:active {
+  transform: translateY(0);
+}
+
+.garden-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* === GARDEN BLEND MODES === */
+
+.garden-blend-soft-light {
+  mix-blend-mode: soft-light;
+}
+
+.garden-blend-screen {
+  mix-blend-mode: screen;
+}
+
+.garden-blend-overlay {
+  mix-blend-mode: overlay;
+}
+
+/* === GARDEN UTILITY CLASSES === */
+
+.garden-blur-background {
+  filter: blur(5px) brightness(0.85);
+}
+
+.garden-blur-soft {
+  filter: blur(2px);
+}
+
+.garden-fade-in {
+  opacity: 0;
+  animation: fadeIn var(--garden-transition-normal) forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.garden-fade-out {
+  animation: fadeOut var(--garden-transition-normal) forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
+.garden-scale-in {
+  transform: scale(0.8);
+  opacity: 0;
+  animation: scaleIn var(--garden-transition-cinematic) forwards;
+}
+
+@keyframes scaleIn {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* === GARDEN FOCUS STYLES === */
+
+.garden-interactive:focus-visible {
+  outline: 2px solid var(--garden-moonlight);
+  outline-offset: 2px;
+  border-radius: var(--garden-radius-sm);
+}
+
+/* === GARDEN LOADING STATES === */
+
+.garden-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.garden-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* === GARDEN PRINT STYLES === */
+
+@media print {
+  .garden-container {
+    background: white;
+    color: black;
+    height: auto;
+    overflow: visible;
+  }
+  
+  .garden-interactive {
+    pointer-events: none;
+  }
+  
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

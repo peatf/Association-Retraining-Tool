@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarity Canvas - Therapeutic Reframing Engine</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* React Canvas Override - Show React content when active */
+        #app-container[data-react-root] {
+            display: block !important;
+            opacity: 1 !important;
+            min-height: 100vh;
+            background: #f4f4f9 !important;
+        }
+        
+        /* Hide legacy content when React is active */
+        #app-container[data-react-root] > div:not([data-react-content]) {
+            display: none !important;
+        }
+        
+        /* Ensure React content is visible */
+        #app-container[data-react-root] > div[data-react-content] {
+            display: block !important;
+            opacity: 1 !important;
+        }
+        
+        /* Override any body styles that might interfere */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container"></div>
+    <script type="module" src="/src/index.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
+</body>
+</html> 

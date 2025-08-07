@@ -19,24 +19,49 @@
         "What part of you believes this thought is necessary for survival?"
       ],
       "dataExtraction": [
-        "Does this decision come from a place of scarcity or a place of sufficiency?",
-        "Is this choice about avoiding risk or about creating opportunity?",
-        "Does this financial belief feel like your own, or did it come from someone else?",
-        "Is the goal to accumulate for safety or to circulate for impact?",
-        "Are you focused on what you lack or on what you have and can grow?"
+        {
+          "question": "Does this financial worry feel like it's trying to protect you?",
+          "optionA": "Yes, it's trying to keep me safe from financial ruin or instability",
+          "optionB": "No, it feels more like it's keeping me stuck in scarcity thinking"
+        },
+        {
+          "question": "Does this decision come from a place of scarcity or sufficiency?",
+          "optionA": "Scarcity - I'm focused on what I lack or might lose",
+          "optionB": "Sufficiency - I'm working with what I have and can create"
+        },
+        {
+          "question": "Is this choice about avoiding risk or creating opportunity?",
+          "optionA": "Avoiding risk - I want to prevent financial loss or mistakes",
+          "optionB": "Creating opportunity - I want to build and grow my resources"
+        },
+        {
+          "question": "Does this financial belief feel like your own or inherited?",
+          "optionA": "Inherited - it came from family, society, or past experiences",
+          "optionB": "My own - it reflects my current values and understanding"
+        }
       ]
     },
-    "replacementThoughts": [
-      "Money is a neutral tool; I assign it its meaning.",
-      "My worth is not measured by my bank account.",
-      "I can feel secure even as my financial picture changes.",
-      "Every dollar I spend can be a choice for a better world.",
-      "I am a good steward of the resources I have.",
-      "Building wealth can be a creative and joyful act.",
-      "I release old stories and welcome a new financial reality.",
-      "My financial well-being is constantly expanding.",
-      "I trust my ability to create the resources I need.",
-      "Abundance is my birthright; I claim it now."
-    ]
+    "replacementThoughts": {
+      "level1": [
+        "It's normal to have concerns about money and financial security.",
+        "I can acknowledge my financial worries without letting them control me.",
+        "Many people face financial challenges - I'm not alone in this."
+      ],
+      "level2": [
+        "I am learning to make financial decisions from a calmer place.",
+        "My worth is not measured by my bank account.",
+        "I can feel secure even as my financial picture changes."
+      ],
+      "level3": [
+        "I am a good steward of the resources I have.",
+        "Every financial choice can be an expression of my values.",
+        "I trust my ability to learn and grow in financial wisdom."
+      ],
+      "level4": [
+        "Money is a neutral tool; I assign it its meaning.",
+        "Building wealth can be a creative and joyful act.",
+        "Abundance is my natural state; I welcome prosperity with gratitude."
+      ]
+    }
   }
 ]

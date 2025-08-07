@@ -85,17 +85,38 @@ async function buildContentIndex() {
       });
 
       // Add chunks for replacement thoughts
-      entry.replacementThoughts.forEach((thought, index) => {
-        processedEntry.chunks.push({
-          text: thought,
-          metadata: {
-            category: entry.category,
-            subcategories: entry.subcategories,
-            type: 'replacementThought',
-            index
+      if (Array.isArray(entry.replacementThoughts)) {
+        // Legacy format - flat array
+        entry.replacementThoughts.forEach((thought, index) => {
+          processedEntry.chunks.push({
+            text: thought,
+            metadata: {
+              category: entry.category,
+              subcategories: entry.subcategories,
+              type: 'replacementThought',
+              index
+            }
+          });
+        });
+      } else if (typeof entry.replacementThoughts === 'object') {
+        // New hierarchical format - process each level
+        Object.entries(entry.replacementThoughts).forEach(([level, thoughts]) => {
+          if (Array.isArray(thoughts)) {
+            thoughts.forEach((thought, index) => {
+              processedEntry.chunks.push({
+                text: thought,
+                metadata: {
+                  category: entry.category,
+                  subcategories: entry.subcategories,
+                  type: 'replacementThought',
+                  level: level,
+                  index
+                }
+              });
+            });
           }
         });
-      });
+      }
 
       processedEntries.push(processedEntry);
     }

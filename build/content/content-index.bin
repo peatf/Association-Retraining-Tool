@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "timestamp": "2025-07-28T23:18:47.518Z",
+  "timestamp": "2025-08-07T04:29:38.792Z",
   "metadata": {
     "categories": [
       "Money",
@@ -25,11 +25,11 @@
       ]
     },
     "totalEntries": 3,
-    "totalChunks": 77
+    "totalChunks": 81
   },
   "entries": [
     {
-      "id": "Money-1753744727518-kl0ed5xmw",
+      "id": "Money-1754540978792-0ullofjmx",
       "category": "Money",
       "subcategories": [
         "Savings",
@@ -53,25 +53,50 @@
           "What part of you believes this thought is necessary for survival?"
         ],
         "dataExtraction": [
-          "Does this decision come from a place of scarcity or a place of sufficiency?",
-          "Is this choice about avoiding risk or about creating opportunity?",
-          "Does this financial belief feel like your own, or did it come from someone else?",
-          "Is the goal to accumulate for safety or to circulate for impact?",
-          "Are you focused on what you lack or on what you have and can grow?"
+          {
+            "question": "Does this financial worry feel like it's trying to protect you?",
+            "optionA": "Yes, it's trying to keep me safe from financial ruin or instability",
+            "optionB": "No, it feels more like it's keeping me stuck in scarcity thinking"
+          },
+          {
+            "question": "Does this decision come from a place of scarcity or sufficiency?",
+            "optionA": "Scarcity - I'm focused on what I lack or might lose",
+            "optionB": "Sufficiency - I'm working with what I have and can create"
+          },
+          {
+            "question": "Is this choice about avoiding risk or creating opportunity?",
+            "optionA": "Avoiding risk - I want to prevent financial loss or mistakes",
+            "optionB": "Creating opportunity - I want to build and grow my resources"
+          },
+          {
+            "question": "Does this financial belief feel like your own or inherited?",
+            "optionA": "Inherited - it came from family, society, or past experiences",
+            "optionB": "My own - it reflects my current values and understanding"
+          }
         ]
       },
-      "replacementThoughts": [
-        "Money is a neutral tool; I assign it its meaning.",
-        "My worth is not measured by my bank account.",
-        "I can feel secure even as my financial picture changes.",
-        "Every dollar I spend can be a choice for a better world.",
-        "I am a good steward of the resources I have.",
-        "Building wealth can be a creative and joyful act.",
-        "I release old stories and welcome a new financial reality.",
-        "My financial well-being is constantly expanding.",
-        "I trust my ability to create the resources I need.",
-        "Abundance is my birthright; I claim it now."
-      ],
+      "replacementThoughts": {
+        "level1": [
+          "It's normal to have concerns about money and financial security.",
+          "I can acknowledge my financial worries without letting them control me.",
+          "Many people face financial challenges - I'm not alone in this."
+        ],
+        "level2": [
+          "I am learning to make financial decisions from a calmer place.",
+          "My worth is not measured by my bank account.",
+          "I can feel secure even as my financial picture changes."
+        ],
+        "level3": [
+          "I am a good steward of the resources I have.",
+          "Every financial choice can be an expression of my values.",
+          "I trust my ability to learn and grow in financial wisdom."
+        ],
+        "level4": [
+          "Money is a neutral tool; I assign it its meaning.",
+          "Building wealth can be a creative and joyful act.",
+          "Abundance is my natural state; I welcome prosperity with gratitude."
+        ]
+      },
       "sourceFile": "money.json",
       "chunks": [
         {
@@ -217,7 +242,11 @@
           }
         },
         {
-          "text": "Does this decision come from a place of scarcity or a place of sufficiency?",
+          "text": {
+            "question": "Does this financial worry feel like it's trying to protect you?",
+            "optionA": "Yes, it's trying to keep me safe from financial ruin or instability",
+            "optionB": "No, it feels more like it's keeping me stuck in scarcity thinking"
+          },
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -230,7 +259,11 @@
           }
         },
         {
-          "text": "Is this choice about avoiding risk or about creating opportunity?",
+          "text": {
+            "question": "Does this decision come from a place of scarcity or sufficiency?",
+            "optionA": "Scarcity - I'm focused on what I lack or might lose",
+            "optionB": "Sufficiency - I'm working with what I have and can create"
+          },
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -243,7 +276,11 @@
           }
         },
         {
-          "text": "Does this financial belief feel like your own, or did it come from someone else?",
+          "text": {
+            "question": "Is this choice about avoiding risk or creating opportunity?",
+            "optionA": "Avoiding risk - I want to prevent financial loss or mistakes",
+            "optionB": "Creating opportunity - I want to build and grow my resources"
+          },
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -256,7 +293,11 @@
           }
         },
         {
-          "text": "Is the goal to accumulate for safety or to circulate for impact?",
+          "text": {
+            "question": "Does this financial belief feel like your own or inherited?",
+            "optionA": "Inherited - it came from family, society, or past experiences",
+            "optionB": "My own - it reflects my current values and understanding"
+          },
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -269,20 +310,7 @@
           }
         },
         {
-          "text": "Are you focused on what you lack or on what you have and can grow?",
-          "metadata": {
-            "category": "Money",
-            "subcategories": [
-              "Savings",
-              "Debt",
-              "Investing"
-            ],
-            "type": "miningPrompt_dataExtraction",
-            "index": 4
-          }
-        },
-        {
-          "text": "Money is a neutral tool; I assign it its meaning.",
+          "text": "It's normal to have concerns about money and financial security.",
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -291,6 +319,49 @@
               "Investing"
             ],
             "type": "replacementThought",
+            "level": "level1",
+            "index": 0
+          }
+        },
+        {
+          "text": "I can acknowledge my financial worries without letting them control me.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level1",
+            "index": 1
+          }
+        },
+        {
+          "text": "Many people face financial challenges - I'm not alone in this.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level1",
+            "index": 2
+          }
+        },
+        {
+          "text": "I am learning to make financial decisions from a calmer place.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level2",
             "index": 0
           }
         },
@@ -304,6 +375,7 @@
               "Investing"
             ],
             "type": "replacementThought",
+            "level": "level2",
             "index": 1
           }
         },
@@ -317,20 +389,8 @@
               "Investing"
             ],
             "type": "replacementThought",
+            "level": "level2",
             "index": 2
-          }
-        },
-        {
-          "text": "Every dollar I spend can be a choice for a better world.",
-          "metadata": {
-            "category": "Money",
-            "subcategories": [
-              "Savings",
-              "Debt",
-              "Investing"
-            ],
-            "type": "replacementThought",
-            "index": 3
           }
         },
         {
@@ -343,7 +403,50 @@
               "Investing"
             ],
             "type": "replacementThought",
-            "index": 4
+            "level": "level3",
+            "index": 0
+          }
+        },
+        {
+          "text": "Every financial choice can be an expression of my values.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 1
+          }
+        },
+        {
+          "text": "I trust my ability to learn and grow in financial wisdom.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 2
+          }
+        },
+        {
+          "text": "Money is a neutral tool; I assign it its meaning.",
+          "metadata": {
+            "category": "Money",
+            "subcategories": [
+              "Savings",
+              "Debt",
+              "Investing"
+            ],
+            "type": "replacementThought",
+            "level": "level4",
+            "index": 0
           }
         },
         {
@@ -356,11 +459,12 @@
               "Investing"
             ],
             "type": "replacementThought",
-            "index": 5
+            "level": "level4",
+            "index": 1
           }
         },
         {
-          "text": "I release old stories and welcome a new financial reality.",
+          "text": "Abundance is my natural state; I welcome prosperity with gratitude.",
           "metadata": {
             "category": "Money",
             "subcategories": [
@@ -369,52 +473,14 @@
               "Investing"
             ],
             "type": "replacementThought",
-            "index": 6
-          }
-        },
-        {
-          "text": "My financial well-being is constantly expanding.",
-          "metadata": {
-            "category": "Money",
-            "subcategories": [
-              "Savings",
-              "Debt",
-              "Investing"
-            ],
-            "type": "replacementThought",
-            "index": 7
-          }
-        },
-        {
-          "text": "I trust my ability to create the resources I need.",
-          "metadata": {
-            "category": "Money",
-            "subcategories": [
-              "Savings",
-              "Debt",
-              "Investing"
-            ],
-            "type": "replacementThought",
-            "index": 8
-          }
-        },
-        {
-          "text": "Abundance is my birthright; I claim it now.",
-          "metadata": {
-            "category": "Money",
-            "subcategories": [
-              "Savings",
-              "Debt",
-              "Investing"
-            ],
-            "type": "replacementThought",
-            "index": 9
+            "level": "level4",
+            "index": 2
           }
         }
       ]
     },
     {
-      "id": "Relationships-1753744727518-ye2joiroj",
+      "id": "Relationships-1754540978792-27qvg1ie2",
       "category": "Relationships",
       "subcategories": [
         "Romance",
@@ -438,25 +504,50 @@
           "Could this boundary be a loving act toward yourself?"
         ],
         "dataExtraction": [
-          "Is this action about seeking validation or offering authentic connection?",
-          "Does this boundary feel like a wall or a gate?",
-          "Are you prioritizing someone else's comfort over your own truth?",
-          "Is this relationship defined by shared history or by present-day alignment?",
-          "Do you feel you are giving from a full cup or an empty one?"
+          {
+            "question": "Is this relationship pattern trying to protect your heart?",
+            "optionA": "Yes, it's trying to prevent me from being hurt or abandoned",
+            "optionB": "No, it feels more like it's keeping me from authentic connection"
+          },
+          {
+            "question": "Is this action about seeking validation or offering authentic connection?",
+            "optionA": "Seeking validation - I need others to approve of or accept me",
+            "optionB": "Authentic connection - I want to share my true self with others"
+          },
+          {
+            "question": "Does this boundary feel like a wall or a gate?",
+            "optionA": "A wall - it's meant to keep people out and protect me",
+            "optionB": "A gate - it's selective but allows for meaningful connection"
+          },
+          {
+            "question": "Are you giving from a full cup or an empty one?",
+            "optionA": "Empty cup - I'm depleted but still trying to give to others",
+            "optionB": "Full cup - I'm resourced and can give from abundance"
+          }
         ]
       },
-      "replacementThoughts": [
-        "I can love others while honoring my own needs.",
-        "My boundaries are a sacred expression of self-respect.",
-        "I attract relationships that mirror my inner wholeness.",
-        "Healthy conflict can bring greater intimacy and understanding.",
-        "I release the need to manage others' emotions.",
-        "Each relationship is an assignment for my growth.",
-        "I deserve to feel safe, seen, and cherished.",
-        "I can communicate my needs with clarity and kindness.",
-        "Authentic connection feels calm, not chaotic.",
-        "I allow my relationships to evolve as I do."
-      ],
+      "replacementThoughts": {
+        "level1": [
+          "It's natural to have challenges in relationships.",
+          "I can notice my relationship patterns without judging them.",
+          "Most people struggle with connection - I'm not alone in this."
+        ],
+        "level2": [
+          "I am learning to communicate my needs more clearly.",
+          "I can love others while still honoring my own needs.",
+          "Healthy boundaries are an act of self-care, not selfishness."
+        ],
+        "level3": [
+          "I deserve to feel safe, seen, and cherished in my relationships.",
+          "I can communicate my needs with clarity and kindness.",
+          "Each relationship is an opportunity for my growth and healing."
+        ],
+        "level4": [
+          "I attract relationships that mirror my inner wholeness.",
+          "Authentic connection feels calm, not chaotic.",
+          "I allow my relationships to evolve as I do, with love and acceptance."
+        ]
+      },
       "sourceFile": "relationships.json",
       "chunks": [
         {
@@ -602,7 +693,11 @@
           }
         },
         {
-          "text": "Is this action about seeking validation or offering authentic connection?",
+          "text": {
+            "question": "Is this relationship pattern trying to protect your heart?",
+            "optionA": "Yes, it's trying to prevent me from being hurt or abandoned",
+            "optionB": "No, it feels more like it's keeping me from authentic connection"
+          },
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -615,7 +710,11 @@
           }
         },
         {
-          "text": "Does this boundary feel like a wall or a gate?",
+          "text": {
+            "question": "Is this action about seeking validation or offering authentic connection?",
+            "optionA": "Seeking validation - I need others to approve of or accept me",
+            "optionB": "Authentic connection - I want to share my true self with others"
+          },
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -628,7 +727,11 @@
           }
         },
         {
-          "text": "Are you prioritizing someone else's comfort over your own truth?",
+          "text": {
+            "question": "Does this boundary feel like a wall or a gate?",
+            "optionA": "A wall - it's meant to keep people out and protect me",
+            "optionB": "A gate - it's selective but allows for meaningful connection"
+          },
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -641,7 +744,11 @@
           }
         },
         {
-          "text": "Is this relationship defined by shared history or by present-day alignment?",
+          "text": {
+            "question": "Are you giving from a full cup or an empty one?",
+            "optionA": "Empty cup - I'm depleted but still trying to give to others",
+            "optionB": "Full cup - I'm resourced and can give from abundance"
+          },
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -654,20 +761,7 @@
           }
         },
         {
-          "text": "Do you feel you are giving from a full cup or an empty one?",
-          "metadata": {
-            "category": "Relationships",
-            "subcategories": [
-              "Romance",
-              "Friendship",
-              "Family"
-            ],
-            "type": "miningPrompt_dataExtraction",
-            "index": 4
-          }
-        },
-        {
-          "text": "I can love others while honoring my own needs.",
+          "text": "It's natural to have challenges in relationships.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -676,11 +770,12 @@
               "Family"
             ],
             "type": "replacementThought",
+            "level": "level1",
             "index": 0
           }
         },
         {
-          "text": "My boundaries are a sacred expression of self-respect.",
+          "text": "I can notice my relationship patterns without judging them.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -689,11 +784,12 @@
               "Family"
             ],
             "type": "replacementThought",
+            "level": "level1",
             "index": 1
           }
         },
         {
-          "text": "I attract relationships that mirror my inner wholeness.",
+          "text": "Most people struggle with connection - I'm not alone in this.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -702,11 +798,12 @@
               "Family"
             ],
             "type": "replacementThought",
+            "level": "level1",
             "index": 2
           }
         },
         {
-          "text": "Healthy conflict can bring greater intimacy and understanding.",
+          "text": "I am learning to communicate my needs more clearly.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -715,11 +812,12 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 3
+            "level": "level2",
+            "index": 0
           }
         },
         {
-          "text": "I release the need to manage others' emotions.",
+          "text": "I can love others while still honoring my own needs.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -728,11 +826,12 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 4
+            "level": "level2",
+            "index": 1
           }
         },
         {
-          "text": "Each relationship is an assignment for my growth.",
+          "text": "Healthy boundaries are an act of self-care, not selfishness.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -741,11 +840,12 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 5
+            "level": "level2",
+            "index": 2
           }
         },
         {
-          "text": "I deserve to feel safe, seen, and cherished.",
+          "text": "I deserve to feel safe, seen, and cherished in my relationships.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -754,7 +854,8 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 6
+            "level": "level3",
+            "index": 0
           }
         },
         {
@@ -767,7 +868,36 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 7
+            "level": "level3",
+            "index": 1
+          }
+        },
+        {
+          "text": "Each relationship is an opportunity for my growth and healing.",
+          "metadata": {
+            "category": "Relationships",
+            "subcategories": [
+              "Romance",
+              "Friendship",
+              "Family"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 2
+          }
+        },
+        {
+          "text": "I attract relationships that mirror my inner wholeness.",
+          "metadata": {
+            "category": "Relationships",
+            "subcategories": [
+              "Romance",
+              "Friendship",
+              "Family"
+            ],
+            "type": "replacementThought",
+            "level": "level4",
+            "index": 0
           }
         },
         {
@@ -780,11 +910,12 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 8
+            "level": "level4",
+            "index": 1
           }
         },
         {
-          "text": "I allow my relationships to evolve as I do.",
+          "text": "I allow my relationships to evolve as I do, with love and acceptance.",
           "metadata": {
             "category": "Relationships",
             "subcategories": [
@@ -793,13 +924,14 @@
               "Family"
             ],
             "type": "replacementThought",
-            "index": 9
+            "level": "level4",
+            "index": 2
           }
         }
       ]
     },
     {
-      "id": "Self-Image-1753744727518-pdq36jqjn",
+      "id": "Self-Image-1754540978792-dw6et3ce3",
       "category": "Self-Image",
       "subcategories": [
         "Self-Talk",
@@ -823,24 +955,50 @@
           "Thank this thought for its protective intention, even if its strategy is outdated."
         ],
         "dataExtraction": [
-          "Is this self-assessment based on external standards or your own inner truth?",
-          "Does this thought expand your sense of what's possible or limit it?",
-          "Are you defining yourself by past mistakes or by your potential to grow?",
-          "Is your sense of worth conditional on achievement or is it inherent?",
-          "Does this belief feel like a choice or an obligation?"
+          {
+            "question": "Does this doubt feel like it's trying to keep you safe?",
+            "optionA": "Yes, it feels protective - warning me about potential failure or judgment",
+            "optionB": "No, it feels more like it's telling me I'm on the wrong path entirely"
+          },
+          {
+            "question": "Is this self-criticism based on external standards or your own inner truth?",
+            "optionA": "External standards - what others expect or society demands",
+            "optionB": "My own inner truth - what feels authentic and right for me"
+          },
+          {
+            "question": "Does this thought expand your sense of what's possible or limit it?",
+            "optionA": "It expands possibilities - shows me areas for growth",
+            "optionB": "It limits possibilities - makes me feel stuck or small"
+          },
+          {
+            "question": "Is your sense of worth conditional on achievement or inherent?",
+            "optionA": "Conditional - I need to earn my worth through accomplishments",
+            "optionB": "Inherent - my worth exists regardless of what I do or achieve"
+          }
         ]
       },
-      "replacementThoughts": [
-        "I am not my thoughts; I am the observer of my thoughts.",
-        "My worthiness is inherent and does not need to be earned.",
-        "I choose to speak to myself with kindness and compassion.",
-        "Confidence is a practice, and I am practicing now.",
-        "I approve of myself, here and now.",
-        "I am allowed to be both a masterpiece and a work in progress.",
-        "My unique essence is my gift to the world.",
-        "I release the past and embrace the person I am becoming.",
-        "I trust the wisdom that lies within me."
-      ],
+      "replacementThoughts": {
+        "level1": [
+          "It's okay to have these thoughts about myself.",
+          "I notice this self-critical voice without needing to believe it.",
+          "Many people struggle with self-doubt - I'm not alone in this."
+        ],
+        "level2": [
+          "I am learning to speak to myself with more kindness.",
+          "My worth doesn't depend on being perfect.",
+          "I can acknowledge my mistakes without defining myself by them."
+        ],
+        "level3": [
+          "I choose to focus on my growth rather than my limitations.",
+          "I am allowed to be both a masterpiece and a work in progress.",
+          "My unique perspective and experiences have value."
+        ],
+        "level4": [
+          "I am not my thoughts; I am the observer of my thoughts.",
+          "My worthiness is inherent and does not need to be earned.",
+          "I trust the wisdom that lies within me and honor my authentic self."
+        ]
+      },
       "sourceFile": "self-image.json",
       "chunks": [
         {
@@ -986,7 +1144,11 @@
           }
         },
         {
-          "text": "Is this self-assessment based on external standards or your own inner truth?",
+          "text": {
+            "question": "Does this doubt feel like it's trying to keep you safe?",
+            "optionA": "Yes, it feels protective - warning me about potential failure or judgment",
+            "optionB": "No, it feels more like it's telling me I'm on the wrong path entirely"
+          },
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -999,7 +1161,11 @@
           }
         },
         {
-          "text": "Does this thought expand your sense of what's possible or limit it?",
+          "text": {
+            "question": "Is this self-criticism based on external standards or your own inner truth?",
+            "optionA": "External standards - what others expect or society demands",
+            "optionB": "My own inner truth - what feels authentic and right for me"
+          },
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -1012,7 +1178,11 @@
           }
         },
         {
-          "text": "Are you defining yourself by past mistakes or by your potential to grow?",
+          "text": {
+            "question": "Does this thought expand your sense of what's possible or limit it?",
+            "optionA": "It expands possibilities - shows me areas for growth",
+            "optionB": "It limits possibilities - makes me feel stuck or small"
+          },
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -1025,7 +1195,11 @@
           }
         },
         {
-          "text": "Is your sense of worth conditional on achievement or is it inherent?",
+          "text": {
+            "question": "Is your sense of worth conditional on achievement or inherent?",
+            "optionA": "Conditional - I need to earn my worth through accomplishments",
+            "optionB": "Inherent - my worth exists regardless of what I do or achieve"
+          },
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -1038,7 +1212,7 @@
           }
         },
         {
-          "text": "Does this belief feel like a choice or an obligation?",
+          "text": "It's okay to have these thoughts about myself.",
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -1046,8 +1220,121 @@
               "Confidence",
               "Worthiness"
             ],
-            "type": "miningPrompt_dataExtraction",
-            "index": 4
+            "type": "replacementThought",
+            "level": "level1",
+            "index": 0
+          }
+        },
+        {
+          "text": "I notice this self-critical voice without needing to believe it.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level1",
+            "index": 1
+          }
+        },
+        {
+          "text": "Many people struggle with self-doubt - I'm not alone in this.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level1",
+            "index": 2
+          }
+        },
+        {
+          "text": "I am learning to speak to myself with more kindness.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level2",
+            "index": 0
+          }
+        },
+        {
+          "text": "My worth doesn't depend on being perfect.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level2",
+            "index": 1
+          }
+        },
+        {
+          "text": "I can acknowledge my mistakes without defining myself by them.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level2",
+            "index": 2
+          }
+        },
+        {
+          "text": "I choose to focus on my growth rather than my limitations.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 0
+          }
+        },
+        {
+          "text": "I am allowed to be both a masterpiece and a work in progress.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 1
+          }
+        },
+        {
+          "text": "My unique perspective and experiences have value.",
+          "metadata": {
+            "category": "Self-Image",
+            "subcategories": [
+              "Self-Talk",
+              "Confidence",
+              "Worthiness"
+            ],
+            "type": "replacementThought",
+            "level": "level3",
+            "index": 2
           }
         },
         {
@@ -1060,6 +1347,7 @@
               "Worthiness"
             ],
             "type": "replacementThought",
+            "level": "level4",
             "index": 0
           }
         },
@@ -1073,11 +1361,12 @@
               "Worthiness"
             ],
             "type": "replacementThought",
+            "level": "level4",
             "index": 1
           }
         },
         {
-          "text": "I choose to speak to myself with kindness and compassion.",
+          "text": "I trust the wisdom that lies within me and honor my authentic self.",
           "metadata": {
             "category": "Self-Image",
             "subcategories": [
@@ -1086,85 +1375,8 @@
               "Worthiness"
             ],
             "type": "replacementThought",
+            "level": "level4",
             "index": 2
-          }
-        },
-        {
-          "text": "Confidence is a practice, and I am practicing now.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 3
-          }
-        },
-        {
-          "text": "I approve of myself, here and now.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 4
-          }
-        },
-        {
-          "text": "I am allowed to be both a masterpiece and a work in progress.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 5
-          }
-        },
-        {
-          "text": "My unique essence is my gift to the world.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 6
-          }
-        },
-        {
-          "text": "I release the past and embrace the person I am becoming.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 7
-          }
-        },
-        {
-          "text": "I trust the wisdom that lies within me.",
-          "metadata": {
-            "category": "Self-Image",
-            "subcategories": [
-              "Self-Talk",
-              "Confidence",
-              "Worthiness"
-            ],
-            "type": "replacementThought",
-            "index": 8
           }
         }
       ]

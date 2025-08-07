@@ -14,9 +14,14 @@ export interface CanvasState {
   isReady: boolean;
   intensity: number;
   
+  // Topic Selection & Flow Control
+  userThought?: string;
+  hasPersistentThought?: boolean;
+  needsThoughtMining?: boolean;
+  selectedTopic: string | null;
+  
   // Thought Mining
   needsExtraction: boolean;
-  selectedTopic: string | null;
   miningResults: Record<string, any>;
   
   // Thought Picker
@@ -24,6 +29,7 @@ export interface CanvasState {
   selectedSubcategory: string | null;
   selectedThoughts: string[];
   selectedThought?: string | null; // Add this for backward compatibility
+  pickerResults?: Record<string, any>;
   
   // Export Data
   minedInsights: Array<{
@@ -31,6 +37,7 @@ export interface CanvasState {
     timestamp: string;
     source: string;
     type?: string; // Add type field for insights
+    level?: number; // Add level for hierarchical thoughts
     metadata?: Record<string, any>;
   }>;
   exportableData: Record<string, any>;

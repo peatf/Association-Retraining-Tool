@@ -19,24 +19,49 @@
         "Could this boundary be a loving act toward yourself?"
       ],
       "dataExtraction": [
-        "Is this action about seeking validation or offering authentic connection?",
-        "Does this boundary feel like a wall or a gate?",
-        "Are you prioritizing someone else's comfort over your own truth?",
-        "Is this relationship defined by shared history or by present-day alignment?",
-        "Do you feel you are giving from a full cup or an empty one?"
+        {
+          "question": "Is this relationship pattern trying to protect your heart?",
+          "optionA": "Yes, it's trying to prevent me from being hurt or abandoned",
+          "optionB": "No, it feels more like it's keeping me from authentic connection"
+        },
+        {
+          "question": "Is this action about seeking validation or offering authentic connection?",
+          "optionA": "Seeking validation - I need others to approve of or accept me",
+          "optionB": "Authentic connection - I want to share my true self with others"
+        },
+        {
+          "question": "Does this boundary feel like a wall or a gate?",
+          "optionA": "A wall - it's meant to keep people out and protect me",
+          "optionB": "A gate - it's selective but allows for meaningful connection"
+        },
+        {
+          "question": "Are you giving from a full cup or an empty one?",
+          "optionA": "Empty cup - I'm depleted but still trying to give to others",
+          "optionB": "Full cup - I'm resourced and can give from abundance"
+        }
       ]
     },
-    "replacementThoughts": [
-      "I can love others while honoring my own needs.",
-      "My boundaries are a sacred expression of self-respect.",
-      "I attract relationships that mirror my inner wholeness.",
-      "Healthy conflict can bring greater intimacy and understanding.",
-      "I release the need to manage others' emotions.",
-      "Each relationship is an assignment for my growth.",
-      "I deserve to feel safe, seen, and cherished.",
-      "I can communicate my needs with clarity and kindness.",
-      "Authentic connection feels calm, not chaotic.",
-      "I allow my relationships to evolve as I do."
-    ]
+    "replacementThoughts": {
+      "level1": [
+        "It's natural to have challenges in relationships.",
+        "I can notice my relationship patterns without judging them.",
+        "Most people struggle with connection - I'm not alone in this."
+      ],
+      "level2": [
+        "I am learning to communicate my needs more clearly.",
+        "I can love others while still honoring my own needs.",
+        "Healthy boundaries are an act of self-care, not selfishness."
+      ],
+      "level3": [
+        "I deserve to feel safe, seen, and cherished in my relationships.",
+        "I can communicate my needs with clarity and kindness.",
+        "Each relationship is an opportunity for my growth and healing."
+      ],
+      "level4": [
+        "I attract relationships that mirror my inner wholeness.",
+        "Authentic connection feels calm, not chaotic.",
+        "I allow my relationships to evolve as I do, with love and acceptance."
+      ]
+    }
   }
 ]

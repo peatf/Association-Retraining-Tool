@@ -2,7 +2,7 @@
 
 ## Overview
 
-Clarity Canvas implements a card-based, canvas-style therapeutic interface using React components with a privacy-first, offline-capable architecture. The system provides a non-linear, tactile user experience through interactive cards organized in lanes, powered by on-device AI and semantic search of therapeutic content. The design emphasizes user agency, ephemerality, and gentle guidance through structured therapeutic processes.
+Clarity Canvas implements a structured therapeutic methodology through a card-based, canvas-style interface using React components with a privacy-first, offline-capable architecture. The system guides users through a specific three-phase process: comprehensive readiness assessment, detailed thought mining with 5-step neutralization and either/or data extraction, and a 4-level hierarchical thought selection system. The design emphasizes therapeutic precision, user agency, and gentle guidance through evidence-based thought processing techniques, powered by on-device AI and semantic search of therapeutic content.
 
 ## Architecture
 
@@ -227,80 +227,173 @@ const BaseCard = ({
 };
 ```
 
-#### 4. CardNeutralize.jsx - Voice Neutralization Card
+#### 4. CardNeutralize.jsx - 5-Step Voice Neutralization Card
 ```javascript
-const CardNeutralize = ({ topic, onComplete, isActive }) => {
-  const [prompts, setPrompts] = useState([]);
+const CardNeutralize = ({ topic, userThought, onComplete, isActive }) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [stepData, setStepData] = useState({
+    initialCharge: 5,
+    thoughtStatement: '',
+    acknowledgment: '',
+    distractionActivity: '',
+    finalCharge: 5
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedPrompt, setSelectedPrompt] = useState(null);
   
-  useEffect(() => {
-    if (isActive && topic) {
-      loadNeutralizePrompts();
+  const neutralizationSteps = [
+    {
+      id: 1,
+      title: "Name the Thought, Feel the Charge",
+      instruction: "Rate the emotional intensity of this thought (1-10):",
+      component: "slider"
+    },
+    {
+      id: 2,
+      title: "State the Thought Without Drama",
+      instruction: "Gently name the thought without adding energy to it:",
+      component: "text",
+      placeholder: "I don't know if I'm good enough..."
+    },
+    {
+      id: 3,
+      title: "Neutralize with Acknowledgment",
+      instruction: "Speak to the thought lovingly, without trying to fix it:",
+      component: "text",
+      placeholder: "It's okay that I feel this way. This thought came from contrast..."
+    },
+    {
+      id: 4,
+      title: "Distract with Mildness",
+      instruction: "Choose a gentle distraction activity:",
+      component: "select",
+      options: [
+        "Describe the room you're in",
+        "Name colors around you", 
+        "Describe the texture of your shirt",
+        "Count your breaths to 10",
+        "Pet your cat/dog",
+        "Other mindful activity"
+      ]
+    },
+    {
+      id: 5,
+      title: "Recheck the Charge",
+      instruction: "What number is it now? Even a drop from 7 to 5 means you've reclaimed energetic control:",
+      component: "slider"
     }
-  }, [isActive, topic]);
+  ];
   
-  const loadNeutralizePrompts = async () => {
-    try {
-      setLoading(true);
-      const neutralizePrompts = await contentSearchService.getMiningPrompts(
-        topic, 
-        'neutralize'
-      );
-      setPrompts(neutralizePrompts);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load neutralization prompts');
-      console.error('Error loading neutralize prompts:', err);
-    } finally {
-      setLoading(false);
+  const handleStepComplete = (stepId, value) => {
+    const stepKey = {
+      1: 'initialCharge',
+      2: 'thoughtStatement', 
+      3: 'acknowledgment',
+      4: 'distractionActivity',
+      5: 'finalCharge'
+    }[stepId];
+    
+    setStepData(prev => ({ ...prev, [stepKey]: value }));
+    
+    if (stepId < 5) {
+      setCurrentStep(stepId + 1);
+    } else {
+      // Complete neutralization process
+      onComplete({
+        type: 'neutralize',
+        steps: stepData,
+        chargeReduction: stepData.initialCharge - value,
+        timestamp: new Date().toISOString()
+      });
     }
   };
   
-  const handlePromptSelect = (prompt) => {
-    setSelectedPrompt(prompt);
-  };
-  
-  const handleComplete = () => {
-    onComplete({
-      type: 'neutralize',
-      selectedPrompt,
-      timestamp: new Date().toISOString()
-    });
-  };
+  const currentStepConfig = neutralizationSteps[currentStep - 1];
   
   return (
     <BaseCard
       title="Neutralize the Voice"
       isActive={isActive}
-      onComplete={handleComplete}
       loading={loading}
       error={error}
       testId="card-neutralize"
     >
       <div className="neutralize-content">
-        <p className="card-instruction">
-          Choose a prompt that helps you separate from the emotional charge of your thought:
-        </p>
-        
-        <div className="prompt-options">
-          {prompts.map((prompt, index) => (
-            <button
-              key={index}
-              className={`prompt-option ${selectedPrompt === prompt ? 'selected' : ''}`}
-              onClick={() => handlePromptSelect(prompt)}
-              data-testid={`neutralize-prompt-${index}`}
-            >
-              {prompt}
-            </button>
-          ))}
+        <div className="step-progress">
+          <span>Step {currentStep} of 5</span>
+          <div className="progress-bar">
+            <div 
+              className="progress-fill" 
+              style={{ width: `${(currentStep / 5) * 100}%` }}
+            />
+          </div>
         </div>
         
-        {selectedPrompt && (
-          <div className="selected-prompt-display">
-            <h4>Selected approach:</h4>
-            <p>"{selectedPrompt}"</p>
+        <div className="current-step">
+          <h4>{currentStepConfig.title}</h4>
+          <p className="step-instruction">{currentStepConfig.instruction}</p>
+          
+          {currentStepConfig.component === 'slider' && (
+            <div className="intensity-slider">
+              <input
+                type="range"
+                min="1"
+                max="10"
+                defaultValue={stepData[currentStep === 1 ? 'initialCharge' : 'finalCharge']}
+                onChange={(e) => handleStepComplete(currentStep, parseInt(e.target.value))}
+                data-testid={`neutralize-step-${currentStep}-slider`}
+              />
+              <div className="slider-labels">
+                <span>1 - Calm</span>
+                <span>10 - Overwhelming</span>
+              </div>
+            </div>
+          )}
+          
+          {currentStepConfig.component === 'text' && (
+            <div className="text-input">
+              <textarea
+                placeholder={currentStepConfig.placeholder}
+                onChange={(e) => setStepData(prev => ({ 
+                  ...prev, 
+                  [currentStep === 2 ? 'thoughtStatement' : 'acknowledgment']: e.target.value 
+                }))}
+                data-testid={`neutralize-step-${currentStep}-text`}
+              />
+              <button 
+                onClick={() => handleStepComplete(currentStep, stepData[currentStep === 2 ? 'thoughtStatement' : 'acknowledgment'])}
+                className="btn-primary"
+              >
+                Continue
+              </button>
+            </div>
+          )}
+          
+          {currentStepConfig.component === 'select' && (
+            <div className="activity-selection">
+              {currentStepConfig.options.map((option, index) => (
+                <button
+                  key={index}
+                  className="activity-option"
+                  onClick={() => handleStepComplete(currentStep, option)}
+                  data-testid={`neutralize-step-${currentStep}-option-${index}`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {currentStep > 1 && (
+          <div className="step-summary">
+            <h5>Progress so far:</h5>
+            <ul>
+              {currentStep > 1 && <li>Initial charge: {stepData.initialCharge}/10</li>}
+              {currentStep > 2 && <li>Thought stated: "{stepData.thoughtStatement}"</li>}
+              {currentStep > 3 && <li>Acknowledgment: "{stepData.acknowledgment}"</li>}
+              {currentStep > 4 && <li>Distraction: {stepData.distractionActivity}</li>}
+            </ul>
           </div>
         )}
       </div>
@@ -388,13 +481,15 @@ const CardCommonGround = ({ topic, onComplete, isActive }) => {
 };
 ```
 
-#### 6. CardDataExtraction.jsx - Data Mining Card
+#### 6. CardDataExtraction.jsx - Either/Or Data Mining Card
 ```javascript
-const CardDataExtraction = ({ topic, onComplete, isActive }) => {
-  const [prompts, setPrompts] = useState([]);
+const CardDataExtraction = ({ topic, userThought, onComplete, isActive }) => {
+  const [eitherOrPrompts, setEitherOrPrompts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [responses, setResponses] = useState({});
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [newJobOptions, setNewJobOptions] = useState([]);
   
   useEffect(() => {
     if (isActive && topic) {
@@ -405,11 +500,12 @@ const CardDataExtraction = ({ topic, onComplete, isActive }) => {
   const loadDataExtractionPrompts = async () => {
     try {
       setLoading(true);
+      // Load either/or prompts structured as A/B pairs
       const extractionPrompts = await contentSearchService.getMiningPrompts(
         topic, 
         'dataExtraction'
       );
-      setPrompts(extractionPrompts);
+      setEitherOrPrompts(extractionPrompts);
       setError(null);
     } catch (err) {
       setError('Failed to load data extraction prompts');
@@ -419,27 +515,111 @@ const CardDataExtraction = ({ topic, onComplete, isActive }) => {
     }
   };
   
-  const handleResponse = (promptIndex, response) => {
+  const handleResponse = (promptIndex, choice, choiceText) => {
     setResponses(prev => ({
       ...prev,
-      [promptIndex]: response
+      [promptIndex]: {
+        choice,
+        text: choiceText,
+        question: eitherOrPrompts[promptIndex].question
+      }
     }));
   };
   
-  const handleComplete = () => {
+  const handleAllQuestionsComplete = () => {
+    // Generate new job options based on extracted data
+    const extractedInsights = Object.values(responses);
+    generateNewJobOptions(extractedInsights);
+    setShowThankYou(true);
+  };
+  
+  const generateNewJobOptions = async (insights) => {
+    try {
+      // Use AI to generate alternative "jobs" for the thought based on insights
+      const jobOptions = await contentSearchService.generateThoughtJobs(
+        topic,
+        insights,
+        userThought
+      );
+      setNewJobOptions(jobOptions);
+    } catch (err) {
+      // Fallback job options
+      setNewJobOptions([
+        "Remind me to check in with my values before making decisions",
+        "Help me notice when I need to pause and breathe",
+        "Alert me to opportunities for self-compassion"
+      ]);
+    }
+  };
+  
+  const handleJobSelection = (selectedJob) => {
     onComplete({
       type: 'dataExtraction',
       responses,
       extractedData: Object.values(responses),
+      thoughtThankYou: true,
+      newJob: selectedJob,
       timestamp: new Date().toISOString()
     });
   };
+  
+  const allQuestionsAnswered = Object.keys(responses).length === eitherOrPrompts.length;
+  
+  if (showThankYou) {
+    return (
+      <BaseCard
+        title="Thank the Thought & Offer New Job"
+        isActive={isActive}
+        testId="card-data-extraction-thankyou"
+      >
+        <div className="thank-you-content">
+          <div className="gratitude-section">
+            <h4>Thank the Thought (Genuinely)</h4>
+            <p className="gratitude-message">
+              "I see you were trying to help. You're not the enemy. 
+              You showed up when I needed some kind of safety."
+            </p>
+          </div>
+          
+          <div className="new-job-section">
+            <h4>Offer an Updated Job</h4>
+            <p>Based on what we learned, here are some new roles this thought could play:</p>
+            
+            <div className="job-options">
+              {newJobOptions.map((job, index) => (
+                <button
+                  key={index}
+                  className="job-option"
+                  onClick={() => handleJobSelection(job)}
+                  data-testid={`new-job-option-${index}`}
+                >
+                  {job}
+                </button>
+              ))}
+            </div>
+            
+            <div className="custom-job">
+              <p>Or create your own:</p>
+              <textarea
+                placeholder="What new job would you like to offer this thought?"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    handleJobSelection(e.target.value.trim());
+                  }
+                }}
+                data-testid="custom-job-input"
+              />
+            </div>
+          </div>
+        </div>
+      </BaseCard>
+    );
+  }
   
   return (
     <BaseCard
       title="Extract Core Data"
       isActive={isActive}
-      onComplete={handleComplete}
       loading={loading}
       error={error}
       testId="card-data-extraction"
@@ -450,37 +630,58 @@ const CardDataExtraction = ({ topic, onComplete, isActive }) => {
         </p>
         
         <div className="extraction-prompts">
-          {prompts.map((prompt, index) => (
+          {eitherOrPrompts.map((promptPair, index) => (
             <div key={index} className="either-or-prompt">
-              <p className="prompt-question">{prompt}</p>
+              <p className="prompt-question">{promptPair.question}</p>
               <div className="either-or-options">
                 <button
-                  className={`option-button ${responses[index] === 'A' ? 'selected' : ''}`}
-                  onClick={() => handleResponse(index, 'A')}
+                  className={`option-button option-a ${
+                    responses[index]?.choice === 'A' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleResponse(index, 'A', promptPair.optionA)}
                   data-testid={`extraction-option-${index}-a`}
                 >
-                  Option A
+                  {promptPair.optionA}
                 </button>
                 <button
-                  className={`option-button ${responses[index] === 'B' ? 'selected' : ''}`}
-                  onClick={() => handleResponse(index, 'B')}
+                  className={`option-button option-b ${
+                    responses[index]?.choice === 'B' ? 'selected' : ''
+                  }`}
+                  onClick={() => handleResponse(index, 'B', promptPair.optionB)}
                   data-testid={`extraction-option-${index}-b`}
                 >
-                  Option B
+                  {promptPair.optionB}
                 </button>
               </div>
             </div>
           ))}
         </div>
         
-        <div className="extraction-summary">
-          <h4>Extracted Insights:</h4>
-          <ul>
-            {Object.values(responses).map((response, index) => (
-              <li key={index}>Question {index + 1}: {response}</li>
-            ))}
-          </ul>
-        </div>
+        {Object.keys(responses).length > 0 && (
+          <div className="extraction-summary">
+            <h4>Your Insights So Far:</h4>
+            <ul>
+              {Object.values(responses).map((response, index) => (
+                <li key={index}>
+                  <strong>Q:</strong> {response.question}<br/>
+                  <strong>A:</strong> {response.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        
+        {allQuestionsAnswered && (
+          <div className="completion-section">
+            <button
+              className="btn-primary complete-extraction"
+              onClick={handleAllQuestionsComplete}
+              data-testid="complete-data-extraction"
+            >
+              Thank the Thought & Continue
+            </button>
+          </div>
+        )}
       </div>
     </BaseCard>
   );
@@ -567,7 +768,189 @@ const ReadinessGate = ({ onReady }) => {
 };
 ```
 
-#### 8. ThoughtMining.jsx - Mining Card Container
+#### 8. ThoughtPicker.jsx - 4-Level Hierarchical Thought Selector
+```javascript
+const ThoughtPicker = ({ onSelection }) => {
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [availableThoughts, setAvailableThoughts] = useState([]);
+  const [selectedThoughts, setSelectedThoughts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const topics = ['Money', 'Relationships', 'Self-Image'];
+  
+  useEffect(() => {
+    if (selectedTopic && selectedSubcategory) {
+      loadHierarchicalThoughts();
+    }
+  }, [selectedTopic, selectedSubcategory]);
+  
+  const loadHierarchicalThoughts = async () => {
+    try {
+      setLoading(true);
+      const thoughts = await contentSearchService.getReplacementThoughts(
+        selectedTopic,
+        selectedSubcategory
+      );
+      
+      // Organize thoughts into 4 hierarchical levels
+      const organizedThoughts = organizeThoughtsIntoLevels(thoughts);
+      setAvailableThoughts(organizedThoughts);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load replacement thoughts');
+      console.error('Error loading thoughts:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const organizeThoughtsIntoLevels = (thoughts) => {
+    return {
+      level1: thoughts.filter(t => t.level === 1 || t.intensity === 'neutral'),
+      level2: thoughts.filter(t => t.level === 2 || t.intensity === 'gentle'),
+      level3: thoughts.filter(t => t.level === 3 || t.intensity === 'moderate'),
+      level4: thoughts.filter(t => t.level === 4 || t.intensity === 'empowered')
+    };
+  };
+  
+  const handleTopicSelect = (topic) => {
+    setSelectedTopic(topic);
+    loadSubcategories(topic);
+  };
+  
+  const loadSubcategories = async (topic) => {
+    try {
+      const subcategories = await contentSearchService.getSubcategories(topic);
+      // Reveal subcategories dynamically
+      setSubcategories(subcategories);
+    } catch (err) {
+      console.error('Error loading subcategories:', err);
+    }
+  };
+  
+  const handleThoughtSelect = (thought, level) => {
+    const thoughtWithLevel = { ...thought, selectedLevel: level };
+    setSelectedThoughts(prev => [...prev, thoughtWithLevel]);
+  };
+  
+  const handleComplete = () => {
+    onSelection({
+      topic: selectedTopic,
+      subcategory: selectedSubcategory,
+      selectedThoughts,
+      timestamp: new Date().toISOString()
+    });
+  };
+  
+  return (
+    <BaseCard
+      title="Choose Better-Feeling Thoughts"
+      testId="thought-picker"
+    >
+      <div className="thought-picker-content">
+        {!selectedTopic && (
+          <div className="topic-selection">
+            <h4>Which area would you like to explore?</h4>
+            <div className="topic-buttons">
+              {topics.map(topic => (
+                <button
+                  key={topic}
+                  className="topic-button"
+                  onClick={() => handleTopicSelect(topic)}
+                  data-testid={`topic-${topic.toLowerCase()}`}
+                >
+                  {topic}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {selectedTopic && !selectedSubcategory && (
+          <SubcategoryReveal
+            topic={selectedTopic}
+            onSelect={setSelectedSubcategory}
+          />
+        )}
+        
+        {selectedTopic && selectedSubcategory && (
+          <div className="hierarchical-thoughts">
+            <div className="selection-header">
+              <h4>{selectedTopic} → {selectedSubcategory}</h4>
+              <p>Choose thoughts that feel authentic to you right now. Start with Level 1 if you need something gentle and believable.</p>
+            </div>
+            
+            {loading ? (
+              <div className="loading-thoughts">
+                <Spinner message="Loading better-feeling thoughts..." />
+              </div>
+            ) : error ? (
+              <ErrorState message={error} onRetry={loadHierarchicalThoughts} />
+            ) : (
+              <div className="thought-levels">
+                {[1, 2, 3, 4].map(level => (
+                  <div key={level} className={`thought-level level-${level}`}>
+                    <div className="level-header">
+                      <h5>Level {level}</h5>
+                      <span className="level-description">
+                        {level === 1 && "Most neutral and believable"}
+                        {level === 2 && "Gentle improvement"}
+                        {level === 3 && "Moderate empowerment"}
+                        {level === 4 && "Most empowered and aspirational"}
+                      </span>
+                    </div>
+                    
+                    <div className="thoughts-grid">
+                      {availableThoughts[`level${level}`]?.map((thought, index) => (
+                        <div
+                          key={`${level}-${index}`}
+                          className="thought-card"
+                          onClick={() => handleThoughtSelect(thought, level)}
+                          data-testid={`thought-level-${level}-${index}`}
+                        >
+                          <p className="thought-content">{thought.content}</p>
+                          <div className="thought-meta">
+                            <span className="level-indicator">Level {level}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {selectedThoughts.length > 0 && (
+              <div className="selected-thoughts-summary">
+                <h5>Your Selected Thoughts:</h5>
+                <ul>
+                  {selectedThoughts.map((thought, index) => (
+                    <li key={index}>
+                      <strong>Level {thought.selectedLevel}:</strong> {thought.content}
+                    </li>
+                  ))}
+                </ul>
+                
+                <button
+                  className="btn-primary complete-selection"
+                  onClick={handleComplete}
+                  data-testid="complete-thought-selection"
+                >
+                  Complete Selection ({selectedThoughts.length} thoughts)
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </BaseCard>
+  );
+};
+```
+
+#### 9. ThoughtMining.jsx - Mining Card Container
 ```javascript
 const ThoughtMining = ({ topic, onComplete }) => {
   const [activeCard, setActiveCard] = useState('neutralize');

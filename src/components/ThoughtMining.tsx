@@ -76,7 +76,7 @@ const ThoughtMining: React.FC<ThoughtMiningProps> = memo(({ onComplete }) => {
           </Suspense>
         </motion.div>
       </AnimatePresence>
-      {step > 0 && (
+      {step > 1 && (
         <div style={{ textAlign: 'center', marginTop: '1rem' }}>
           <button className="btn-secondary" onClick={onComplete}>
             I have what I need
