@@ -2,10 +2,11 @@
  * ContentSearchService
  * Provides methods to query the content index for categories, subcategories,
  * and replacement thoughts. Integrates with the content-index.bin structure.
- * Enhanced with error handling and graceful degradation.
+ * Enhanced with error handling, graceful degradation, and semantic search.
  */
 
 import errorHandlingService from '../services/ErrorHandlingService';
+import embeddingService, { EmbeddingResult, SimilarityResult } from './EmbeddingService';
 
 interface EitherOrPrompt {
   question: string;
@@ -60,6 +61,7 @@ interface SearchResult {
   subcategories: string[];
   metadata?: Record<string, any>;
   relevance: number;
+  semanticSimilarity?: number; // Added for semantic search results
 }
 
 interface ContentStats {
@@ -83,6 +85,8 @@ class ContentSearchService {
   private isLoaded: boolean;
   private loadingPromise: Promise<ContentIndex> | null;
   private cache: Map<string, any>;
+  private embeddingsCache: EmbeddingResult[] = [];
+  private embeddingsLoaded: boolean = false;
 
   constructor() {
     this.contentIndex = null;
@@ -525,7 +529,7 @@ class ContentSearchService {
   }
 
   /**
-   * Search content by text query
+   * Search content by text query (legacy substring search)
    * @param query - Search query
    * @param category - Optional category filter
    * @returns Array of matching content chunks
@@ -555,6 +559,182 @@ class ContentSearchService {
 
     // Sort by relevance
     return results.sort((a, b) => b.relevance - a.relevance);
+  }
+
+  /**
+   * Search content using semantic similarity
+   * @param query - Search query
+   * @param category - Optional category filter
+   * @param topK - Number of results to return (default: 10)
+   * @param threshold - Minimum similarity threshold (default: 0.3)
+   * @returns Promise<SearchResult[]>
+   */
+  async searchContentSemantic(
+    query: string, 
+    category: string | null = null,
+    topK: number = 10,
+    threshold: number = 0.3
+  ): Promise<SearchResult[]> {
+    try {
+      // Ensure embeddings are loaded
+      await this.loadEmbeddings();
+
+      if (!embeddingService.isReady()) {
+        console.warn('Embedding service not ready, falling back to substring search');
+        return this.searchContent(query, category);
+      }
+
+      // Filter by category if specified
+      let candidateEmbeddings = this.embeddingsCache;
+      if (category) {
+        candidateEmbeddings = this.embeddingsCache.filter(
+          emb => emb.metadata?.category === category
+        );
+      }
+
+      // Perform semantic search
+      const similarResults = await embeddingService.searchSimilar(
+        query,
+        candidateEmbeddings,
+        topK,
+        threshold
+      );
+
+      // Convert to SearchResult format
+      const searchResults: SearchResult[] = similarResults.map(result => ({
+        text: result.text,
+        category: result.metadata?.category || 'Unknown',
+        subcategories: result.metadata?.subcategories || [],
+        metadata: result.metadata,
+        relevance: result.similarity,
+        semanticSimilarity: result.similarity
+      }));
+
+      return searchResults;
+
+    } catch (error) {
+      console.error('Semantic search error, falling back to substring search:', error);
+      return this.searchContent(query, category);
+    }
+  }
+
+  /**
+   * Hybrid search combining semantic and keyword search
+   * @param query - Search query
+   * @param category - Optional category filter
+   * @param topK - Number of results to return
+   * @returns Promise<SearchResult[]>
+   */
+  async searchContentHybrid(
+    query: string,
+    category: string | null = null,
+    topK: number = 10
+  ): Promise<SearchResult[]> {
+    try {
+      // Run both searches in parallel
+      const [semanticResults, keywordResults] = await Promise.all([
+        this.searchContentSemantic(query, category, Math.ceil(topK * 0.7)),
+        this.searchContent(query, category)
+      ]);
+
+      // Combine and deduplicate results
+      const combinedResults = new Map<string, SearchResult>();
+      
+      // Add semantic results with boost
+      semanticResults.forEach(result => {
+        const key = result.text;
+        combinedResults.set(key, {
+          ...result,
+          relevance: result.relevance * 1.2 // Boost semantic results
+        });
+      });
+
+      // Add keyword results, merging with existing semantic results
+      keywordResults.slice(0, Math.ceil(topK * 0.5)).forEach(result => {
+        const key = result.text;
+        if (combinedResults.has(key)) {
+          // Merge scores for items found in both searches
+          const existing = combinedResults.get(key)!;
+          existing.relevance = Math.max(existing.relevance, result.relevance * 0.8);
+        } else {
+          combinedResults.set(key, {
+            ...result,
+            relevance: result.relevance * 0.8 // Slightly reduce keyword-only results
+          });
+        }
+      });
+
+      // Sort by combined relevance and return top K
+      return Array.from(combinedResults.values())
+        .sort((a, b) => b.relevance - a.relevance)
+        .slice(0, topK);
+
+    } catch (error) {
+      console.error('Hybrid search error, falling back to keyword search:', error);
+      return this.searchContent(query, category);
+    }
+  }
+
+  /**
+   * Load and cache embeddings for all content chunks
+   * @private
+   */
+  private async loadEmbeddings(): Promise<void> {
+    if (this.embeddingsLoaded) {
+      return;
+    }
+
+    try {
+      const contentIndex = await this.loadContentIndex();
+      
+      // Extract all text chunks with metadata
+      const textChunks: Array<{text: string, metadata: any}> = [];
+      
+      for (const entry of contentIndex.entries) {
+        if (entry.chunks) {
+          entry.chunks.forEach(chunk => {
+            textChunks.push({
+              text: chunk.text,
+              metadata: {
+                ...chunk.metadata,
+                category: entry.category,
+                subcategories: entry.subcategories
+              }
+            });
+          });
+        }
+        
+        // Also include summaries as searchable content
+        if (entry.summaryForVectorization) {
+          textChunks.push({
+            text: entry.summaryForVectorization,
+            metadata: {
+              category: entry.category,
+              subcategories: entry.subcategories,
+              type: 'summary'
+            }
+          });
+        }
+      }
+
+      // Generate embeddings for all chunks
+      console.log(`Generating embeddings for ${textChunks.length} content chunks...`);
+      
+      this.embeddingsCache = [];
+      for (const chunk of textChunks) {
+        const embedding = await embeddingService.embedText(chunk.text, chunk.metadata);
+        if (embedding) {
+          this.embeddingsCache.push(embedding);
+        }
+      }
+
+      this.embeddingsLoaded = true;
+      console.log(`Loaded ${this.embeddingsCache.length} embeddings for semantic search`);
+
+    } catch (error) {
+      console.error('Failed to load embeddings:', error);
+      // Continue without embeddings - searches will fall back to keyword search
+    }
   }
 
   /**
